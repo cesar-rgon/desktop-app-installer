@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Commands to add third-party repository of the application
+add-apt-repository -y ppa:danielrichter2007/grub-customizer 2>&1

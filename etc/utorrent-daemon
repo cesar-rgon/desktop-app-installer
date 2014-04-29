@@ -1,0 +1,242 @@
+#!/bin/sh
+
+#
+#
+# Original source: http://forum.utorrent.com/viewtopic.php?id=88044
+#
+# uTorrent start stop service script
+#
+# copy to /etc/init.d
+# run "update-rc.d utorrent-daemon defaults" to install
+# run "update-rc.d utorrent-daemon remove" to remove
+#
+#
+# version 2 improvments by:
+# @author FanFan Huang (kaboom05+utorrentscript@gmail.com)
+#
+#
+
+USER=%USER% #any user account you can create the utorrent user if you like
+UTORRENT_PATH=/usr/share/utorrent-server-alpha-v3_3 #where you extracted your utserver executable
+LOGFILE=/var/log/utorrent/utorrent.log #must be a writable directory
+GROUP=$USER
+NICE=15
+SCRIPTNAME=/etc/init.d/utorrent-daemon #must match this file name
+ 
+DESC="uTorrent Server for Linux"
+CHDIR=$UTORRENT_PATH
+NAME=utserver
+UT_SETTINGS=$UTORRENT_PATH
+UT_LOG=$LOGFILE
+ 
+DAEMON_ARGS="-settingspath ${UT_SETTINGS} -logfile ${UT_LOG}"
+DAEMON=$CHDIR/$NAME
+PIDFILE=/var/run/utorrent.pid
+STOP_TIMEOUT=5
+INIT_VERBOSE=yes
+ 
+FAILURE=false
+ 
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+ 
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+ 
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+ 
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
+. /lib/lsb/init-functions
+ 
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+	FAILURE=false
+        # Return
+        #   0 if daemon has been started
+        #   1 if daemon was already running
+        #   2 if daemon could not be started
+		#	3 if port bind failed
+				
+        start-stop-daemon --start --nicelevel $NICE --quiet --make-pidfile --pidfile $PIDFILE --chuid $USER:$GROUP --chdir $CHDIR --background --exec $DAEMON --test > /dev/null 
+		if [  "$?" = "1" ]; then 
+			return 1
+		fi
+		
+        start-stop-daemon --start --nicelevel $NICE --quiet --make-pidfile --pidfile $PIDFILE --chuid $USER:$GROUP --chdir $CHDIR --background --exec $DAEMON -- $DAEMON_ARGS
+		if [ "$?" != "0" ]; then
+			return 2
+		fi
+		
+		#bind validation
+		while [ ! -e $LOGFILE ]; do
+			sleep 1 #Wait for file to be generated
+		done
+ 
+######################## DISABLED ENABLE THIS SECTION IF YOU HAVE IPv6 HANGS WITH NO IPv6 Support ################
+#		while [ ! -n "$(cat $LOGFILE|grep 'IPv6 is installed')" ]; do
+#        	#wait until utorrent has finished bootup (IPv6 MESSAGE is the last message)#
+#			sleep 1
+#		done
+ 
+		RESULT=$(cat $LOGFILE|grep 'bind failed')
+        if [ -n "$RESULT" ]; then
+			return 3
+        fi
+		
+		return 0
+}
+ 
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+        # Return
+        #   0 if daemon has been stopped
+        #   1 if daemon was already stopped
+        #   2 if daemon could not be stopped
+        #   other if a failure occurred
+        start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
+		RETVAL="$?"
+        if [ "$RETVAL" = 2 ]; then
+			return 2
+		fi
+        
+        start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+		RETVAL="$?"
+        if [ "$RETVAL" = 2 ]; then
+			return 2
+		fi
+		
+		#block process until server is completed shutting down fully
+		while [ -n "$(pidof "$NAME")" ]; do
+			sleep 1
+		done
+		
+        # Many daemons don't delete their pidfiles when they exit.
+        rm -f $PIDFILE
+		rm -f $LOGFILE #we don't want to keep our logfile
+        return "$RETVAL"
+}
+ 
+#
+# Function that sends a SIGHUP to the daemon/service
+#
+do_reload() {
+        #
+        # If the daemon can reload its configuration without
+        # restarting (for example, when it is sent a SIGHUP),
+        # then implement that here.
+        #
+        start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
+        return 0
+}
+ 
+msg_start() {
+	case "$1" in
+			0|1) 
+				if [ "$VERBOSE" != no ]; then 
+					log_end_msg 0 
+				fi
+			;;
+			2) 
+				if [ "$VERBOSE" != no ]; then
+					log_end_msg 1 
+				fi
+			;;
+			3)
+				if [ "$VERBOSE" != no ]; then
+					log_daemon_msg "Port bind failure detected uTorrent may have limited functionality please change the bind port and restart uTorrent"
+					log_end_msg 1
+				fi
+			;;
+	esac
+}
+ 
+msg_stop() {
+	case "$1" in
+			0|1)
+				if [ "$VERBOSE" != no ]; then
+					log_end_msg 0
+				fi
+			;;
+			*) 
+				if [ "$VERBOSE" != no ]; then
+					log_daemon_msg "Failed to stop service exit status $STATUS"
+					log_end_msg 1 
+				fi
+	esac
+}
+ 
+case "$1" in
+	start)
+        if [ "$VERBOSE" != no ]; then
+			log_daemon_msg "Starting $DESC"
+		fi
+        do_start
+        msg_start "$?"
+		;;
+	stop)
+        if [ "$VERBOSE" != no ]; then 
+			log_daemon_msg "Stopping $DESC"
+		fi
+        do_stop
+		msg_stop "$?"
+        ;;
+	status)
+		if [ -e "$PIDFILE" ]; then
+			PID=" PID:($(cat $PIDFILE))"
+		else
+			PID=""
+		fi
+		status_of_proc "$DAEMON" "uTorrent$PID"
+		
+			if [ "$?" != "0" ]; then
+				exit $?
+			fi
+		;;
+	restart|force-reload)
+        #
+        # If the "reload" option is implemented then remove the
+        # 'force-reload' alias
+        #
+        log_daemon_msg "Restarting $DESC"
+        do_stop
+		STATUS="$?"
+		if [ "$STATUS" -ne 0 ] && [ "$STATUS" -ne 1 ]; then
+			log_daemon_msg "Could not stop exit status $STATUS"
+			log_end_msg 1
+			exit 1
+		fi
+		
+		do_start
+		STATUS="$?"
+		case "$STATUS" in
+			0)
+			log_end_msg 0
+			;;
+			*)
+			log_daemon_msg "Restart failed start exist status $STATUS"
+			log_end_msg 1
+		esac	
+	;;
+	log)
+		if [ -e "$LOGFILE" ]; then
+			LOG=$(cat $LOGFILE)
+				echo "$LOG"
+		else
+			echo "uTorrent is not running no active log file"
+		fi
+	;;
+ 
+	*)
+        
+        echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|log}" >&2
+        exit 3
+        ;;
+esac

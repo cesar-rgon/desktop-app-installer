@@ -1,0 +1,8 @@
+#!/bin/bash
+# Get common variables and check if the script is being running by a root or sudoer user
+. ../common/commonVariables
+
+# Commands to add third-party repository of the application
+apt-key add "$scriptRootFolder/third-party-repo/keys/faenza.key"
+echo "deb http://ppa.launchpad.net/tiheum/equinox/ubuntu precise main" > /etc/apt/sources.list.d/tiheum-equinox-precise.list
+echo "deb-src http://ppa.launchpad.net/tiheum/equinox/ubuntu precise main" >> /etc/apt/sources.list.d/tiheum-equinox-precise.list

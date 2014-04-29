@@ -1,0 +1,28 @@
+########################################################################################################################
+# VARIABLES
+########################################################################################################################
+if [ "$1" != "" ]; then
+	# username is passed by first parameter
+	username="$1"
+else
+	username=`whoami`
+fi
+if [ "$username" == "root" ]; then
+	homeFolder="/root"
+else
+	homeFolder="/home/$username"
+fi
+scriptRootFolder=`pwd`/..
+homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
+
+########################################################################################################################
+# CHECK ROOT USER
+########################################################################################################################
+# Check if the script is being running like root user (root user has id equal to 0)
+if [ $(id -u) != 0 ]
+then
+	echo ""
+	echo "This script must be executed by a root or sudoer user"
+	echo ""
+	exit 1
+fi

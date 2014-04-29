@@ -1,0 +1,13 @@
+#!/bin/bash
+# Get common variables and check if the script is being running by a root or sudoer user
+. ../common/commonVariables
+
+# Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
+wget -O /tmp/teamviewer_linux.deb http://download.teamviewer.com/download/teamviewer_linux.deb 2>&1
+# Install application
+dpkg -i /tmp/teamviewer_linux.deb
+# Extract teamviewer icons
+tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
+
+# No need to execute thease commands. The main script already execute them at the end of the installation proccess.
+# apt-get install -f
