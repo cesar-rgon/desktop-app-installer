@@ -35,7 +35,7 @@ $ cd app-installer
 ```bash
 $ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
-$ cd app-installer
+$ cd app-installer-master
 ```
 
 Execution
