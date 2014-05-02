@@ -1,21 +1,21 @@
 App-installer
 =============
-
 Advanced scripts to install applications from default repositories, third-party repositories or external sources on any Ubuntu system (desktop or server).
 
 ![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
 
 ![Main menu screenshot through Dailog box for terminal system][screenshot dialog]
 
+<a name="index"/>
 **Index**
 > 1. [Features](#Features)
-> 2. [Installation](#Installation)  
+> 2. [Installing this project](#Installation)  
 > 2.1. [Method 1. Clone this repository](#Clone_this_repository)  
 > 2.2. [Method 2. Download and extract files](#Download_files)
-> 3. [Execution](#Execution)  
+> 3. [Executing a script](#Execution)  
 > 3.1 [Main script](#Exec_main_script)  
 > 3.2 [Application script](#Exec_app_script)
-> 4. [Installation's lifecycle](#Lifecycle)
+> 4. [Execution's lifecycle](#Lifecycle)
 > 5. [Extend script functionallity and customize applications to install](#Extend_functionallity)  
 > 5.1 [Understanding project structure](#Understanding_project_structure)  
 > 5.2 [Add new category. Modify or delete an existing one](#Add_new_application)  
@@ -26,30 +26,31 @@ Advanced scripts to install applications from default repositories, third-party 
 > 5.7 [Add new application's config script](#Add_new_config_script)  
 > 5.8 [Add new EULA config script for an application](#Add_new_eula_script)
 
-
-Tested on: Ubuntu desktops 14.04 and Ubuntu Server 14.04.  
-It should be executed without problems on previous Ubuntu versions with minor changes in config files.  
-Version: 1.0 beta  
-Last modified date: 04/29/2014  
-TODO: Test compatibility with Debian 7. Bug fixes.
+```
+Tested on:   Ubuntu desktops 14.04 and Ubuntu Server 14.04.
+             With some changes in config files, it can be 100% compatible with previous versions.
+Version:     1.0 beta  
+Last change: 04/29/2014  
+TODO:        Test compatibility with Debian 7. Bug fixes.
+```
 
 <a name="Features"/>
 ### 1. Features
-* One main script that shows a menu of aplications to be installed and then install the selected ones.
-* Alternatively, there is one separate script for each application, so it can be installed just running the appropiate script.
+* One main script that shows a menu of aplications wich can be selected for installation.
+* Alternatively, there is one separate script for each application, so it can be installed just executing the appropiate script.
 * Install official repository applications.
 * Add third-party repositories and install related applications when needed.
-* Download, extract and install non-repository applications through custom subscripts that extend the main script functionallity.
+* Download, extract and install non-repository applications through custom subscripts that extend the main script functionallity. It includes several subscripts by default.
 * Set up applications after they are installed through custom subscripts.
 * Customize your own application list to install and third party repositories to add just editing some config files (no need to edit main script at all for this purpose).
 * EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
 * The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they happened
-* Multilingual support. Easy to add new translations. At the moment: english and spanish languages are included. The script detect system language and it use the appropiate translation.
+* Multilingual support. Easy to add new translations. At the moment: english and spanish languages are included. The script detect system language and it use the appropiate translation.  
 
+---  
 <a name="Installation"/>
-
-### 2. Installation
+### 2. Installing this project
 <a name="Clone_this_repository"/>
 #### 2.1 Method 1. Clone this repository
 ```bash
@@ -65,8 +66,11 @@ $ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
 $ cd app-installer-master
 ```
+[Back to index](#index)
+
+---
 <a name="Execution"/>
-### 3. Execution
+### 3. Executing a script
 <a name="Exec_main_script"/>
 #### 3.1 Main script
 It shows a menu of aplications to be installed ordered by categories. The user navigates through categories and selects the applications to be installed. After that, installation process begins.
@@ -79,8 +83,11 @@ There is one separate script for each application, so it can be installed just r
 ```bash
 $ bash ./scripts/applicationName.sh
 ```
+[Back to index](#index)
+
+---
 <a name="Lifecycle"/>
-### 4. Installation's lifecycle
+### 4. Execution's lifecycle
 1. The user must select the applications to install.
 2. The script adds third-party repositories of the selected third-party applications, if this is the case.
 3. The script installs all the selected repository applications with EULA support if required.
@@ -91,40 +98,65 @@ $ bash ./scripts/applicationName.sh
 
 Main script run all the previous steps while separate application scripts skip step 1 and run the rest.
 
+[Back to index](#index)
+
+---
 <a name="Extend_functionallity"/>
-### 5. Extend script functionallity and customize applications to install
+### 5. Extend functionallity and customize applications to install
 To extend script functionallity is required to add subscripts for custom purposes. To customize applications to install is necessary to edit some config files. This actions will be detailed in next chapters.
 
 <a name="Understanding_project_structure"/>
 #### 5.1 Understanding project structure
+| Folders                                          | Description                                                                                     | 
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| [common](./common)                               | It contains common functions and variables used by installation scripts                         |
+| [config-apps](./config-apps)                     | It contains subscripts to setup applications after install                                      |
+| [etc](./etc)                                     | It contains application list and miscelanea files used by config subscripts                     |
+| [eula](./eula)                                   | It contains text files who set parameters to skip EULA questions during installation's proccess |
+| [icons](./icons)                                 | It contains sets of application icons used by subscripts                                        |
+| [languages](./languages)                         | It contains language translations used by installation scripts                                  |
+| [non-repository-apps](./non-repository-apps)     | It contains subscripts to install non-repository applications                                   |
+| [scripts](./scripts)                             | It contains one installation script by each application                                         |
+| [third-party-repo](./third-party-repo)           | It contains subscripts to add third-party repository for some applications                      |
+| [third-party-repo/keys](./third-party-repo/keys) | It contains key files used by third-party repository's subscripts                               |
+
+| Important files                                        | Description                                                                       |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| [installer.sh](./installer.sh)                         | Main script file                                                                  |
+| [./etc/applicationList](./etc/applicationList)         | Text file which defines categories, applications and packages used by main script |
+| [./languages/en.properties](./languages/en.properties) | English translation file                                                          |
+| [./languages/es.properties](./languages/es.properties) | Spanish translation file                                                          |
+
+<a name="Add_new_actegory"/>
+#### 5.2 Add new category. Modify or delete an existing one.
+
 Under construction ...  
 ![][under construction]
 
 <!--
-<a name="Add_new_actegory"/>
-#### Add new category. Modify or delete an existing one.
-
 <a name="Add_new_application"/>
-#### Add new application to a category. Modify or delete an existing one.
+#### 5.3 Add new application to a category. Modify or delete an existing one.
 
 <a name="Add_new_script"/>
-#### Add new separate application script.
+#### 5.4 Add new separate application script.
 
 <a name="Add_new_repository"/>
-#### Add new third-party repository.
+#### 5.5 Add new third-party repository.
 
 <a name="Add_new_non_repo_application"/>
-#### Add new non-repository application script.
+#### 5.6 Add new non-repository application script.
 
 <a name="Add_new_config_script"/>
-#### Add new application's config script.
+#### 5.7 Add new application's config script.
 
 <a name="Add_new_eula_script"/>
-#### Add new EULA config script for an application.
+#### 5.8 Add new EULA config script for an application.
 -->
+[Back to index](#index)
 
-<!-- References -->
+<!-- References 
+[tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
+-->
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
 [screenshot dialog]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-dialog.jpg
 [screenshot zenity]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-zenity.jpg
-
