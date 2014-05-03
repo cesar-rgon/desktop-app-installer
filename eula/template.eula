@@ -1,0 +1,5 @@
+# Commands to avoid interactive installation of the aplication to confirm EULA
+# Set default selected options to be taken by the application installer
+# Format: <package> <module>/<parameter> <command> <value>. See man debconf, debconf-set-selections for more information.
+
+# ...

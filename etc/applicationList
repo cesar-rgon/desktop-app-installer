@@ -1,19 +1,19 @@
-#####################################################################################################
-# APPLICATION LIST FOR SCRIPT MENU.                                                                 #
-# It can contain repository applications and non repository ones.                                   #
-# The columns are described below:                                                                  #
-#                                                                                                   #
-# Category [mandatory]:         can not contain whitespaces, number at beginning nor "-" character. #
-# Application-Name [mandatory]: can not contain whitespaces, number at beginning nor "-" character. #
-# Application-packages:         For a repository application, this column is mandatory and it must  #
-#                               contain whitespace character between package names.                 #
-#                               For a non-repository application, this column must be empty because #
-#                               there isn't any repository package to be installed.                 #
-#                                                                                                   #
-# Lines begining with comment character "#" or blank ones are ignored                               #
-#####################################################################################################
-# Category    Application-Name            Application-packages                                      #
-#####################################################################################################
+#########################################################################################################################
+# APPLICATION LIST FOR SCRIPT MENU.                                                                                     #
+# It can contain repository applications and non repository ones.                                                       #
+# The columns are described below:                                                                                      #
+#                                                                                                                       #
+# Category [mandatory]:         shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
+# Application-Name [mandatory]: shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
+# Application-packages:         For a repository application, this column is mandatory and it must contain whitespace   #
+#                               character between package names.                                                        #
+#                               For a non-repository application, this column must be empty because there isn't any     #
+#                               repository package to be installed.                                                     #
+#                                                                                                                       #
+# Lines begining with comment character "#" or blank ones are ignored                                                   #
+#########################################################################################################################
+# Category    Application-Name            Application-packages                                                          #
+#########################################################################################################################
 
 base          Clementine                  clementine
 base          Compressors                 p7zip-full rar unrar

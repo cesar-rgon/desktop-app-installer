@@ -9,5 +9,5 @@ dpkg -i /tmp/teamviewer_linux.deb
 # Extract teamviewer icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
 
-# No need to execute thease commands. The main script already execute them at the end of the installation proccess.
+# No need to execute this command. The main script already execute it at the end of the installation proccess.
 # apt-get install -f
