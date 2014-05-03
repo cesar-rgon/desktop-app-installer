@@ -18,22 +18,29 @@ Advanced scripts to install applications from default repositories, third-party 
 > 4. [Execution's lifecycle](#Lifecycle)
 > 5. [Extend script functionallity and customize applications to install](#Extend_functionallity)  
 > 5.1 [Understanding project structure](#Understanding_project_structure)  
-> 5.2 [Add new category. Modify or delete an existing one](#Add_new_application)  
-> 5.3 [Add new application to a category. Modify or delete an existing one](#Add_new_script)  
-> 5.4 [Add new separate application script](#Add_new_repository)  
-> 5.5 [Add new third-party repository](#Add_new_non_repo_application)  
-> 5.6 [Add new non-repository application script](#Add_new_config_script)  
-> 5.7 [Add new application's config script](#Add_new_config_script)  
-> 5.8 [Add new EULA config script for an application](#Add_new_eula_script)
+> 5.2 [Add new application to a category. Modify or delete an existing one](#Add_new_script)  
+> 5.3 [Add new separate application script](#Add_new_repository)  
+> 5.4 [Add new third-party repository](#Add_new_non_repo_application)  
+> 5.5 [Add new non-repository application script](#Add_new_config_script)  
+> 5.6 [Add new application's config script](#Add_new_config_script)  
+> 5.7 [Add new EULA config script for an application](#Add_new_eula_script)
 
 ```
-Tested on:   Ubuntu desktops 14.04 and Ubuntu Server 14.04.
+Valid for:   Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.0 beta  
 Last change: 04/29/2014  
-TODO:        Test compatibility with Debian 7. Bug fixes.
 ```
+**Task List**:
+> - [x] Test compatibility with Xubuntu 14.04
+> - [x] Test compatibility with Ubuntu server 14.04
+> - [ ] Test compatibility with Ubuntu 14.04
+> - [ ] Test compatibility with Ubuntu Gnome 14.04
+> - [ ] Test compatibility with Kubuntu 14.04
+> - [ ] Test compatibility with Lubuntu 14.04
+> - [ ] Test compatibility with Debian 7
 
+---
 <a name="Features"/>
 ### 1. Features
 * One main script that shows a menu of aplications wich can be selected for installation.
@@ -107,6 +114,37 @@ To extend script functionallity is required to add subscripts for custom purpose
 
 <a name="Understanding_project_structure"/>
 #### 5.1 Understanding project structure
+Tree of folders and files:
+```
+├── common
+│   ├── askpass.sh
+│   ├── commonFunctions
+│   ├── commonVariables
+│   └── menuFunctions
+├── config-apps
+│   └── ...
+├── etc
+│   ├── applicationList
+│   └── ...
+├── eula
+│   └── ...
+├── icons
+│   └── ...
+├── installer.sh
+├── languages
+│   ├── en.properties
+│   └── es.properties
+├── non-repository-apps
+│   └── ...
+├── README.md
+├── scripts
+│   └── ...
+└── third-party-repo
+    ├── ...
+    └── keys
+        └── ...
+```
+
 | Folders                                          | Description                                                                                     | 
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
 | [common](./common)                               | It contains common functions and variables used by installation scripts                         |
@@ -127,30 +165,50 @@ To extend script functionallity is required to add subscripts for custom purpose
 | [./languages/en.properties](./languages/en.properties) | English translation file                                                          |
 | [./languages/es.properties](./languages/es.properties) | Spanish translation file                                                          |
 
-<a name="Add_new_actegory"/>
-#### 5.2 Add new category. Modify or delete an existing one.
+<a name="Add_new_application"/>
+#### 5.2 Add new application to a category. Modify or delete an existing one.
+To add an application to be installed follow next steps:
+
+1. Edit [applicationList](./etc/applicationList) file and add a new line with the next syntax:
+
+  | First column - Category (*)  | Second column - Application Name (*) | Other columns (Packages) |
+  | ---------------------------- | ------------------------------------ | ------------------------ |
+  | Existing/New_category_name   | Application_name                     | repository package(s)    |
+
+  Considerations:
+  * First column - Category: is mandatory.
+  * If the category name is new in file, the script will generate a new window for this category.
+  * Each category should contain at least one application.
+  * The category name shall contain only letters, digits and/or underscore '_' and do not begin with a digit.
+  * Second column - Application name: is mandatory.
+  * The application name shall contain only letters, digits and/or underscore '_' and do not begin with a digit.
+  * The application source can be official repositories, third-party repository even other source (non-repository).
+  * The order in which applications are listed in menu is the same as set in this file.
+  * Third column - Packages: is mandatory only if the application belongs to a repository.
+  * Packages must be separated by whitespaces.
+  * Non-repository applications must leave this field empty.
+
 
 Under construction ...  
 ![][under construction]
 
 <!--
-<a name="Add_new_application"/>
-#### 5.3 Add new application to a category. Modify or delete an existing one.
+
 
 <a name="Add_new_script"/>
-#### 5.4 Add new separate application script.
+#### 5.3 Add new separate application script.
 
 <a name="Add_new_repository"/>
-#### 5.5 Add new third-party repository.
+#### 5.4 Add new third-party repository.
 
 <a name="Add_new_non_repo_application"/>
-#### 5.6 Add new non-repository application script.
+#### 5.5 Add new non-repository application script.
 
 <a name="Add_new_config_script"/>
-#### 5.7 Add new application's config script.
+#### 5.6 Add new application's config script.
 
 <a name="Add_new_eula_script"/>
-#### 5.8 Add new EULA config script for an application.
+#### 5.7 Add new EULA config script for an application.
 -->
 [Back to index](#index)
 
