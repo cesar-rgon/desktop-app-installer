@@ -6,24 +6,23 @@ Advanced scripts to install applications from default repositories, third-party 
 
 ![Main menu screenshot through Dailog box for terminal system][screenshot dialog]
 
-<a name="index"/>
-**Index**
-> 1. [Features](#Features)
-> 2. [Installing this project](#Installation)  
-> 2.1. [Method 1. Clone this repository](#Clone_this_repository)  
-> 2.2. [Method 2. Download and extract files](#Download_files)
-> 3. [Executing a script](#Execution)  
-> 3.1 [Main script](#Exec_main_script)  
-> 3.2 [Application script](#Exec_app_script)
-> 4. [Execution's lifecycle](#Lifecycle)
-> 5. [Extend script functionallity and customize applications to install](#Extend_functionallity)  
-> 5.1 [Understanding project structure](#Understanding_project_structure)  
-> 5.2 [Add new application to a category. Modify or delete an existing one](#Add_new_script)  
-> 5.3 [Add new separate application script](#Add_new_repository)  
-> 5.4 [Add new third-party repository](#Add_new_non_repo_application)  
-> 5.5 [Add new non-repository application script](#Add_new_config_script)  
-> 5.6 [Add new application's config script](#Add_new_config_script)  
-> 5.7 [Add new EULA config script for an application](#Add_new_eula_script)
+##### Index
+> 1. [Features](#1-features)
+> 2. [Installing this project](#2-installing-this-project)  
+>   - [Method 1. Clone this repository](#21-method-1-clone-this-repository)  
+>   - [Method 2. Download and extract files](#22-method-2-download-and-extract-files)
+> 3. [Executing a script](#3-executing-a-script)  
+>   - [Main script](#31-main-script)  
+>   - [Application script](#32-application-script)
+> 4. [Execution's lifecycle](#4-executions-lifecycle)
+> 5. [Extend functionallity and customize applications to install](#5-extend-functionallity-and-customize-applications-to-install)  
+>   - [Understanding project structure](#51-understanding-project-structure)  
+>   - [Add new application to a category. Modify or delete an existing one](#52-add-new-application-to-a-category-modify-or-delete-an-existing-one)  
+>   - [Add new separate application script](#)  
+>   - [Add new third-party repository](#)  
+>   - [Add new non-repository application script](#)  
+>   - [Add new application's config script](#)  
+>   - [Add new EULA config script for an application](#)
 
 ```
 Valid for:   Ubuntu desktops and server 14.04.
@@ -31,7 +30,7 @@ Valid for:   Ubuntu desktops and server 14.04.
 Version:     1.0 beta  
 Last change: 04/29/2014  
 ```
-**Task List**:
+##### Task list
 > - [x] Test compatibility with Xubuntu 14.04
 > - [x] Test compatibility with Ubuntu server 14.04
 > - [ ] Test compatibility with Ubuntu 14.04
@@ -41,7 +40,6 @@ Last change: 04/29/2014
 > - [ ] Test compatibility with Debian 7
 
 ---
-<a name="Features"/>
 ### 1. Features
 * One main script that shows a menu of aplications wich can be selected for installation.
 * Alternatively, there is one separate script for each application, so it can be installed just executing the appropiate script.
@@ -56,7 +54,6 @@ Last change: 04/29/2014
 * Multilingual support. Easy to add new translations. At the moment: english and spanish languages are included. The script detect system language and it use the appropiate translation.  
 
 ---  
-<a name="Installation"/>
 ### 2. Installing this project
 <a name="Clone_this_repository"/>
 #### 2.1 Method 1. Clone this repository
@@ -76,7 +73,6 @@ $ cd app-installer-master
 [Back to index](#index)
 
 ---
-<a name="Execution"/>
 ### 3. Executing a script
 <a name="Exec_main_script"/>
 #### 3.1 Main script
@@ -93,7 +89,6 @@ $ bash ./scripts/applicationName.sh
 [Back to index](#index)
 
 ---
-<a name="Lifecycle"/>
 ### 4. Execution's lifecycle
 1. The user must select the applications to install.
 2. The script adds third-party repositories of the selected third-party applications, if this is the case.
@@ -108,62 +103,51 @@ Main script run all the previous steps while separate application scripts skip s
 [Back to index](#index)
 
 ---
-<a name="Extend_functionallity"/>
 ### 5. Extend functionallity and customize applications to install
 To extend script functionallity is required to add subscripts for custom purposes. To customize applications to install is necessary to edit some config files. This actions will be detailed in next chapters.
 
 <a name="Understanding_project_structure"/>
 #### 5.1 Understanding project structure
-Tree of folders and files:
+Tree of folders and some files:
 ```
-├── common
-│   ├── askpass.sh
-│   ├── commonFunctions
-│   ├── commonVariables
-│   └── menuFunctions
-├── config-apps
-│   └── ...
-├── etc
-│   ├── applicationList
-│   └── ...
-├── eula
-│   └── ...
-├── icons
-│   └── ...
+├── common                  It contains common functions and variables used by installation scripts
+│   ├── commonFunctions  
+│   ├── commonVariables
+│   ├── menuFunctions
+│   └── *
+├── config-apps             It contains subscripts to setup applications after install
+│   └── *
+├── etc                     It contains application list and miscelanea files used by config subscripts
+│   ├── applicationList
+│   └── *
+├── eula                    It contains files who set parameters to skip questions during installation's proccess
+│   └── *
+├── icons                   It contains sets of application icons used by subscripts
+│   └── *
 ├── installer.sh
-├── languages
-│   ├── en.properties
-│   └── es.properties
-├── non-repository-apps
-│   └── ...
+├── languages               It contains language translations used by installation scripts
+│   ├── en.properties
+│   └── es.properties
+├── non-repository-apps     It contains subscripts to install non-repository applications
+│   └── *
 ├── README.md
-├── scripts
-│   └── ...
-└── third-party-repo
-    ├── ...
-    └── keys
-        └── ...
+├── scripts                 It contains one installation script by each application
+│   └── *.sh
+└── third-party-repo        It contains subscripts to add third-party repository for some applications
+    ├── *
+    └── keys                It contains key files used by third-party repository's subscripts
+        └── *
 ```
 
-| Folders                                          | Description                                                                                     | 
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| [common](./common)                               | It contains common functions and variables used by installation scripts                         |
-| [config-apps](./config-apps)                     | It contains subscripts to setup applications after install                                      |
-| [etc](./etc)                                     | It contains application list and miscelanea files used by config subscripts                     |
-| [eula](./eula)                                   | It contains text files who set parameters to skip EULA questions during installation's proccess |
-| [icons](./icons)                                 | It contains sets of application icons used by subscripts                                        |
-| [languages](./languages)                         | It contains language translations used by installation scripts                                  |
-| [non-repository-apps](./non-repository-apps)     | It contains subscripts to install non-repository applications                                   |
-| [scripts](./scripts)                             | It contains one installation script by each application                                         |
-| [third-party-repo](./third-party-repo)           | It contains subscripts to add third-party repository for some applications                      |
-| [third-party-repo/keys](./third-party-repo/keys) | It contains key files used by third-party repository's subscripts                               |
-
-| Important files                                        | Description                                                                       |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| [installer.sh](./installer.sh)                         | Main script file                                                                  |
-| [./etc/applicationList](./etc/applicationList)         | Text file which defines categories, applications and packages used by main script |
-| [./languages/en.properties](./languages/en.properties) | English translation file                                                          |
-| [./languages/es.properties](./languages/es.properties) | Spanish translation file                                                          |
+| Some files                             | Description                                                                       |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| [commonFunctions](./common/commonFunctions) | It contains common functions used by all the installation scripts                 |
+| [commonVariables](./common/commonVariables) | It contains common variables available for all subscripts                         |
+| [menuFunctions](./common/menuFunctions)     | It contains menu functions. Used only by main script                              |
+| [applicationList](./etc/applicationList)    | Text file which defines categories, applications and packages used by main script |
+| [installer.sh](./installer.sh)              | Main script file                                                                  |
+| [en.properties](./languages/en.properties)  | English translation file                                                          |
+| [es.properties](./languages/es.properties)  | Spanish translation file                                                          |
 
 <a name="Add_new_application"/>
 #### 5.2 Add new application to a category. Modify or delete an existing one.
@@ -171,16 +155,18 @@ To add an application to be installed follow next steps:
 
 1. Edit [applicationList](./etc/applicationList) file and add a new line with the next syntax:
 
-  | First column - Category (*)  | Second column - Application Name (*) | Other columns (Packages) |
-  | ---------------------------- | ------------------------------------ | ------------------------ |
-  | Existing/New_category_name   | Application_name                     | repository package(s)    |
+  | 1st column - Category (*)  | 2nd column - Application Name (*) | Other columns (Packages) |
+  | -------------------------- | --------------------------------- | ------------------------ |
+  | Existing/New_category_name | Application_name                  | repository package(s)    |
 
   Considerations:
   * First column - Category: is mandatory.
+  * Category name is repeated once per application contained in it.
   * If the category name is new in file, the script will generate a new window for this category.
   * Each category should contain at least one application.
   * The category name shall contain only letters, digits and/or underscore '_' and do not begin with a digit.
   * Second column - Application name: is mandatory.
+  * Just one row per application.
   * The application name shall contain only letters, digits and/or underscore '_' and do not begin with a digit.
   * The application source can be official repositories, third-party repository even other source (non-repository).
   * The order in which applications are listed in menu is the same as set in this file.
