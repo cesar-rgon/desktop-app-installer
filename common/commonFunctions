@@ -1,10 +1,46 @@
 #!/bin/bash
+##########################################################################
+# This script contains common functions used by installation scripts.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 04/05/2014
+# Licence: MIT
+##########################################################################
 
-########################################################################################################################
-# COMMON FUNCTIONS
-########################################################################################################################
-
-# Initialize common variables
+##########################################################################
+# This funtion initialize common variables used by other functions
+#
+# Parameters: 
+#	scriptRootFolder: main script root folder
+#	logFilename: log filename where the script will report errors or
+# 		     steps of installation process.
+# Return:
+#	username: that executes the installation script.
+#	scriptRootFolder: main script root folder.
+#	logsFolder: folder that will contain the script's log file.
+#	logFile: log file where the script will report steps and errors.
+#	tempFolder: temporal folder used by installation script.
+#	thirdPartyRepoFolder: where are placed files which contain
+#			      commands to add third-party repositories.
+#	eulaFolder: where are placed files which contain commands to set
+#		    debconf for EULA support.
+#	configFolder: where are placed files which contain commands to
+#		      setup applications.
+#	nonRepositoryAppsFolder: where are placed files which contain
+#				 commands to install non-repo apps.
+#	appListFile: it contains categories, applications and packages
+#		     used by main menu and the installation proccess.
+#	askpass: script that launchs a zenity to ask por admin password.
+#	dialogWidth: width in pixels of dialog box.
+#	dialogHeight: height in pixels of dialog box.
+#	zenityWidth: width in pixels of zenity box.
+#	zenityHeight: height in pixels of zenity box.
+#	repoCommands: commands to add third-party repotitories.
+#	packageCommands: commands to install repository packages.
+#	nonRepoAppCommands: commands to install non-repository apps.
+#	setupCommands: commands to setup applications.
+##########################################################################
 function initCommonVariables()
 {
 	username=`whoami`
@@ -40,8 +76,13 @@ function initCommonVariables()
 	setupCommands=""
 }
 
-
-### Select script language
+##########################################################################
+# This funtion imports a translation file according to system's language.
+# If no exists translation file, by default, it takes english translation. 
+#
+# Parameters: none
+# Return: none
+##########################################################################
 function selectLanguage()
 {
 	local ISO639_1=${LANG:0:2}
@@ -54,8 +95,13 @@ function selectLanguage()
 	fi
 }
 
-
-# Install "Dialog" or "Zenity" packages if not installed yet.
+##########################################################################
+# This funtion installs dialog or zenity packages, if not installed yet,
+# according to detected enviroment (desktop or terminal).
+#
+# Parameters: none
+# Return: none
+##########################################################################
 function installNeededPackages
 {
 	local box=""
@@ -88,8 +134,16 @@ function installNeededPackages
 	rm -f "$boxFile"
 }
 
-
-### Preparing script
+##########################################################################
+# This funtion calls previous functions and creates needed folders and
+# files used by installation script.
+#
+# Parameters: 
+#	scriptRootFolder: main script root folder
+#	logFilename: log filename where the script will report errors or
+# 		     steps of installation process.
+# Return: same result variables than initCommonVariables function
+##########################################################################
 function prepareScript()
 {
 	initCommonVariables "${1}" "${2}"
@@ -104,10 +158,17 @@ function prepareScript()
 	chown $username:$username "$logFile"
 }
 
-
+##########################################################################
+# This funtion setup debconf from parameters read from an EULA file
+#
+# Parameters: 
+#	eulaFilename: EULA file wich contains parameters to setup debconf
+# Return: 
+#	debconfCommands: commands to setup debconf-set-selections
+##########################################################################
 function setDebconfFromFile
 {
-	local package="$1"
+	local eulaFilename="$1"
 	local line=""
 	local lineWithoutSpaces=""
 	# Result of the function
@@ -119,10 +180,18 @@ function setDebconfFromFile
 		if [ "$lineWithoutSpaces" != "" ] && [[ "$line" != "#"* ]]; then
 			debconfCommands+="echo $line | debconf-set-selections 2>>\"$logFile\";"
 		fi
-	done < "$eulaFolder/$package"	
+	done < "$eulaFolder/$eulaFilename"	
 }
 
-
+##########################################################################
+# This funtion sets dialogBox variable to use a dialog progressbox if 
+# detected enviroment is terminal.
+#
+# Parameters:
+#	title: used by dialog box 
+# Return: 
+#	dialogBox: it contains the command to lauch dialog progressbox
+##########################################################################
 function dialogBoxFunction
 {
 	if [ -z $DISPLAY ]; then
@@ -132,7 +201,15 @@ function dialogBoxFunction
 	fi
 }
 
-
+##########################################################################
+# This funtion sets commands to be executed to add all needed third-party
+# repositories.
+#
+# Parameters: 
+#	addThirdPartyPPACommands: basic commands to add third-party-repos
+# Return: 
+#	repoCommands: complete list of commands to add third-party-repos
+##########################################################################
 function prepareThirdPartyRepository
 {
 	if [ "$1" != "" ]; then
@@ -148,7 +225,15 @@ function prepareThirdPartyRepository
 	fi
 }
 
-
+##########################################################################
+# This funtion sets commands to be executed to install all needed 
+# repository packages.
+#
+# Parameters: 
+#	packagesToInstall: list of packages to be installed
+# Return: 
+#	packageCommands: commands to install the packages
+##########################################################################
 function prepareRepositoryPackages
 {
 	if [ "$1" != "" ]; then
@@ -183,8 +268,15 @@ function prepareRepositoryPackages
 	fi
 }
 
-
-# This function prepare the installation of non repository applications
+##########################################################################
+# This funtion sets commands to be executed to install a non-repository
+# applications specified by parameter.
+#
+# Parameters: 
+#	appName: non-repository application name.
+# Return: 
+#	nonRepoAppCommands: commands to install the application.
+##########################################################################
 function prepareNonRepositoryApplication
 {
 	if [ "$1" != "" ]; then
@@ -195,8 +287,15 @@ function prepareNonRepositoryApplication
 	fi
 }
 
-
-# This function prepare the setup of applications
+##########################################################################
+# This funtion sets commands to be executed to setup an application 
+# specified by parameter.
+#
+# Parameters: 
+#	appName: application name.
+# Return: 
+#	setupCommands: commands to setup the application.
+##########################################################################
 function prepareSetupApplication
 {
 	if [ "$1" != "" ]; then
@@ -207,9 +306,17 @@ function prepareSetupApplication
 	fi
 }
 
-
-# Install commands to install and configure applications
-function runCommands
+##########################################################################
+# This funtion executes all the commands taken from previous functions
+# (to add third-party repositories or to install all needed repository
+# packages or to install non-repository applications or to setup
+# applications) and passes to dialog or zenity according to detected
+# enviroment (terminal or desktop).
+#
+# Parameters: none 
+# Return: none
+##########################################################################
+function executeCommands
 {
 	local debconfInterface=""
 	if [ -z $DISPLAY ]; then
@@ -258,8 +365,17 @@ function runCommands
 	fi
 }
 
-
-# Install and configure all the repository or non-repository applications given by name
+##########################################################################
+# This is the main funtion called from external scripts. Browse the list
+# of applications to be installed and check, for each application, if
+# exist related files: third-party repository file, setup subscript.
+# After that, call previous functions to prepare and execute commands to
+# carry out the installation process.
+#
+# Parameters:
+#	appsToInstall: list of applications to install and configure
+# Return: none
+##########################################################################
 function installAndSetupApplications
 {
 	if [ "$1" != "" ]; then
@@ -298,7 +414,7 @@ function installAndSetupApplications
 
 		prepareThirdPartyRepository "$addThirdPartyPPACommands"
 		prepareRepositoryPackages "$packagesToInstall"
-		runCommands
+		executeCommands
 	fi
 }
 
