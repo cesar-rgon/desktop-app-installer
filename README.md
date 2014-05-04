@@ -24,6 +24,7 @@ Advanced scripts to install applications from default repositories, third-party 
 >   - [Add new subscript to setup an application](#56-add-new-subscript-to-setup-an-application)  
 >   - [Add new subscript to setup EULA support](#57-add-new-subscript-to-setup-eula-support)
 > 6. [Add new translation file](#6-add-new-translation-file)
+
 ```
 Valid for:   Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
