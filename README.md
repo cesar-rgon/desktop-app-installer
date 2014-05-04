@@ -23,6 +23,7 @@ Advanced scripts to install applications from default repositories, third-party 
 >   - [Add new subscript to install a non-repository application](#55-add-new-subscript-to-install-a-non-repository-application)  
 >   - [Add new subscript to setup an application](#56-add-new-subscript-to-setup-an-application)  
 >   - [Add new subscript to setup EULA support](#57-add-new-subscript-to-setup-eula-support)
+> 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
 Valid for:   Ubuntu desktops and server 14.04.
@@ -165,7 +166,7 @@ Tree of folders and some files:
 
 [Back to index](#index)
 
-#### 5.2 Add new application to a category. Modify or delete an existing one.
+#### 5.2 Add new application to a category. Modify or delete an existing one
 To **add** an application to be installed follow next steps:
 
 1. Edit [applicationList](./etc/applicationList) file and add a new line with the next syntax:
@@ -200,14 +201,14 @@ To **add** an application to be installed follow next steps:
   * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identically (case-sensitive) to the application name defined in [applicationList](./etc/applicationList) file. _Description_ word: must always follow the category name word.
   * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
-  * You can create new translation file in your native language to be easier for your understanding.
+  * You can create new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
 
 To **modify** or **delete** an application or category just edit [applicationList](./etc/applicationList) file and change the corresponding lines.
 
 ---
 [Back to index](#index)
 
-#### 5.3 Add new subscript to install an application.
+#### 5.3 Add new subscript to install an application
 To **add** a new installation script for an application follow next steps:
 
 1. Create a new file './scripts/application-name.sh' taking, as base, next commands from [template.script](./scripts/template.script) file
@@ -233,7 +234,7 @@ To **add** a new installation script for an application follow next steps:
 ---
 [Back to index](#index)
 
-#### 5.4 Add new subscript to add third-party repository.
+#### 5.4 Add new subscript to add third-party repository
 To **add** a new third-party repository subscript for an application follow next steps:
 
 1. Create a new file './third-party-repo/applicationName' taking, as base, next commands from [template.repository](./third-party-repo/template.repository) file.
@@ -276,7 +277,7 @@ To **add** a new third-party repository subscript for an application follow next
 ---
 [Back to index](#index)
 
-#### 5.5 Add new subscript to install a non-repository application.
+#### 5.5 Add new subscript to install a non-repository application
 To **add** a new non-repository application subscript just follow next steps:
 
 1. Create a new file './non-repository-apps/applicationName' taking, as base, next commands from [template.non-repo-app](./non-repository-apps/template.non-repo-app) file.
@@ -321,7 +322,7 @@ To **add** a new non-repository application subscript just follow next steps:
 ---
 [Back to index](#index)
 
-#### 5.6 Add new subscript to setup an application.
+#### 5.6 Add new subscript to setup an application
 To **add** a new subscript to setup an application after installation proccess just follow next steps:
 
 1. Create a new file './config-apps/applicationName' taking, as base, next commands from [template.config](./config-apps/template.config) file.
@@ -363,7 +364,7 @@ To **add** a new subscript to setup an application after installation proccess j
 ---
 [Back to index](#index)
 
-#### 5.7 Add new subscript to setup EULA support.
+#### 5.7 Add new subscript to setup EULA support
 To **add** a new subscript to setup EULA support for a package just follow next steps:
 
 1. Create a new file './config-apps/packageName' taking, as base, next commands from [template.eula](./eula/template.eula) file.
@@ -382,13 +383,27 @@ To **add** a new subscript to setup EULA support for a package just follow next 
 ---
 [Back to index](#index)
 
+### 6. Add new translation file
+To add a new translation file for a specific language just follow next steps:
+
+1. Create a new file "./languages/xx.properties" with the content of an existing translation file, for example, [en.properties](./languages/en.properties)
+  Considerations:
+  * 'xx' must consist of two lowercase characters based on [ISO639-1 code][ISO639] for the specific language.
+
+2. Translate values of all variables to the specific language.  
+  Considerations:
+  * The names of variables must not be changed at all.
+
+---
+[Back to index](#index)
+
 ### Author notes
-Any contribution to this project would be appreciated.
+Any contribution to this project would be appreciated.  
 I hope you find it useful.
 
 <!-- References -->
 [screenshot dialog]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-dialog.jpg
 [screenshot zenity]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-zenity.jpg
+[ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
-
