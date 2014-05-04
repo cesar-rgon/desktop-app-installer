@@ -403,6 +403,6 @@ I hope you find it useful.
 <!-- References -->
 [screenshot dialog]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-dialog.jpg
 [screenshot zenity]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-zenity.jpg
-[ISO639]:(http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+[ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
