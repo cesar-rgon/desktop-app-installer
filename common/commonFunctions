@@ -44,9 +44,12 @@ function initCommonVariables()
 ### Select script language
 function selectLanguage()
 {
-	if [[ "$LANG" == "es"* ]]; then		# System language is spanish or latin so apply spanish language to this script.
-		. $scriptRootFolder/languages/es.properties
-	else					# System language is not spanish nor latin so apply english language to this script.
+	local ISO639_1=${LANG:0:2}
+	local LANGUAGE_FILE="$scriptRootFolder/languages/"$ISO639_1".properties"
+
+	if [ -f "$LANGUAGE_FILE" ]; then
+		. $LANGUAGE_FILE
+	else
 		. $scriptRootFolder/languages/en.properties
 	fi
 }

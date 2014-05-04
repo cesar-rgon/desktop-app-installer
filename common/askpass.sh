@@ -1,6 +1,12 @@
 #!/bin/bash
-if [[ "$LANG" == "es"* ]]; then		# System language is spanish or latin so apply spanish language to this script.
-	zenity --password --title "Contraseña administrador"
-else					# System language is not spanish nor latin so apply english language to this script.
-	zenity --password --title "Administrator password"
+ISO639_1=${LANG:0:2}
+LANGUAGE_FILE="../languages/"$ISO639_1".properties"
+
+if [ -f "$LANGUAGE_FILE" ]; then
+	. $LANGUAGE_FILE
+else
+	. ../languages/en.properties
 fi
+
+zenity --password --title "$adminPassword"
+
