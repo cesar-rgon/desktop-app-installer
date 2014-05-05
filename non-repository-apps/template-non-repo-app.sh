@@ -1,6 +1,6 @@
 #!/bin/bash
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables
+. ../common/commonVariables.sh
 
 ################################################
 #                                              #
@@ -14,6 +14,8 @@
 ################################################
 
 # - No need to use 'sudo' because this script must be executed as root user.
+# - No need to include next command. The main script already execute it at the end of the installation proccess.
+# 	apt-get install -f
 # - This script must be non-interactive, this means, no interaction with user at all:
 # 	* No echo to standard output (monitor)
 #	* No read from standard input (keyboard)

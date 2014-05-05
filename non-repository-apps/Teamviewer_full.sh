@@ -1,6 +1,15 @@
 #!/bin/bash
+##########################################################################
+# This script installs Teamviewer full support application.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 05/05/2014
+# Licence: MIT
+##########################################################################
+
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables
+. ../common/commonVariables.sh
 
 # Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
 wget -O /tmp/teamviewer_linux.deb http://download.teamviewer.com/download/teamviewer_linux.deb 2>&1

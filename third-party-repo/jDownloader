@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# Commands to add third-party repository of the application
-add-apt-repository -y ppa:jd-team/jdownloader 2>&1

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables
+. ../common/commonVariables.sh
 
 ################################################
 #                                              #

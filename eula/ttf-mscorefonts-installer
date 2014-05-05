@@ -1,5 +1,14 @@
-# Commands to avoid interactive installation of the aplication to confirm EULA
-# Set default selected options to be taken by the application installer
-# Format: <package> <module>/<parameter> <command> <value>. See man debconf, debconf-set-selections for more information.
+##########################################################################
+# This file contains debconf's parameters to avoid interactive
+# installation of the package to confirm EULA.
+#
+# Format: <package> <module>/<parameter> <command> <value>.
+# See man debconf or debconf-set-selections for more information.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 05/05/2014
+# Licence: MIT
+##########################################################################
 
 ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true

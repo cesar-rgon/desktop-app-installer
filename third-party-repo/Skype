@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# Commands to add third-party repository of the application
-add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" 2>&1
-

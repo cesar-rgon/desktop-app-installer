@@ -1,6 +1,11 @@
 #########################################################################################################################
-# APPLICATION LIST FOR SCRIPT MENU.                                                                                     #
-# It can contain repository applications and non repository ones.                                                       #
+# Application list used by main menu. It contains repository applications and/or non repository ones.                   #
+#                                                                                                                       #
+# Author: César Rodríguez González                                                                                      #
+# Version: 1.0                                                                                                          #
+# Last modified date (dd/mm/yyyy): 05/05/2014                                                                           #
+# Licence: MIT                                                                                                          #
+#                                                                                                                       #
 # The columns are described below:                                                                                      #
 #                                                                                                                       #
 # Category [mandatory]:         shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #

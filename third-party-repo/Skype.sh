@@ -1,6 +1,7 @@
 #!/bin/bash
 ##########################################################################
-# This script adds a translation file according to system language.
+# This script executes commands to add third-party repository of
+# Skype application.
 #
 # Author: César Rodríguez González
 # Version: 1.0
@@ -8,14 +9,4 @@
 # Licence: MIT
 ##########################################################################
 
-ISO639_1=${LANG:0:2}
-LANGUAGE_FILE="../languages/"$ISO639_1".properties"
-
-if [ -f "$LANGUAGE_FILE" ]; then
-	. $LANGUAGE_FILE
-else
-	. ../languages/en.properties
-fi
-
-zenity --password --title "$adminPassword"
-
+add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" 2>&1

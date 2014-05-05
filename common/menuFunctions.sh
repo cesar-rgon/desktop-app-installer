@@ -1,8 +1,12 @@
 #!/bin/bash
-
-########################################################################################################################
-# MENU FUNCTIONS
-########################################################################################################################
+##########################################################################
+# This script contains menu functions used only by main script.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 05/05/2014
+# Licence: MIT
+##########################################################################
 
 function menu {
 	# Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.

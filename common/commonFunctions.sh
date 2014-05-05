@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 04/05/2014
+# Last modified date (dd/mm/yyyy): 05/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -381,6 +381,7 @@ function installAndSetupApplications
 	if [ "$1" != "" ]; then
 		local appsToInstall=(${1})
 		local appName=""
+		local appFile=""
 		local packagesToInstall=""
 		local addThirdPartyPPACommands=""
 		local line=""
@@ -388,7 +389,8 @@ function installAndSetupApplications
 		local setupScriptCommands=""
 
 		for appName in "${appsToInstall[@]}"; do
-			if [ -f "$thirdPartyRepoFolder/$appName" ]; then
+			appFile=$appName".sh"
+			if [ -f "$thirdPartyRepoFolder/$appFile" ]; then
 				# If exists application third-party repository file
 				# Read application repository file ignoring comment and blank lines
 				while read line; do
@@ -396,19 +398,19 @@ function installAndSetupApplications
 					if [ "$lineWithoutSpaces" != "" ] && [[ "$line" != "#"* ]]; then
 						addThirdPartyPPACommands+="$line 2>>\"$logFile\"; "
 					fi
-				done < "$thirdPartyRepoFolder/$appName"
+				done < "$thirdPartyRepoFolder/$appFile"
 			fi
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
 			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|[:space:]*#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 
 			# Check if exists subscript to install a non-repository application
-			if [ -f "$nonRepositoryAppsFolder/$appName" ]; then
-				prepareNonRepositoryApplication $appName
+			if [ -f "$nonRepositoryAppsFolder/$appFile" ]; then
+				prepareNonRepositoryApplication $appFile
 			fi			
 
 			# Check if exists subscript to setup the application
-			if [ -f "$configFolder/$appName" ]; then
-				prepareSetupApplication $appName
+			if [ -f "$configFolder/$appFile" ]; then
+				prepareSetupApplication $appFile
 			fi
 		done
 

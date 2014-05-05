@@ -1,5 +1,16 @@
+##########################################################################
+# This script contains common variables used by installation scripts or
+# subscripts. Also, it checks if the script is being running like root
+# user.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 05/05/2014
+# Licence: MIT
+##########################################################################
+
 ########################################################################################################################
-# VARIABLES
+# Variables
 ########################################################################################################################
 if [ "$1" != "" ]; then
 	# username is passed by first parameter
@@ -16,9 +27,8 @@ scriptRootFolder=`pwd`/..
 homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 
 ########################################################################################################################
-# CHECK ROOT USER
-########################################################################################################################
 # Check if the script is being running like root user (root user has id equal to 0)
+########################################################################################################################
 if [ $(id -u) != 0 ]
 then
 	echo ""

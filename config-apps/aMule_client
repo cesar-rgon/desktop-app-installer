@@ -1,9 +1,0 @@
-#!/bin/bash
-# Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables
-
-# Extract amule icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
-mkdir -p /usr/share/amule/skins
-cp $scriptRootFolder/icons/aMule-faenza-theme.zip /usr/share/amule/skins
-

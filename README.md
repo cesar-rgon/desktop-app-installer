@@ -29,7 +29,7 @@ Advanced scripts to install applications from default repositories, third-party 
 Valid for:   Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.0 beta  
-Last change: 04/29/2014  
+Last change: 05/05/2014 (dd/mm/yyyy)
 ```
 ##### Task list
 > - [x] Test compatibility with Xubuntu 14.04
@@ -115,18 +115,18 @@ To extend script functionallity is required to add subscripts for custom purpose
 Tree of folders and some files:
 ```
 ├── common                  It contains common functions and variables used by installation scripts
-│   ├── commonFunctions  
-│   ├── commonVariables
-│   ├── menuFunctions
+│   ├── commonFunctions.sh  
+│   ├── commonVariables.sh
+│   ├── menuFunctions.sh
 │   └── *
 ├── config-apps             It contains subscripts to setup applications after install
-│   ├── template.config
+│   ├── template-config.sh
 │   └── *
 ├── etc                     It contains application list and miscelanea files used by config subscripts
 │   ├── applicationList
 │   └── *
 ├── eula                    It contains files who set parameters to skip questions during installation's proccess
-│   ├── template.eula
+│   ├── template-eula
 │   └── *
 ├── icons                   It contains sets of application icons used by subscripts
 │   └── *
@@ -135,33 +135,33 @@ Tree of folders and some files:
 │   ├── en.properties
 │   └── es.properties
 ├── non-repository-apps     It contains subscripts to install non-repository applications
-│   ├── template.non-repo-app
+│   ├── template-non-repo-app.sh
 │   └── *
 ├── README.md
 ├── scripts                 It contains one installation script by each application
-│   ├── template.script
+│   ├── template-script.sh
 │   └── *.sh
 └── third-party-repo        It contains subscripts to add third-party repository for some applications
-    ├── template.repository
+    ├── template-repository.sh
     ├── *
     └── keys                It contains key files used by third-party repository's subscripts
         └── *
 ```
 
-| Some files                                                           | Description                                                                       |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [commonFunctions](./common/commonFunctions)                          | It contains common functions used by all the installation scripts                 |
-| [commonVariables](./common/commonVariables)                          | It contains common variables available for all subscripts                         |
-| [menuFunctions](./common/menuFunctions)                              | It contains menu functions. Used only by main script                              |
-| [applicationList](./etc/applicationList)                             | Text file which defines categories, applications and packages used by main script |
-| [installer.sh](./installer.sh)                                       | Main script file                                                                  |
-| [en.properties](./languages/en.properties)                           | English translation file                                                          |
-| [es.properties](./languages/es.properties)                           | Spanish translation file                                                          |
-| [template.config](./config-apps/template.config)                     | Template file to help to create new subscript to setup an application             |
-| [template.eula](./eula/template.eula)                                | Template file to help to create new subscript to setup EULA support for a package |
-| [template.non-repo-app](./non-repository-apps/template.non-repo-app) | Template file to help to create new subscript to install a non-repo application   |
-| [template.script](./scripts/template.script)                         | Template file to help to create new script file to install an application         |
-| [template.repository](./third-party-repo/template.repository)        | Template file to help to create new subscript to add a third-party repository     |
+| Some files                                           | Description                                                                       |
+| -----------------------------------------------------| --------------------------------------------------------------------------------- |
+| [commonFunctions.sh][commonFunctions.sh]             | It contains common functions used by all the installation scripts                 |
+| [commonVariables.sh][commonVariables.sh]             | It contains common variables available for all subscripts                         |
+| [menuFunctions.sh][menuFunctions.sh]                 | It contains menu functions. Used only by main script                              |
+| [applicationList][applicationList]                   | Text file which defines categories, applications and packages used by main script |
+| [installer.sh][installer.sh]                         | Main script file                                                                  |
+| [en.properties][en.properties]                       | English translation file                                                          |
+| [es.properties][es.properties]                       | Spanish translation file                                                          |
+| [template-config.sh][template-config.sh]             | Template file to help to create new subscript to setup an application             |
+| [template-eula][template-eula]                       | Template file to help to create new subscript to setup EULA support for a package |
+| [template-non-repo-app.sh][template-non-repo-app.sh] | Template file to help to create new subscript to install a non-repo application   |
+| [template-script.sh][template-script.sh]             | Template file to help to create new script file to install an application         |
+| [template-repository.sh][template-repository.sh]     | Template file to help to create new subscript to add a third-party repository     |
 ---
 
 [Back to index](#index)
@@ -169,7 +169,7 @@ Tree of folders and some files:
 #### 5.2 Add new application to a category. Modify or delete an existing one
 To **add** an application to be installed follow next steps:
 
-1. Edit [applicationList](./etc/applicationList) file and add a new line with the next syntax:
+1. Edit [applicationList][applicationList] file and add a new line with the next syntax:
 
 | 1st column - Category (*)  | 2nd column - Application Name (*) | Other columns (Packages) |
 | -------------------------- | --------------------------------- | ------------------------ |
@@ -191,19 +191,19 @@ To **add** an application to be installed follow next steps:
   * Packages must be separated by whitespaces.
   * Non-repository applications must leave this field empty.
 
-2. Edit [en.properties](./languages/en.properties) file and add description for category (if it's new) and application with the next syntax:
+2. Edit [en.properties][en.properties] file and add description for category (if it's new) and application with the next syntax:
   CategoryNameDescription=Here goes the category description that is used by main menu  
   ApplicationNameDescription=Here goes the application description that is used by main menu
 
   Considerations:
-  * CategoryNameDescription is composed by _CategoryName_ word: must be identically (case-sensitive) to the category name defined in [applicationList](./etc/applicationList) file. _Description_ word: must always follow the category name word.
+  * CategoryNameDescription is composed by _CategoryName_ word: must be identically (case-sensitive) to the category name defined in [applicationList][applicationList] file. _Description_ word: must always follow the category name word.
   * To be intuitive, CategoryNameDescription should be defined in the 'CATEGORIES' section of the file.
-  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identically (case-sensitive) to the application name defined in [applicationList](./etc/applicationList) file. _Description_ word: must always follow the category name word.
+  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identically (case-sensitive) to the application name defined in [applicationList][applicationList] file. _Description_ word: must always follow the category name word.
   * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
   * You can create new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
 
-To **modify** or **delete** an application or category just edit [applicationList](./etc/applicationList) file and change the corresponding lines.
+To **modify** or **delete** an application or category just edit [applicationList][applicationList] file and change the corresponding lines.
 
 ---
 [Back to index](#index)
@@ -211,24 +211,21 @@ To **modify** or **delete** an application or category just edit [applicationLis
 #### 5.3 Add new subscript to install an application
 To **add** a new installation script for an application follow next steps:
 
-1. Create a new file './scripts/application-name.sh' taking, as base, next commands from [template.script](./scripts/template.script) file
+1. Create a new file './scripts/application-name.sh' taking, as base, next commands from [template-script.sh][template-script.sh] file
   ```bash
   #!/bin/bash
   scriptRootFolder=`pwd`/..
-  . $scriptRootFolder/common/commonFunctions
+  . $scriptRootFolder/common/commonFunctions.sh
   appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applicationList file.
   logFile=""  # Here goes log file name that will be created in ~/logs/logFile
 
-  ########################################################################################################################
-  # MAIN
-  ########################################################################################################################
   prepareScript "$scriptRootFolder" "$logFile"
   installAndSetupApplications $appName
   ```
 
 2. Modify content to asign values to variables: _appName_ and _logFile_  
   Considerations:
-  * appName value must be identically (case-sensitive) to the application name defined in [applicationList](./etc/applicationList) file.
+  * appName value must be identically (case-sensitive) to the application name defined in [applicationList][applicationList] file.
   * logFile value is used to create the log file ~/logs/logFile.
 
 ---
@@ -237,11 +234,11 @@ To **add** a new installation script for an application follow next steps:
 #### 5.4 Add new subscript to add third-party repository
 To **add** a new third-party repository subscript for an application follow next steps:
 
-1. Create a new file './third-party-repo/applicationName' taking, as base, next commands from [template.repository](./third-party-repo/template.repository) file.
+1. Create a new file './third-party-repo/applicationName' taking, as base, next commands from [template-repository.sh][template-repository.sh] file.
   ```bash
   #!/bin/bash
   # Get common variables and check if the script is being running by a root or sudoer user
-  . ../common/commonVariables
+  . ../common/commonVariables.sh
 
   ################################################
   #                                              #
@@ -265,13 +262,13 @@ To **add** a new third-party repository subscript for an application follow next
   # ...
   ```
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList](./etc/applicationList) file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList][applicationList] file.
 
 2. Add neccessary commands at the end of the file to add the repository  
   Considerations:
   * No need to use 'sudo' in commands because the subscript will be executed as root user.
   * Use common variables supplied by main script as needed.
-  * If commands need to use a key file, it should be placed in [keys](./third-party-repo/keys) folder.
+  * If commands need to use a key file, it should be placed in [keys][keys] folder.
   * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
 
 ---
@@ -280,11 +277,11 @@ To **add** a new third-party repository subscript for an application follow next
 #### 5.5 Add new subscript to install a non-repository application
 To **add** a new non-repository application subscript just follow next steps:
 
-1. Create a new file './non-repository-apps/applicationName' taking, as base, next commands from [template.non-repo-app](./non-repository-apps/template.non-repo-app) file.
+1. Create a new file './non-repository-apps/applicationName' taking, as base, next commands from [template-non-repo-app.sh][template-non-repo-app.sh] file.
   ```bash
   #!/bin/bash
   # Get common variables and check if the script is being running by a root or sudoer user
-  . ../common/commonVariables
+  . ../common/commonVariables.sh
 
   ################################################
   #                                              #
@@ -310,7 +307,7 @@ To **add** a new non-repository application subscript just follow next steps:
   # ...
   ```
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList](./etc/applicationList) file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList][applicationList] file.
 
 2. Add neccessary commands at the end of the file to download and install the non-repository application
   Considerations:
@@ -325,11 +322,11 @@ To **add** a new non-repository application subscript just follow next steps:
 #### 5.6 Add new subscript to setup an application
 To **add** a new subscript to setup an application after installation proccess just follow next steps:
 
-1. Create a new file './config-apps/applicationName' taking, as base, next commands from [template.config](./config-apps/template.config) file.
+1. Create a new file './config-apps/applicationName' taking, as base, next commands from [template-config.sh][template-config.sh] file.
   ```bash
   #!/bin/bash
   # Get common variables and check if the script is being running by a root or sudoer user
-  . ../common/commonVariables
+  . ../common/commonVariables.sh
 
   ################################################
   #                                              #
@@ -353,7 +350,7 @@ To **add** a new subscript to setup an application after installation proccess j
   # ...
   ```
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList](./etc/applicationList) file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList][applicationList] file.
 
 2. Add neccessary commands at the end of the file to setup the application
   Considerations:
@@ -367,7 +364,7 @@ To **add** a new subscript to setup an application after installation proccess j
 #### 5.7 Add new subscript to setup EULA support
 To **add** a new subscript to setup EULA support for a package just follow next steps:
 
-1. Create a new file './config-apps/packageName' taking, as base, next commands from [template.eula](./eula/template.eula) file.
+1. Create a new file './config-apps/packageName' taking, as base, next commands from [template-eula][template-eula] file.
   ```bash
   # Commands to avoid interactive installation of the aplication to confirm EULA
   # Set default selected options to be taken by the application installer
@@ -376,7 +373,7 @@ To **add** a new subscript to setup EULA support for a package just follow next 
   # ...
   ```
   Considerations:
-  * The filename must be identically (case-sensitive) to the related application package defined in [applicationList](./etc/applicationList) file.
+  * The filename must be identically (case-sensitive) to the related application package defined in [applicationList][applicationList] file.
 
 2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
 
@@ -386,7 +383,7 @@ To **add** a new subscript to setup EULA support for a package just follow next 
 ### 6. Add new translation file
 To add a new translation file for a specific language just follow next steps:
 
-1. Create a new file "./languages/xx.properties" with the content of an existing translation file, for example, [en.properties](./languages/en.properties)
+1. Create a new file "./languages/xx.properties" with the content of an existing translation file, for example, [en.properties][en.properties]
   Considerations:
   * 'xx' must consist of two lowercase characters based on [ISO639-1 code][ISO639] for the specific language.
 
@@ -402,6 +399,19 @@ Any contribution to this project would be appreciated.
 I hope you find it useful.
 
 <!-- References -->
+[commonFunctions.sh]:./common/commonFunctions.sh
+[commonVariables.sh]:./common/commonVariables.sh
+[menuFunctions.sh]:./common/menuFunctions.sh
+[applicationList]:./etc/applicationList
+[installer.sh]:./installer.sh
+[en.properties]:./languages/en.properties
+[es.properties]:./languages/es.properties
+[template-config.sh]:./config-apps/template-config.sh
+[template-eula]:./eula/template-eula
+[template-non-repo-app.sh]:./non-repository-apps/template-non-repo-app.sh
+[template-script.sh]:./scripts/template-script.sh
+[template-repository.sh]:./third-party-repo/template-repository.sh
+[keys]:./third-party-repo/keys
 [screenshot dialog]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-dialog.jpg
 [screenshot zenity]:http://cesar-rgon.github.io/app-installer/images/screenshots/screenshot-zenity.jpg
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes

@@ -1,6 +1,15 @@
 #!/bin/bash
+##########################################################################
+# This script installs Teamviewer quick support application.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 05/05/2014
+# Licence: MIT
+##########################################################################
+
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables
+. ../common/commonVariables.sh
 
 # Download Teamviewer quick support
 wget -O /tmp/teamviewer_qs.tar.gz http://download.teamviewer.com/download/teamviewer_qs.tar.gz 2>&1

@@ -1,6 +1,15 @@
 #!/bin/bash
+##########################################################################
+# This script installs and configures uTorrent server application.
+#
+# Author: César Rodríguez González
+# Version: 1.0
+# Last modified date (dd/mm/yyyy): 05/05/2014
+# Licence: MIT
+##########################################################################
+
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables
+. ../common/commonVariables.sh
 
 # DEFAULT uTORRENT SERVER INFO
 # Username: admin
