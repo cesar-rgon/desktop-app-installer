@@ -366,9 +366,13 @@ To **add** a new subscript to setup EULA support for a package just follow next 
 
 1. Create a new file './config-apps/packageName' taking, as base, next commands from [template-eula][template-eula] file.
   ```bash
-  # Commands to avoid interactive installation of the aplication to confirm EULA
-  # Set default selected options to be taken by the application installer
-  # Format: <package> <module>/<parameter> <command> <value>. See man debconf, debconf-set-selections for more information.
+  ##########################################################################
+  # This file contains debconf's parameters to avoid interactive
+  # installation of the package to confirm EULA.
+  #
+  # Format: <package> <module>/<parameter> <command> <value>.
+  # See man debconf or debconf-set-selections for more information.
+  ##########################################################################
 
   # ...
   ```
