@@ -12,9 +12,9 @@
 ########################################################################################################################
 # Variables
 ########################################################################################################################
-if [ "$1" != "" ]; then
-	# username is passed by first parameter
-	username="$1"
+if [ "$2" != "" ]; then
+	# username is passed by second parameter
+	username="$2"
 else
 	username=`whoami`
 fi
@@ -23,7 +23,6 @@ if [ "$username" == "root" ]; then
 else
 	homeFolder="/home/$username"
 fi
-scriptRootFolder=`pwd`/..
 homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 
 ########################################################################################################################

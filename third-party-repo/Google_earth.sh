@@ -10,5 +10,5 @@
 ##########################################################################
 
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub 2>&1 | apt-key add -
-echo "deb http://dl.google.com/linux/earth/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+echo "deb http://dl.google.com/linux/earth/deb/ stable main" > /etc/apt/sources.list.d/google.list
 

@@ -9,7 +9,12 @@
 ##########################################################################
 
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables.sh
+if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+else
+	scriptRootFolder=".."
+fi
+. $scriptRootFolder/common/commonVariables.sh
 
 # Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
 wget -O /tmp/teamviewer_linux.deb http://download.teamviewer.com/download/teamviewer_linux.deb 2>&1

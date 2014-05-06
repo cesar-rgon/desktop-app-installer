@@ -213,15 +213,11 @@ function dialogBoxFunction
 function prepareThirdPartyRepository
 {
 	if [ "$1" != "" ]; then
-		local addThirdPartyPPACommands=${1}
-		# Execute commands to add third-party repositories
-		repoCommands+="echo \"# $addingThirdPartyRepo\"; echo \"$addingThirdPartyRepo ...\" >> \"$logFile\";"
-		dialogBoxFunction "$addingThirdPartyRepo"
-		repoCommands+="bash -c \"$addThirdPartyPPACommands\" $dialogBox;"
-
-		repoCommands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
-		dialogBoxFunction "$updatingRepositories"
-		repoCommands+="apt-get update --fix-missing 2>>\"$logFile\" $dialogBox;"
+		local appName="$1"
+		local appFile=$appName".sh"
+		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
+		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
+		repoCommands+="bash \"$thirdPartyRepoFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -281,9 +277,10 @@ function prepareNonRepositoryApplication
 {
 	if [ "$1" != "" ]; then
 		local appName="$1"
+		local appFile=$appName".sh"
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$installingNonRepoApp $appName ..."
-		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appName\" $username 2>>\"$logFile\" $dialogBox;"
+		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -300,9 +297,10 @@ function prepareSetupApplication
 {
 	if [ "$1" != "" ]; then
 		local appName="$1"
+		local appFile=$appName".sh"
 		setupCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		setupCommands+="bash \"$configFolder/$appName\" $username 2>>\"$logFile\" $dialogBox;"
+		setupCommands+="bash \"$configFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -330,6 +328,13 @@ function executeCommands
 		local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingDebconfInterface"
 		commands+="echo debconf debconf/frontend select $debconfInterface | debconf-set-selections 2>>\"$logFile\" $dialogBox;"
+
+		if [ "$repoCommands" != "" ]; then
+			# Update repositories
+			repoCommands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
+			dialogBoxFunction "$updatingRepositories"
+			repoCommands+="apt-get update --fix-missing 2>>\"$logFile\" $dialogBox;"
+		fi
 
 		# Install repositories and packages
 		commands+="$repoCommands $packageCommands $nonRepoAppCommands $setupCommands"
@@ -383,38 +388,27 @@ function installAndSetupApplications
 		local appName=""
 		local appFile=""
 		local packagesToInstall=""
-		local addThirdPartyPPACommands=""
-		local line=""
-		local lineWithoutSpaces=""	
-		local setupScriptCommands=""
 
 		for appName in "${appsToInstall[@]}"; do
 			appFile=$appName".sh"
+			# Check if exists subscript to add third-party repository
 			if [ -f "$thirdPartyRepoFolder/$appFile" ]; then
-				# If exists application third-party repository file
-				# Read application repository file ignoring comment and blank lines
-				while read line; do
-					lineWithoutSpaces=`echo $line | tr -d ' '`
-					if [ "$lineWithoutSpaces" != "" ] && [[ "$line" != "#"* ]]; then
-						addThirdPartyPPACommands+="$line 2>>\"$logFile\"; "
-					fi
-				done < "$thirdPartyRepoFolder/$appFile"
+				prepareThirdPartyRepository $appName
 			fi
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
 			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|[:space:]*#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 
 			# Check if exists subscript to install a non-repository application
 			if [ -f "$nonRepositoryAppsFolder/$appFile" ]; then
-				prepareNonRepositoryApplication $appFile
+				prepareNonRepositoryApplication $appName
 			fi			
 
 			# Check if exists subscript to setup the application
 			if [ -f "$configFolder/$appFile" ]; then
-				prepareSetupApplication $appFile
+				prepareSetupApplication $appName
 			fi
 		done
 
-		prepareThirdPartyRepository "$addThirdPartyPPACommands"
 		prepareRepositoryPackages "$packagesToInstall"
 		executeCommands
 	fi

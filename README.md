@@ -238,7 +238,12 @@ To **add** a new third-party repository subscript for an application follow next
   ```bash
   #!/bin/bash
   # Get common variables and check if the script is being running by a root or sudoer user
-  . ../common/commonVariables.sh
+  if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+  else
+  	scriptRootFolder=".."
+  fi
+  . $scriptRootFolder/common/commonVariables.sh
 
   ################################################
   #                                              #
@@ -281,7 +286,12 @@ To **add** a new non-repository application subscript just follow next steps:
   ```bash
   #!/bin/bash
   # Get common variables and check if the script is being running by a root or sudoer user
-  . ../common/commonVariables.sh
+  if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+  else
+  	scriptRootFolder=".."
+  fi
+  . $scriptRootFolder/common/commonVariables.sh
 
   ################################################
   #                                              #
@@ -326,7 +336,12 @@ To **add** a new subscript to setup an application after installation proccess j
   ```bash
   #!/bin/bash
   # Get common variables and check if the script is being running by a root or sudoer user
-  . ../common/commonVariables.sh
+  if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+  else
+  	scriptRootFolder=".."
+  fi
+  . $scriptRootFolder/common/commonVariables.sh
 
   ################################################
   #                                              #

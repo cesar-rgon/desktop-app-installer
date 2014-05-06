@@ -1,6 +1,11 @@
 #!/bin/bash
 # Get common variables and check if the script is being running by a root or sudoer user
-. ../common/commonVariables.sh
+if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+else
+	scriptRootFolder=".."
+fi
+. $scriptRootFolder/common/commonVariables.sh
 
 ################################################
 #                                              #
