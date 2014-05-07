@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 07/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -63,7 +63,7 @@ function initCommonVariables()
 	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
 
 	appListFile="$scriptRootFolder/etc/applicationList"
-	askpass="$scriptRootFolder/common/askpass.sh"
+	askpass="$tempFolder/askpass.sh"
 	
 	dialogWidth=$((`tput cols` - 4))
 	dialogHeight=$((`tput lines` - 6))
@@ -150,8 +150,12 @@ function prepareScript()
 	selectLanguage
 	installNeededPackages
 
-	# Create temporal folders
+	# Create temporal folders and files
 	mkdir -p "$tempFolder"
+	echo "#!/bin/bash
+	zenity --password --title \"$askAdminPassword\"" > "$askpass"
+	chmod +x "$askpass"
+
 	mkdir -p "$logsFolder"
 	chown $username:$username "$logsFolder"
 	echo "" > "$logFile"
