@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 07/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -25,7 +25,7 @@ function menu {
 	local selectedApps=""
 	local appsToInstall=""
 	local index=1
-	local zenityWidth=680
+	local zenityWidth=740
 	local zenityHeight=162
 
 	for categoryName in "${categoryArray[@]}"; do

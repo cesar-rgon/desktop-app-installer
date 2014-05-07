@@ -29,12 +29,12 @@ Advanced scripts to install applications from default repositories, third-party 
 Valid for:   Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.0 beta  
-Last change: 05/05/2014 (dd/mm/yyyy)
+Last change: 07/05/2014 (dd/mm/yyyy)
 ```
 ##### Task list
+> - [x] Test compatibility with Ubuntu 14.04
 > - [x] Test compatibility with Xubuntu 14.04
 > - [x] Test compatibility with Ubuntu server 14.04
-> - [ ] Test compatibility with Ubuntu 14.04
 > - [ ] Test compatibility with Ubuntu Gnome 14.04
 > - [ ] Test compatibility with Kubuntu 14.04
 > - [ ] Test compatibility with Lubuntu 14.04
