@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 07/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -33,6 +33,7 @@ DELUGED_USER=\"$username\"
 RUN_AT_STARTUP=\"YES\"" > /etc/default/deluge-daemon
 # Add username and password to Deluge's authentication file
 sudo -u $username deluged
+sudo -u $username mkdir -p "$homeFolder/.config/deluge"
 echo "$DELUGE_DAEMON_USERNAME:$DELUGE_DAEMON_PASSWORD:10" >> $homeFolder/.config/deluge/auth
 chown $username:$username $homeFolder/.config/deluge/auth
 # Set deluge folders
@@ -47,11 +48,19 @@ sudo -u $username deluge-console "config autoadd_location"
 # Allow remote connection
 sudo -u $username deluge-console "config -s allow_remote True"
 sudo -u $username deluge-console "config allow_remote"
-# Set Deluge daemon client and web ports
+# Set Deluge daemon client port
 sudo -u $username deluge-console "config -s daemon_port $DELUGE_DAEMON_CLIENT_PORT"
 sudo -u $username deluge-console "config daemon_port"
-sudo -u $username sed -i "s/\"port\":.*/\"port\": $DELUGE_DAEMON_WEB_PORT/g" $homeFolder/.config/deluge/web.conf
 pkill deluged
+
+# Set Deluge daemon web port
+echo "{
+  \"file\": 1, 
+  \"format\": 1
+}{
+  \"port\": $DELUGE_DAEMON_WEB_PORT
+}" > "$homeFolder/.config/deluge/web.conf"
+chown $username:$username "$homeFolder/.config/deluge/web.conf"
 
 # Create menu launcher for deluge-daemon's web client.
 echo "[Desktop Entry]
