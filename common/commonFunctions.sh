@@ -67,7 +67,7 @@ function initCommonVariables()
 	
 	dialogWidth=$((`tput cols` - 4))
 	dialogHeight=$((`tput lines` - 6))
-	zenityWidth=500
+	zenityWidth=770
 	zenityHeight=400
 
 	repoCommands=""
@@ -104,34 +104,34 @@ function selectLanguage()
 ##########################################################################
 function installNeededPackages
 {
-	local box=""
-	local boxFile="$HOME/temporal.log"
+	local box=""	
+	local neededPackages=""
+	local neededPackagesFile="$tempFolder/neededPackages.log"
+
 	if [ -z $DISPLAY ]; then
 		box="dialog"
 	else
 		box="zenity"
 	fi
-	# Check if box package has been installed
-	dpkg -s $box 1>/dev/null 2>"$boxFile"
-
-	# If error log file is not-zero then the box package has not been installed.
-	if [ `stat --format="%s" "$boxFile"` -ne 0 ]; then
-		# Try to install it.
-		if [ -z $DISPLAY ]; then
-			echo "$installingPackage $box"
-			sudo apt-get -y install $box --fix-missing 2>"$boxFile"
-		else
-			x-terminal-emulator -e bash -c "echo \"$installingPackage $box ...\"; sudo apt-get -y install $box --fix-missing 2>\"$boxFile\""
-		fi
-		# If error log file is not-zero then the application has not been installed.
-		if [ `stat --format="%s" "$boxFile"` -ne 0 ]; then
-			# Exit the script
-			echo "$errorInstallingPackage $box"
-			echo "$scriptAborted"
-			exit 1
+	if [ "`dpkg -s $box 2>&1 | grep "installed"`" == "" ]; then
+		neededPackages+="$box"
+	fi
+	if [ "`echo "$XDG_DATA_DIRS" | grep -Eo 'gnome'`" == "gnome" ]; then
+		# Unity or Gnome-Shell desktop. Gnome-shell needs to install unity-gtk2-module package. Unity already has this package installed.
+		if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
+			neededPackages+=" unity-gtk2-module"
 		fi
 	fi
-	rm -f "$boxFile"
+
+	if [ "$neededPackages" != "" ]; then
+		# Install needed packages
+		if [ -z $DISPLAY ]; then
+			echo "$installingPackage $neededPackages"
+			sudo apt-get -y install $neededPackages --fix-missing 2>"$neededPackagesFile"
+		else
+			xterm -e bash -c "echo \"$installingPackage $neededPackages ...\"; sudo apt-get -y install $neededPackages --fix-missing 2>\"$neededPackagesFile\""
+		fi
+	fi
 }
 
 ##########################################################################
@@ -148,7 +148,6 @@ function prepareScript()
 {
 	initCommonVariables "${1}" "${2}"
 	selectLanguage
-	installNeededPackages
 
 	# Create temporal folders and files
 	mkdir -p "$tempFolder"
@@ -160,6 +159,8 @@ function prepareScript()
 	chown $username:$username "$logsFolder"
 	echo "" > "$logFile"
 	chown $username:$username "$logFile"
+
+	installNeededPackages
 }
 
 ##########################################################################
