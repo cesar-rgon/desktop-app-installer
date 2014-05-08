@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 07/05/2014
+# Last modified date (dd/mm/yyyy): 08/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -61,6 +61,7 @@ function initCommonVariables()
 	eulaFolder="$scriptRootFolder/eula"
 	configFolder="$scriptRootFolder/config-apps"
 	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
+	installerIconFolder="$scriptRootFolder/icons/installer"
 
 	appListFile="$scriptRootFolder/etc/applicationList"
 	askpass="$tempFolder/askpass.sh"
@@ -116,8 +117,12 @@ function installNeededPackages
 	if [ "`dpkg -s $box 2>&1 | grep "installed"`" == "" ]; then
 		neededPackages+="$box"
 	fi
-	if [ "`echo "$XDG_DATA_DIRS" | grep -Eo 'gnome'`" == "gnome" ]; then
-		# Unity or Gnome-Shell desktop. Gnome-shell needs to install unity-gtk2-module package. Unity already has this package installed.
+	if [ "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" == "" ]; then
+		neededPackages+=" libnotify-bin"
+	fi
+
+	if [ "$XDG_CURRENT_DESKTOP" == "GNOME" ]; then
+		# Gnome-shell needs to install unity-gtk2-module package.
 		if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
 			neededPackages+=" unity-gtk2-module"
 		fi
@@ -369,7 +374,7 @@ function executeCommands
 			) |
 			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate $autoclose --width=$zenityWidth
 			# Show notification and log
-			notify-send -i logviewer "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
+			notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
 			zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight
 		fi
 	fi

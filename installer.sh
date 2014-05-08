@@ -7,7 +7,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 08/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -18,13 +18,13 @@ logFile="linux-app-installer.log"
 
 prepareScript "$scriptRootFolder" "$logFile"
 if [ -n $DISPLAY ]; then
-	notify-send -i shellscript "$linuxAppInstallerTitle" "$linuxAppInstallerCredits"
+	notify-send -i "$installerIconFolder/text-x-script.svg" "$linuxAppInstallerTitle" "$linuxAppInstallerCredits"
 fi
 
 appsToInstall=$(menu)
 if [ "$appsToInstall" != "" ]; then
 	if [ -n $DISPLAY ]; then
-		notify-send -i applications-other "$linuxAppInstallerTitle" "$installingSelectedApplications"
+		notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$installingSelectedApplications"
 	fi
 	# Install all selected applications
 	installAndSetupApplications "$appsToInstall"

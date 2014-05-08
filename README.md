@@ -32,12 +32,12 @@ Version:     1.0 beta
 Last change: 08/05/2014 (dd/mm/yyyy)
 ```
 ##### Task list
-> - [x] Test compatibility with Ubuntu 14.04
-> - [x] Test compatibility with Ubuntu Gnome 14.04
-> - [x] Test compatibility with Xubuntu 14.04
-> - [x] Test compatibility with Ubuntu server 14.04
+> - [x] Tested compatibility with Ubuntu 14.04
+> - [x] Tested compatibility with Ubuntu Gnome 14.04
+> - [x] Tested compatibility with Xubuntu 14.04
+> - [x] Tested compatibility with Lubuntu 14.04
+> - [x] Tested compatibility with Ubuntu server 14.04
 > - [ ] Test compatibility with Kubuntu 14.04
-> - [ ] Test compatibility with Lubuntu 14.04
 > - [ ] Test compatibility with Debian 7
 > - [ ] Develop Github web page
 > - [ ] Create spanish translation of this README file

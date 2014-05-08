@@ -4,9 +4,40 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 07/05/2014
+# Last modified date (dd/mm/yyyy): 08/05/2014
 # Licence: MIT
 ##########################################################################
+
+function menuWidthHeight {
+	if [ -z $DISPLAY ]; then
+		maxDialogHeight=$((`tput lines` - 5))
+	else
+		maxZenityHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
+
+		case "$XDG_CURRENT_DESKTOP" in
+		    "Unity" )
+			zenityWidth=740
+			zenityBaseHeight=162
+			zenityRowHeight=23;;
+		    "GNOME" )
+			zenityWidth=770
+			zenityBaseHeight=177
+			zenityRowHeight=27;;
+		    "XFCE" )
+			zenityWidth=680
+			zenityBaseHeight=162
+			zenityRowHeight=23;;
+		    "LXDE" )
+			zenityWidth=790
+			zenityBaseHeight=165
+			zenityRowHeight=23;;
+		    * )
+			zenityWidth=790
+			zenityBaseHeight=177
+			zenityRowHeight=27
+		esac
+	fi
+}
 
 function menu {
 	local appsToInstall=""
@@ -16,6 +47,7 @@ function menu {
 	else
 		box="zenity"
 	fi
+	menuWidthHeight
 	# Check if dialog or zenity has been installed
 	if [ "`dpkg -s $box 2>&1 | grep "installed"`" != "" ]; then
 		# Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
@@ -33,9 +65,8 @@ function menu {
 		local appDescription=""
 		local selectedApps=""
 		local index=1
-		local zenityWidth=770
 		local zenityHeight=0
-		local maxZenityHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
+		local dialogHeight=0
 
 		for categoryName in "${categoryArray[@]}"; do
 			# Each category has it's own screen
@@ -46,18 +77,19 @@ function menu {
 			index=1
 	
 			if [ -z $DISPLAY ]; then
-				local dialogHeight=$(($appNumber+8))
-				if [ $dialogHeight -gt $((`tput lines` - 5)) ]; then
-					dialogHeight=$((`tput lines` - 5))
+				dialogHeight=$(($appNumber+8))
+				if [ $dialogHeight -gt $maxDialogHeight ]; then
+					dialogHeight=$maxDialogHeight
 				fi
 				command="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --checklist \"\n$categoryLabel $categoryNumber/$totalCategoriesNumber: $categoryDescription\" $dialogHeight $dialogWidth $appNumber "
 			else
-				zenityHeight=177
 				if [ $appNumber -gt 2 ]; then
-					zenityHeight=$(($zenityHeight+$(($(($appNumber-2))*27))))
+					zenityHeight=$(($zenityBaseHeight+$(($(($appNumber-2))*$zenityRowHeight))))
 					if [ $zenityHeight -gt $maxZenityHeight ]; then
 						zenityHeight=$maxZenityHeight
 					fi
+				else
+					zenityHeight=$zenityBaseHeight
 				fi
 				command="zenity --list --checklist --width=$zenityWidth --height=$zenityHeight --title=\"$linuxAppInstallerTitle\" --text \"$categoryLabel $categoryNumber/$totalCategoriesNumber: $categoryDescription\" --column \"$selection\" --column \"#\" --column=\"$value\" "
 			fi
