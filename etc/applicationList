@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.0                                                                                                          #
-# Last modified date (dd/mm/yyyy): 05/05/2014                                                                           #
+# Last modified date (dd/mm/yyyy): 09/05/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -57,8 +57,8 @@ downloads     Transmission_client         transmission-remote-gtk
 downloads     Transmission_server         transmission-daemon
 # uTorrent server is a non-repository application. The script ../apps-install-config/uTorrent_server handles the installation process
 downloads     uTorrent_server
-
-games         Steam                       steam
+# Steam is under repositories but it fails to install on Kubuntu. So download and install from official webpage with a non-repository subscript.
+games         Steam
 
 internet      Chrome                      google-chrome-stable
 internet      Chromium                    chromium-browser

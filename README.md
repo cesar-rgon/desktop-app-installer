@@ -28,16 +28,16 @@ Advanced scripts to install applications from default repositories, third-party 
 ```
 Valid for:   Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
-Version:     1.0 beta  
-Last change: 08/05/2014 (dd/mm/yyyy)
+Version:     1.0  
+Last change: 09/05/2014 (dd/mm/yyyy)
 ```
 ##### Task list
 > - [x] Tested compatibility with Ubuntu 14.04
 > - [x] Tested compatibility with Ubuntu Gnome 14.04
 > - [x] Tested compatibility with Xubuntu 14.04
 > - [x] Tested compatibility with Lubuntu 14.04
+> - [x] Tested compatibility with Kubuntu 14.04
 > - [x] Tested compatibility with Ubuntu server 14.04
-> - [ ] Test compatibility with Kubuntu 14.04
 > - [ ] Test compatibility with Debian 7
 > - [ ] Develop Github web page
 > - [ ] Create spanish translation of this README file
@@ -253,6 +253,7 @@ To **add** a new third-party repository subscript for an application follow next
   # homeFolder: user's home folder               #
   # scriptRootFolder: root folder of main script #
   # homeDownloadFolder: user's download folder   #
+  # desktop: user session desktop                #
   #                                              #
   ################################################
 
@@ -301,6 +302,7 @@ To **add** a new non-repository application subscript just follow next steps:
   # homeFolder: user's home folder               #
   # scriptRootFolder: root folder of main script #
   # homeDownloadFolder: user's download folder   #
+  # desktop: user session desktop                #
   #                                              #
   ################################################
 
@@ -351,6 +353,7 @@ To **add** a new subscript to setup an application after installation proccess j
   # homeFolder: user's home folder               #
   # scriptRootFolder: root folder of main script #
   # homeDownloadFolder: user's download folder   #
+  # desktop: user session desktop                #
   #                                              #
   ################################################
 

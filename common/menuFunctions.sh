@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 08/05/2014
+# Last modified date (dd/mm/yyyy): 09/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -13,25 +13,28 @@ function menuWidthHeight {
 		maxDialogHeight=$((`tput lines` - 5))
 	else
 		maxZenityHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
-
-		case "$XDG_CURRENT_DESKTOP" in
-		    "Unity" )
+		case "$desktop" in
+		"Unity" )
 			zenityWidth=740
 			zenityBaseHeight=162
 			zenityRowHeight=23;;
-		    "GNOME" )
+		"GNOME" )
 			zenityWidth=770
 			zenityBaseHeight=177
 			zenityRowHeight=27;;
-		    "XFCE" )
+		"XFCE" )
 			zenityWidth=680
 			zenityBaseHeight=162
 			zenityRowHeight=23;;
-		    "LXDE" )
+		"LXDE" )
 			zenityWidth=790
 			zenityBaseHeight=165
 			zenityRowHeight=23;;
-		    * )
+		"KDE" )
+			zenityWidth=680
+			zenityBaseHeight=162
+			zenityRowHeight=24;;			
+		* )
 			zenityWidth=790
 			zenityBaseHeight=177
 			zenityRowHeight=27

@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 08/05/2014
+# Last modified date (dd/mm/yyyy): 09/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -29,6 +29,7 @@
 #		      setup applications.
 #	nonRepositoryAppsFolder: where are placed files which contain
 #				 commands to install non-repo apps.
+# 	installerIconFolder: where are placed icons for the installer.
 #	appListFile: it contains categories, applications and packages
 #		     used by main menu and the installation proccess.
 #	askpass: script that launchs a zenity to ask por admin password.
@@ -40,6 +41,8 @@
 #	packageCommands: commands to install repository packages.
 #	nonRepoAppCommands: commands to install non-repository apps.
 #	setupCommands: commands to setup applications.
+#	debconfInterface: Interface used for Debconf (Dialog/Zenity).
+#	desktop: Current user session desktop .
 ##########################################################################
 function initCommonVariables()
 {
@@ -75,6 +78,20 @@ function initCommonVariables()
 	packageCommands=""
 	nonRepoAppCommands=""
 	setupCommands=""
+
+	# Set debconf interface
+	if [ -z $DISPLAY ]; then
+		debconfInterface="Dialog"
+		desktop="none"
+	else
+		if [ "$KDE_FULL_SESSION" == "true" ]; then
+			debconfInterface="Kde"
+			desktop="KDE"
+		else
+			debconfInterface="Gnome"
+			desktop="$XDG_CURRENT_DESKTOP"
+		fi
+	fi
 }
 
 ##########################################################################
@@ -107,7 +124,6 @@ function installNeededPackages
 {
 	local box=""	
 	local neededPackages=""
-	local neededPackagesFile="$tempFolder/neededPackages.log"
 
 	if [ -z $DISPLAY ]; then
 		box="dialog"
@@ -121,10 +137,15 @@ function installNeededPackages
 		neededPackages+=" libnotify-bin"
 	fi
 
-	if [ "$XDG_CURRENT_DESKTOP" == "GNOME" ]; then
+	if [ "$desktop" == "GNOME" ]; then
 		# Gnome-shell needs to install unity-gtk2-module package.
 		if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
 			neededPackages+=" unity-gtk2-module"
+		fi
+	else
+		# KDE needs to install Debconf dependencies.
+		if [ "$desktop" == "KDE" ]; then
+			neededPackages+=" libqtcore4-perl libqtgui4-perl"
 		fi
 	fi
 
@@ -132,9 +153,9 @@ function installNeededPackages
 		# Install needed packages
 		if [ -z $DISPLAY ]; then
 			echo "$installingPackage $neededPackages"
-			sudo apt-get -y install $neededPackages --fix-missing 2>"$neededPackagesFile"
+			sudo apt-get -y install $neededPackages --fix-missing
 		else
-			xterm -e bash -c "echo \"$installingPackage $neededPackages ...\"; sudo apt-get -y install $neededPackages --fix-missing 2>\"$neededPackagesFile\""
+			gksudo -S "apt-get -y install $neededPackages --fix-missing"
 		fi
 	fi
 }
@@ -153,19 +174,27 @@ function prepareScript()
 {
 	initCommonVariables "${1}" "${2}"
 	selectLanguage
-
-	# Create temporal folders and files
-	mkdir -p "$tempFolder"
-	echo "#!/bin/bash
-	zenity --password --title \"$askAdminPassword\"" > "$askpass"
-	chmod +x "$askpass"
-
-	mkdir -p "$logsFolder"
-	chown $username:$username "$logsFolder"
-	echo "" > "$logFile"
-	chown $username:$username "$logFile"
-
 	installNeededPackages
+	
+	if [ `id -u` -ne 0 ]; then
+		# No root user
+		# Create temporal folders and files
+		mkdir -p "$tempFolder"
+		echo "#!/bin/bash
+		zenity --password --title \"$askAdminPassword\"" > "$askpass"
+		chmod +x "$askpass"
+
+		mkdir -p "$logsFolder"
+		echo "" > "$logFile"
+	else
+		# Root user
+		if [ -z $DISPLAY ]; then
+			echo "$mustBeExecutedByNoRootUser"
+		else
+			zenity --error --text="$mustBeExecutedByNoRootUser"
+		fi
+		exit 1
+	fi
 }
 
 ##########################################################################
@@ -227,7 +256,7 @@ function prepareThirdPartyRepository
 		local appFile=$appName".sh"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+="bash \"$thirdPartyRepoFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
+		repoCommands+="bash \"$thirdPartyRepoFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -290,7 +319,7 @@ function prepareNonRepositoryApplication
 		local appFile=$appName".sh"
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$installingNonRepoApp $appName ..."
-		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
+		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -310,7 +339,7 @@ function prepareSetupApplication
 		local appFile=$appName".sh"
 		setupCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		setupCommands+="bash \"$configFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
+		setupCommands+="bash \"$configFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -326,13 +355,6 @@ function prepareSetupApplication
 ##########################################################################
 function executeCommands
 {
-	local debconfInterface=""
-	if [ -z $DISPLAY ]; then
-		debconfInterface="Dialog"
-	else
-		debconfInterface="Gnome"
-	fi
-
 	if [ "$repoCommands" != "" ] || [ "$packageCommands" != "" ] || [ "$nonRepoAppCommands" != "" ] || [ "$setupCommands" != "" ]; then
 		# Set default Debconf interface to use	
 		local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"

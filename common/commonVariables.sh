@@ -5,7 +5,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 09/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -22,6 +22,9 @@ if [ "$username" == "root" ]; then
 	homeFolder="/root"
 else
 	homeFolder="/home/$username"
+fi
+if [ "$3" != "" ]; then
+	desktop="$3"
 fi
 homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 

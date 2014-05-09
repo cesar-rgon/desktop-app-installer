@@ -15,6 +15,7 @@ fi
 # homeFolder: user's home folder               #
 # scriptRootFolder: root folder of main script #
 # homeDownloadFolder: user's download folder   #
+# desktop: user session desktop                #
 #                                              #
 ################################################
 
