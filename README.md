@@ -1,5 +1,5 @@
-App-installer
-=============
+Ubuntu-app-installer
+====================
 Advanced scripts to install applications from default repositories, third-party repositories or external sources on any Ubuntu system (desktop or server).
 
 ![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
