@@ -26,7 +26,7 @@ Advanced scripts to install applications from default repositories, third-party 
 > 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
-Valid for:   Ubuntu desktops and server 14.04.
+Valid for:   All Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.0  
 Last change: 09/05/2014 (dd/mm/yyyy)
@@ -64,15 +64,15 @@ Last change: 09/05/2014 (dd/mm/yyyy)
 #### 2.1 Method 1. Clone this repository
 ```bash
 $ sudo apt-get install git
-$ git clone -b master https://github.com/cesar-rgon/app-installer.git
-$ cd app-installer
+$ git clone -b master https://github.com/cesar-rgon/ubuntu-app-installer.git
+$ cd ubuntu-app-installer
 ```
 
 #### 2.2 Method 2. Download and extract files
 ```bash
-$ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
+$ wget https://github.com/cesar-rgon/ubuntu-app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
-$ cd app-installer-master
+$ cd ubuntu-app-installer-master
 ```
 
 ---
