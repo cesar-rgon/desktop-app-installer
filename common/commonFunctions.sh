@@ -43,6 +43,7 @@
 #	setupCommands: commands to setup applications.
 #	debconfInterface: Interface used for Debconf (Dialog/Zenity).
 #	desktop: Current user session desktop .
+#       distro: Distribution name (ubuntu/debian)
 ##########################################################################
 function initCommonVariables()
 {
@@ -92,6 +93,7 @@ function initCommonVariables()
 			desktop="$XDG_CURRENT_DESKTOP"
 		fi
 	fi
+	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 }
 
 ##########################################################################
@@ -245,7 +247,7 @@ function prepareThirdPartyRepository
 		local appFile=$appName".sh"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+="bash \"$thirdPartyRepoFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+		repoCommands+="bash \"$thirdPartyRepoFolder/$appFile\" $scriptRootFolder $username $desktop $distro 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -311,7 +313,7 @@ function prepareNonRepositoryApplication
 			nonRepoAppCommands+="clear;"
 		fi
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\";"
+		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username $desktop $distro 2>>\"$logFile\";"
 	fi
 }
 
@@ -331,7 +333,7 @@ function prepareSetupApplication
 		local appFile=$appName".sh"
 		setupCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		setupCommands+="bash \"$configFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+		setupCommands+="bash \"$configFolder/$appFile\" $scriptRootFolder $username $desktop $distro 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 

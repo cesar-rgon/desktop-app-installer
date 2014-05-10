@@ -1,0 +1,102 @@
+#########################################################################################################################
+# Application list used by main menu. It contains repository applications and/or non repository ones.                   #
+#                                                                                                                       #
+# Author: César Rodríguez González                                                                                      #
+# Version: 1.0                                                                                                          #
+# Last modified date (dd/mm/yyyy): 09/05/2014                                                                           #
+# Licence: MIT                                                                                                          #
+#                                                                                                                       #
+# The columns are described below:                                                                                      #
+#                                                                                                                       #
+# Category [mandatory]:         shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
+# Application-Name [mandatory]: shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
+# Application-packages:         For a repository application, this column is mandatory and it must contain whitespace   #
+#                               character between package names.                                                        #
+#                               For a non-repository application, this column must be empty because there isn't any     #
+#                               repository package to be installed.                                                     #
+#                                                                                                                       #
+# Lines begining with comment character "#" or blank ones are ignored                                                   #
+#########################################################################################################################
+# Category    Application-Name            Application-packages                                                          #
+#########################################################################################################################
+
+base          Clementine                  clementine
+base          Compressors                 p7zip-full rar unrar
+base          Evince                      evince
+base          Eye_of_Gnome                eog
+base          Flash_plugin                flashplugin-nonfree
+base          Gedit                       gedit
+base          Libreoffice                 libreoffice
+base          Microsoft_True_Type_Fonts   ttf-mscorefonts-installer
+base          OpenJRE                     openjdk-7-jre
+base          Pidgin                      pidgin pidgin-extprefs
+base          System_monitor              gnome-system-monitor
+base          Videolan                    vlc
+
+accesories    Py_par2                     pypar2
+
+development   Bluefish                    bluefish
+development   Geany                       geany
+development   OpenJDK                     openjdk-7-jdk
+
+downloads     aMule_application           amule
+downloads     aMule_client                amule-utils-gui
+downloads     aMule_server                amule-daemon
+downloads     Deluge_application          deluge
+downloads     Deluge_server               deluged deluge-webui deluge-console
+downloads     jDownloader                 jdownloader-installer
+# jDownloader2 is a non-repository application. The script ../apps-install-config/jDownloader2_beta handles the installation process
+downloads     jDownloader2_beta
+downloads     qBittorrent_application     qbittorrent
+downloads     qBittorrent_server          qbittorrent-nox
+downloads     Transmission_application    transmission-gtk
+downloads     Transmission_client         transgui
+downloads     Transmission_server         transmission-daemon
+# uTorrent server is a non-repository application. The script ../apps-install-config/uTorrent_server handles the installation process
+downloads     uTorrent_server
+
+internet      Chrome                      google-chrome-stable
+internet      Chromium                    chromium-browser
+internet      Dropbox                     nautilus-dropbox
+internet      Evolution                   evolution
+internet      Filezilla                   filezilla
+internet      Google_earth                google-earth-stable
+internet      Midori                      midori
+internet      Remmina                     remmina
+internet      Skype                       skype
+# Teamviewer is a non-repository application. The scripts ../apps-install-config/Teamviewer_full and ../apps-install-config/Teamviewer_quick_support handles the installation process
+internet      Teamviewer_full
+internet      Teamviewer_quick_support
+
+multimedia    Gcstar                      gcstar
+multimedia    Gimp                        gimp
+multimedia    Gstreamer                   gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+multimedia    Guvcview                    guvcview
+multimedia    MkvToolNix                  mkvtoolnix-gui
+multimedia    Xbmc                        xbmc
+
+office        Abiword                     abiword
+office        Gnumeric                    gnumeric
+office        Catfish                     catfish
+office        Shutter                     shutter
+office        Calibre                     calibre
+office        Klavaro                     klavaro
+office        Mcomix                      mcomix
+office        Tomboy                      tomboy
+
+system        Bleachbit                   bleachbit
+system        Gdebi                       gdebi
+system        Gparted                     gparted
+system        Grub_customizer             grub-customizer
+system        Hardinfo                    hardinfo
+system        Htop                        htop
+system        Log_viewer                  gnome-system-log
+system        Lxtask                      lxtask
+system        Luckybackup                 luckybackup
+system        Schedule                    gnome-schedule
+system        Synaptic                    synaptic software-properties-gtk
+system        Virtualbox                  virtualbox
+system        Wine                        wine
+
+themes        Faenza                      faenza-icon-theme faience-icon-theme
+

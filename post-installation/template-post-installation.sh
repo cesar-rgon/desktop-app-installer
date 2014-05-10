@@ -16,6 +16,7 @@ fi
 # scriptRootFolder: root folder of main script #
 # homeDownloadFolder: user's download folder   #
 # desktop: user session desktop                #
+# distro: distribution identifier (lowercase)  #
 #                                              #
 ################################################
 
@@ -26,7 +27,7 @@ fi
 #	* Use auto-confirm for commands. Example: apt-get -y install <package>
 #	* etc.
 
-# Commands to download, extract and install a non-repository application.
+# Commands to setup an installed application
 # ...
 
 
