@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 09/05/2014
+# Last modified date (dd/mm/yyyy): 10/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -84,7 +84,7 @@ function menu {
 				if [ $dialogHeight -gt $maxDialogHeight ]; then
 					dialogHeight=$maxDialogHeight
 				fi
-				command="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --checklist \"\n$categoryLabel $categoryNumber/$totalCategoriesNumber: $categoryDescription\" $dialogHeight $dialogWidth $appNumber "
+				command="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor\" --stdout --separate-output --checklist \"\n$categoryLabel $categoryNumber/$totalCategoriesNumber: $categoryDescription\" $dialogHeight $dialogWidth $appNumber "
 			else
 				if [ $appNumber -gt 2 ]; then
 					zenityHeight=$(($zenityBaseHeight+$(($(($appNumber-2))*$zenityRowHeight))))

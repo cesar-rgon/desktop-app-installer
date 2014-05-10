@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 09/05/2014
+# Last modified date (dd/mm/yyyy): 10/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -122,39 +122,33 @@ function selectLanguage()
 ##########################################################################
 function installNeededPackages
 {
-	local box=""	
-	local neededPackages=""
-
 	if [ -z $DISPLAY ]; then
-		box="dialog"
-	else
-		box="zenity"
-	fi
-	if [ "`dpkg -s $box 2>&1 | grep "installed"`" == "" ]; then
-		neededPackages+="$box"
-	fi
-	if [ "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" == "" ]; then
-		neededPackages+=" libnotify-bin"
-	fi
-
-	if [ "$desktop" == "GNOME" ]; then
-		# Gnome-shell needs to install unity-gtk2-module package.
-		if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
-			neededPackages+=" unity-gtk2-module"
+		if [ "`dpkg -s dialog 2>&1 | grep "installed"`" == "" ]; then
+			echo "$installingPackage dialog"
+			sudo apt-get -y install dialog --fix-missing
 		fi
 	else
-		# KDE needs to install Debconf dependencies.
-		if [ "$desktop" == "KDE" ]; then
-			neededPackages+=" libqtcore4-perl libqtgui4-perl"
+		local neededPackages=""
+		if [ "`dpkg -s zenity 2>&1 | grep "installed"`" == "" ]; then
+			neededPackages+="zenity"
 		fi
-	fi
-
-	if [ "$neededPackages" != "" ]; then
-		# Install needed packages
-		if [ -z $DISPLAY ]; then
-			echo "$installingPackage $neededPackages"
-			sudo apt-get -y install $neededPackages --fix-missing
+		if [ "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" == "" ]; then
+			neededPackages+=" libnotify-bin"
+		fi
+		if [ "$desktop" == "GNOME" ]; then
+			# Gnome-shell needs to install unity-gtk2-module package.
+			if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
+				neededPackages+=" unity-gtk2-module"
+			fi
 		else
+			# KDE needs to install Debconf dependencies.
+			if [ "$desktop" == "KDE" ]; then
+				if [ "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" == "" ]; then
+					neededPackages+=" libqtgui4-perl"
+				fi
+			fi
+		fi
+		if [ "$neededPackages" != "" ]; then
 			gksudo -S "apt-get -y install $neededPackages --fix-missing"
 		fi
 	fi
@@ -176,8 +170,7 @@ function prepareScript()
 	selectLanguage
 	installNeededPackages
 	
-	if [ `id -u` -ne 0 ]; then
-		# No root user
+	if [ -z $DISPLAY ] || [ `id -u` -ne 0 ]; then
 		# Create temporal folders and files
 		mkdir -p "$tempFolder"
 		echo "#!/bin/bash
@@ -187,12 +180,8 @@ function prepareScript()
 		mkdir -p "$logsFolder"
 		echo "" > "$logFile"
 	else
-		# Root user
-		if [ -z $DISPLAY ]; then
-			echo "$mustBeExecutedByNoRootUser"
-		else
-			zenity --error --text="$mustBeExecutedByNoRootUser"
-		fi
+		# Running as root user on desktop session
+		zenity --error --text="$mustBeExecutedByNoRootUser"
 		exit 1
 	fi
 }
@@ -234,7 +223,7 @@ function setDebconfFromFile
 function dialogBoxFunction
 {
 	if [ -z $DISPLAY ]; then
-		dialogBox="| dialog --title \"$1\" --backtitle \"$linuxAppInstallerTitle\" --progressbox $dialogHeight $dialogWidth"
+		dialogBox="| dialog --title \"$1\" --backtitle \"$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor\" --progressbox $dialogHeight $dialogWidth"
 	else
 		dialogBox=""
 	fi
@@ -280,16 +269,17 @@ function prepareRepositoryPackages
 		for package in "${packagesToInstall[@]}"; do
 			# If package has EULA
 			if [ -f "$eulaFolder/$package" ]; then
+				if [ -z $DISPLAY ]; then
+					packageCommands+="clear;"
+				fi
 				# Delete previous Debconf configuration
 				packageCommands+="echo \"# $removeOldDebconfConfiguration $package\"; echo \"$removeOldDebconfConfiguration $package...\" >> \"$logFile\";"
-				dialogBoxFunction "$removeOldDebconfConfiguration"
-				packageCommands+="echo PURGE | debconf-communicate $package 2>>\"$logFile\" $dialogBox;"
+				packageCommands+="echo PURGE | debconf-communicate $package 2>>\"$logFile\";"
 
 				# Set default Debconf configuration
 				packageCommands+="echo \"# $setNewDebconfConfiguration $package\"; echo \"$setNewDebconfConfiguration $package...\" >> \"$logFile\";"
 				setDebconfFromFile $package
-				dialogBoxFunction "$setNewDebconfConfiguration"
-				packageCommands+="bash -c \"$debconfCommands\" $dialogBox;"	
+				packageCommands+="bash -c \"$debconfCommands\";"	
 
 				dialogBox=""
 			else
@@ -317,9 +307,11 @@ function prepareNonRepositoryApplication
 	if [ "$1" != "" ]; then
 		local appName="$1"
 		local appFile=$appName".sh"
+		if [ -z $DISPLAY ]; then
+			nonRepoAppCommands+="clear;"
+		fi
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		dialogBoxFunction "$installingNonRepoApp $appName ..."
-		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\";"
 	fi
 }
 

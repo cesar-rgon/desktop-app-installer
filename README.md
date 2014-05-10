@@ -1,4 +1,4 @@
-Ubuntu-app-installer
+Ubuntu app installer
 ====================
 Advanced scripts to install applications from default repositories, third-party repositories or external sources on any Ubuntu system (desktop or server).
 
@@ -29,7 +29,7 @@ Advanced scripts to install applications from default repositories, third-party 
 Valid for:   All Ubuntu desktops and server 14.04.
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.0  
-Last change: 09/05/2014 (dd/mm/yyyy)
+Last change: 10/05/2014 (dd/mm/yyyy)
 ```
 ##### Task list
 > - [x] Tested compatibility with Ubuntu 14.04
