@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 10/05/2014
+# Last modified date (dd/mm/yyyy): 13/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -40,13 +40,17 @@
 #	repoCommands: commands to add third-party repotitories.
 #	packageCommands: commands to install repository packages.
 #	nonRepoAppCommands: commands to install non-repository apps.
-#	setupCommands: commands to setup applications.
+#	preInstallationCommands: commands to execute before installing an
+#				 application.
+#	postInstallationCommands: commands to execute after installing an
+#				  application.
 #	debconfInterface: Interface used for Debconf (Dialog/Zenity).
 #	desktop: Current user session desktop .
 #       distro: Distribution name (ubuntu/debian)
 ##########################################################################
-function initCommonVariables()
+function initCommonVariables
 {
+	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	username=`whoami`
 	if [ "$1" != "" ]; then
 		scriptRootFolder="${1}"
@@ -63,38 +67,68 @@ function initCommonVariables()
 	tempFolder="/tmp/linux-app-installer-`date +\"%D-%T\" | tr '/' '.'`"
 	thirdPartyRepoFolder="$scriptRootFolder/third-party-repo"
 	eulaFolder="$scriptRootFolder/eula"
-	configFolder="$scriptRootFolder/config-apps"
+	preInstallationFolder="$scriptRootFolder/pre-installation"
+	postInstallationFolder="$scriptRootFolder/post-installation"
 	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
 	installerIconFolder="$scriptRootFolder/icons/installer"
 
-	appListFile="$scriptRootFolder/etc/applicationList"
+	appListFile="$scriptRootFolder/etc/applicationList.$distro"
 	askpass="$tempFolder/askpass.sh"
 	
 	dialogWidth=$((`tput cols` - 4))
 	dialogHeight=$((`tput lines` - 6))
 	zenityWidth=770
 	zenityHeight=400
+	zenityFontFamily="Ubuntu"
+	zenityFontSize="18"
 
 	repoCommands=""
+	preInstallationCommands=""
 	packageCommands=""
 	nonRepoAppCommands=""
-	setupCommands=""
+	postInstallationCommands=""
 
+	desktop=$(getDesktop)
 	# Set debconf interface
+	case "$desktop" in
+	"kde" )
+		debconfInterface="Kde";;
+	"none" )
+		debconfInterface="Dialog";;
+	* )
+		debconfInterface="Gnome"
+	esac
+}
+
+
+##########################################################################
+# This funtion detects current session desktop.
+#
+# Parameters: none
+# Return:
+#	desktop: Current session desktop
+##########################################################################
+function getDesktop
+{
+	local desktop
 	if [ -z $DISPLAY ]; then
-		debconfInterface="Dialog"
 		desktop="none"
 	else
 		if [ "$KDE_FULL_SESSION" == "true" ]; then
-			debconfInterface="Kde"
-			desktop="KDE"
+			desktop="kde"
 		else
-			debconfInterface="Gnome"
-			desktop="$XDG_CURRENT_DESKTOP"
+			if [ "$XDG_CURRENT_DESKTOP" != "" ]; then
+				desktop=$XDG_CURRENT_DESKTOP
+			else
+				desktop=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(xfce\|kde\|gnome\).*/\1/')
+			fi
 		fi
 	fi
-	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
+	# convert to lower case
+	desktop=${desktop,,}  
+	echo "$desktop"
 }
+
 
 ##########################################################################
 # This funtion imports a translation file according to system's language.
@@ -103,7 +137,7 @@ function initCommonVariables()
 # Parameters: none
 # Return: none
 ##########################################################################
-function selectLanguage()
+function selectLanguage
 {
 	local ISO639_1=${LANG:0:2}
 	local LANGUAGE_FILE="$scriptRootFolder/languages/"$ISO639_1".properties"
@@ -137,18 +171,19 @@ function installNeededPackages
 		if [ "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" == "" ]; then
 			neededPackages+=" libnotify-bin"
 		fi
-		if [ "$desktop" == "GNOME" ]; then
-			# Gnome-shell needs to install unity-gtk2-module package.
-			if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
-				neededPackages+=" unity-gtk2-module"
-			fi
-		else
-			# KDE needs to install Debconf dependencies.
-			if [ "$desktop" == "KDE" ]; then
+		if [ "$distro" == "ubuntu" ]; then
+			case "$desktop" in
+			"gnome" )
+				# Gnome-shell needs to install unity-gtk2-module package.
+				if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
+					neededPackages+=" unity-gtk2-module"
+				fi;;
+			"kde" )
+				# KDE needs to install Debconf dependencies.
 				if [ "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" == "" ]; then
 					neededPackages+=" libqtgui4-perl"
 				fi
-			fi
+			esac
 		fi
 		if [ "$neededPackages" != "" ]; then
 			gksudo -S "apt-get -y install $neededPackages --fix-missing"
@@ -166,7 +201,7 @@ function installNeededPackages
 # 		     steps of installation process.
 # Return: same result variables than initCommonVariables function
 ##########################################################################
-function prepareScript()
+function prepareScript
 {
 	initCommonVariables "${1}" "${2}"
 	selectLanguage
@@ -231,12 +266,39 @@ function dialogBoxFunction
 	fi
 }
 
+
 ##########################################################################
-# This funtion sets commands to be executed to add all needed third-party
-# repositories.
+# This funtion checks if exist an application subscript file in a distro
+# subfolder or in a root folder specified by parameter.
 #
 # Parameters: 
-#	addThirdPartyPPACommands: basic commands to add third-party-repos
+#	rootFolder: root folder where to check if the file exits.
+#	appName: application name
+# Return: none
+##########################################################################
+function checkFolderThatContainsFile
+{
+	local targetFolder=""
+	if [ "$1" != "" && "$2" != "" ]; then
+		local rootFolder="$1"
+		local appFile=$2".sh"
+
+		if [ -f "$rootFolder/$distro/$appFile" ]; then
+			targetFolder="$rootFolder/$distro"
+		else
+			if [ -f "$rootFolder/$appFile" ]; then
+				targetFolder="$rootFolder"
+			fi
+		fi
+	fi
+}
+
+##########################################################################
+# This funtion sets commands to be executed to add the third-party
+# repository of an application specified by parameter.
+#
+# Parameters: 
+#	appName: application name
 # Return: 
 #	repoCommands: complete list of commands to add third-party-repos
 ##########################################################################
@@ -247,7 +309,28 @@ function prepareThirdPartyRepository
 		local appFile=$appName".sh"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+="bash \"$thirdPartyRepoFolder/$appFile\" $scriptRootFolder $username $desktop $distro 2>>\"$logFile\" $dialogBox;"
+		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+	fi
+}
+
+
+##########################################################################
+# This funtion sets commands to be executed before the installation of an
+# application specified by parameter.
+#
+# Parameters: 
+#	appName: application name.
+# Return: 
+#	preInstallationCommands: pre-installation commands.
+##########################################################################
+function preparePreInstallationCommands
+{
+	if [ "$1" != "" ]; then
+		local appName="$1"
+		local appFile=$appName".sh"
+		preInstallationCommands+="echo \"# $preparingInstallationOf $appName\"; echo \"$preparingInstallationOf $appName ...\" >> \"$logFile\";"
+		dialogBoxFunction "$preparingInstallationOf $appName ..."
+		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -313,27 +396,28 @@ function prepareNonRepositoryApplication
 			nonRepoAppCommands+="clear;"
 		fi
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		nonRepoAppCommands+="bash \"$nonRepositoryAppsFolder/$appFile\" $scriptRootFolder $username $desktop $distro 2>>\"$logFile\";"
+		nonRepoAppCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\";"
 	fi
 }
 
+
 ##########################################################################
-# This funtion sets commands to be executed to setup an application 
-# specified by parameter.
+# This funtion sets commands to be executed after the installation of an 
+# application specified by parameter.
 #
 # Parameters: 
 #	appName: application name.
 # Return: 
-#	setupCommands: commands to setup the application.
+#	postInstallationCommands: post-installation commands.
 ##########################################################################
-function prepareSetupApplication
+function preparePostInstallationCommands
 {
 	if [ "$1" != "" ]; then
 		local appName="$1"
 		local appFile=$appName".sh"
-		setupCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
+		postInstallationCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		setupCommands+="bash \"$configFolder/$appFile\" $scriptRootFolder $username $desktop $distro 2>>\"$logFile\" $dialogBox;"
+		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -349,21 +433,22 @@ function prepareSetupApplication
 ##########################################################################
 function executeCommands
 {
-	if [ "$repoCommands" != "" ] || [ "$packageCommands" != "" ] || [ "$nonRepoAppCommands" != "" ] || [ "$setupCommands" != "" ]; then
+	if [ "$repoCommands" != "" ] || [ "$preInstallationCommands" != "" ] || [ "$packageCommands" != "" ] || [ "$nonRepoAppCommands" != "" ] || [ "$postInstallationCommands" != "" ]; then
 		# Set default Debconf interface to use	
 		local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingDebconfInterface"
 		commands+="echo debconf debconf/frontend select $debconfInterface | debconf-set-selections 2>>\"$logFile\" $dialogBox;"
 
-		if [ "$repoCommands" != "" ]; then
+		if [ "$repoCommands" != "" ] || [ "$preInstallationCommands" != "" ]; then
+			commands+="$repoCommands $preInstallationCommands "
 			# Update repositories
-			repoCommands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
+			commands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
 			dialogBoxFunction "$updatingRepositories"
-			repoCommands+="apt-get update --fix-missing 2>>\"$logFile\" $dialogBox;"
+			commands+="apt-get update --fix-missing 2>>\"$logFile\" $dialogBox;"
 		fi
 
 		# Install repositories and packages
-		commands+="$repoCommands $packageCommands $nonRepoAppCommands $setupCommands"
+		commands+="$packageCommands $nonRepoAppCommands $postInstallationCommands"
 
 		commands+="echo \"# $finishingInstallation\"; echo \"$finishingInstallation ...\" >> \"$logFile\";"
 		local finishingInstallationCommands="apt-get install -f 2>>\"$logFile\" 2>>\"$logFile\";"
@@ -412,26 +497,34 @@ function installAndSetupApplications
 	if [ "$1" != "" ]; then
 		local appsToInstall=(${1})
 		local appName=""
-		local appFile=""
 		local packagesToInstall=""
 
 		for appName in "${appsToInstall[@]}"; do
-			appFile=$appName".sh"
 			# Check if exists subscript to add third-party repository
-			if [ -f "$thirdPartyRepoFolder/$appFile" ]; then
-				prepareThirdPartyRepository $appName
+			checkFolderThatContainsFile "$thirdPartyRepoFolder" "$appName"
+			if [ "$targetFolder" != "" ]; then
+				prepareThirdPartyRepository "$appName"
 			fi
+
+			# Check if exists subscript to execute pre-installation commands
+			checkFolderThatContainsFile "$preInstallationFolder" "$appName"
+			if [ "$targetFolder" != "" ]; then
+				preparePreInstallationCommands "$appName"
+			fi
+
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
 			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|[:space:]*#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 
 			# Check if exists subscript to install a non-repository application
-			if [ -f "$nonRepositoryAppsFolder/$appFile" ]; then
-				prepareNonRepositoryApplication $appName
-			fi			
+			checkFolderThatContainsFile "$nonRepositoryAppsFolder" "$appName"
+			if [ "$targetFolder" != "" ]; then
+				prepareNonRepositoryApplication "$appName"
+			fi
 
-			# Check if exists subscript to setup the application
-			if [ -f "$configFolder/$appFile" ]; then
-				prepareSetupApplication $appName
+			# Check if exists subscript to execute post-installation commands
+			checkFolderThatContainsFile "$postInstallationFolder" "$appName"
+			if [ "$targetFolder" != "" ]; then
+				preparePostInstallationCommands "$appName"
 			fi
 		done
 

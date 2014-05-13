@@ -26,9 +26,6 @@ fi
 if [ "$3" != "" ]; then
 	desktop="$3"
 fi
-if [ "$4" != "" ]; then
-	distro="$4"
-fi
 homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 
 ########################################################################################################################

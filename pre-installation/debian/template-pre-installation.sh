@@ -1,0 +1,1 @@
+../template-pre-installation.sh

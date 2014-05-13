@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.0                                                                                                          #
-# Last modified date (dd/mm/yyyy): 09/05/2014                                                                           #
+# Last modified date (dd/mm/yyyy): 11/05/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -47,15 +47,16 @@ downloads     aMule_client                amule-utils-gui
 downloads     aMule_server                amule-daemon
 downloads     Deluge_application          deluge
 downloads     Deluge_server               deluged deluge-webui deluge-console
-downloads     jDownloader                 jdownloader-installer
-# jDownloader2 is a non-repository application. The script ../apps-install-config/jDownloader2_beta handles the installation process
+# jDownloader is a non-repository application. The script ../non-repository-apps/jDownloader.sh handles the installation process
+downloads     jDownloader
+# jDownloader2 is a non-repository application. The script ../non-repository-apps/jDownloader2_beta.sh handles the installation process
 downloads     jDownloader2_beta
 downloads     qBittorrent_application     qbittorrent
 downloads     qBittorrent_server          qbittorrent-nox
 downloads     Transmission_application    transmission-gtk
 downloads     Transmission_client         transmission-remote-gtk
 downloads     Transmission_server         transmission-daemon
-# uTorrent server is a non-repository application. The script ../apps-install-config/uTorrent_server handles the installation process
+# uTorrent server is a non-repository application. The script ../non-repository-apps/uTorrent_server.sh handles the installation process
 downloads     uTorrent_server
 # Steam is under repositories but it fails to install on Kubuntu. So download and install from official webpage with a non-repository subscript.
 games         Steam
@@ -69,7 +70,7 @@ internet      Google_earth                google-earth-stable
 internet      Midori                      midori
 internet      Remmina                     remmina
 internet      Skype                       skype
-# Teamviewer is a non-repository application. The scripts ../apps-install-config/Teamviewer_full and ../apps-install-config/Teamviewer_quick_support handles the installation process
+# Teamviewer is a non-repository application. The scripts ../non-repository-apps/Teamviewer_full.sh and ../non-repository-apps/Teamviewer_quick_support.sh handle the installation
 internet      Teamviewer_full
 internet      Teamviewer_quick_support
 internet      Thunderbird                 thunderbird

@@ -16,7 +16,6 @@ fi
 # scriptRootFolder: root folder of main script #
 # homeDownloadFolder: user's download folder   #
 # desktop: user session desktop                #
-# distro: distribution identifier (lowercase)  #
 #                                              #
 ################################################
 

@@ -14,23 +14,23 @@ function menuWidthHeight {
 	else
 		maxZenityHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
 		case "$desktop" in
-		"Unity" )
+		"unity" )
 			zenityWidth=740
 			zenityBaseHeight=162
 			zenityRowHeight=23;;
-		"GNOME" )
+		"gnome" )
 			zenityWidth=770
 			zenityBaseHeight=177
 			zenityRowHeight=27;;
-		"XFCE" )
+		"xfce" )
 			zenityWidth=680
 			zenityBaseHeight=162
 			zenityRowHeight=23;;
-		"LXDE" )
+		"lxde" )
 			zenityWidth=790
 			zenityBaseHeight=165
 			zenityRowHeight=23;;
-		"KDE" )
+		"kde" )
 			zenityWidth=680
 			zenityBaseHeight=162
 			zenityRowHeight=24;;			

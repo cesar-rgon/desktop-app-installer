@@ -1,0 +1,1 @@
+../template-non-repo-app.sh
