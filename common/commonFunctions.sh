@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 13/05/2014
+# Last modified date (dd/mm/yyyy): 14/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -114,18 +114,28 @@ function getDesktop
 	if [ -z $DISPLAY ]; then
 		desktop="none"
 	else
-		if [ "$KDE_FULL_SESSION" == "true" ]; then
-			desktop="kde"
+		if [ "$XDG_CURRENT_DESKTOP" != "" ]; then
+			desktop=$XDG_CURRENT_DESKTOP
+			# convert to lower case
+			desktop=${desktop,,}  
 		else
-			if [ "$XDG_CURRENT_DESKTOP" != "" ]; then
-				desktop=$XDG_CURRENT_DESKTOP
+			if [ "$KDE_FULL_SESSION" == "true" ]; then
+				desktop="kde"
 			else
-				desktop=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(xfce\|kde\|gnome\).*/\1/')
+				local dataDirs=$(echo "$XDG_DATA_DIRS" | grep -Eo 'ubuntu|xubuntu|lubuntu|xfce|kde|gnome|lxde' | sed -n 1p)
+				case "$dataDirs" in
+				"ubuntu" )
+					desktop="unity";;
+				"xubuntu" )
+					desktop="xfce";;
+				"lubuntu" )
+					desktop="lxde";;
+				* )
+					desktop="$dataDirs"
+				esac				
 			fi
 		fi
 	fi
-	# convert to lower case
-	desktop=${desktop,,}  
 	echo "$desktop"
 }
 
@@ -207,20 +217,15 @@ function prepareScript
 	selectLanguage
 	installNeededPackages
 	
-	if [ -z $DISPLAY ] || [ `id -u` -ne 0 ]; then
-		# Create temporal folders and files
-		mkdir -p "$tempFolder"
-		echo "#!/bin/bash
-		zenity --password --title \"$askAdminPassword\"" > "$askpass"
+	# Create temporal folders and files
+	mkdir -p "$tempFolder"
+	if [ -n $DISPLAY ]; then
+		echo "#!/bin/bash\nzenity --password --title \"$askAdminPassword\"" > "$askpass"
 		chmod +x "$askpass"
-
-		mkdir -p "$logsFolder"
-		echo "" > "$logFile"
-	else
-		# Running as root user on desktop session
-		zenity --error --text="$mustBeExecutedByNoRootUser"
-		exit 1
 	fi
+
+	mkdir -p "$logsFolder"
+	echo "" > "$logFile"
 }
 
 ##########################################################################
@@ -279,7 +284,7 @@ function dialogBoxFunction
 function checkFolderThatContainsFile
 {
 	local targetFolder=""
-	if [ "$1" != "" && "$2" != "" ]; then
+	if [ "$1" != "" ] && [ "$2" != "" ]; then
 		local rootFolder="$1"
 		local appFile=$2".sh"
 
