@@ -87,6 +87,7 @@ function initCommonVariables
 	packageCommands=""
 	nonRepoAppCommands=""
 	postInstallationCommands=""
+	targetFolder=""
 
 	desktop=$(getDesktop)
 	# Set debconf interface
@@ -219,8 +220,8 @@ function prepareScript
 	
 	# Create temporal folders and files
 	mkdir -p "$tempFolder"
-	if [ -n $DISPLAY ]; then
-		echo "#!/bin/bash\nzenity --password --title \"$askAdminPassword\"" > "$askpass"
+	if [ -n "$DISPLAY" ]; then
+		echo -e "#!/bin/bash\nzenity --password --title \"$askAdminPassword\"" > "$askpass"
 		chmod +x "$askpass"
 	fi
 
@@ -283,7 +284,6 @@ function dialogBoxFunction
 ##########################################################################
 function checkFolderThatContainsFile
 {
-	local targetFolder=""
 	if [ "$1" != "" ] && [ "$2" != "" ]; then
 		local rootFolder="$1"
 		local appFile=$2".sh"
@@ -293,6 +293,8 @@ function checkFolderThatContainsFile
 		else
 			if [ -f "$rootFolder/$appFile" ]; then
 				targetFolder="$rootFolder"
+			else
+				targetFolder=""
 			fi
 		fi
 	fi

@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 09/05/2014
+# Last modified date (dd/mm/yyyy): 14/05/2014
 # Licence: MIT
 ##########################################################################
 # Get common variables and check if the script is being running by a root or sudoer user
@@ -19,7 +19,7 @@ fi
 steamURL="http://media.steampowered.com/client/installer/steam.deb"
 wget -P /var/cache/apt/archives $steamURL
 
-if [ "$desktop" == "KDE" ]; then
+if [ "$desktop" == "kde" ]; then
 	apt-get -y install qapt-deb-installer
 	qapt-deb-installer /var/cache/apt/archives/steam.deb
 else
