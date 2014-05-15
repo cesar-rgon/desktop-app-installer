@@ -6,13 +6,13 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 15/05/2014
 # Licence: MIT
 ##########################################################################
 
 scriptRootFolder=`pwd`/..
 . $scriptRootFolder/common/commonFunctions.sh
-appName="Qbittorrent_server"
+appName="qBittorrent_server"
 logFile="qbittorrent-server.log"
 
 prepareScript "$scriptRootFolder" "$logFile"

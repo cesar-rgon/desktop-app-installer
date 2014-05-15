@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 15/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -18,7 +18,8 @@ fi
 
 # Variables
 AMULE_DOWNLOAD_FOLDER="$homeDownloadFolder/aMule"
-AMULE_TEMP_FOLDER="$homeFolder/.Temporal/aMule"
+TEMP_FOLDER="$homeFolder/.Temporal"
+AMULE_TEMP_FOLDER="$TEMP_FOLDER/aMule"
 AMULE_ACCEPT_EXTERNAL_CONNECTIONS=1
 AMULE_EXTERNAL_CONNECTION_PASSWORD="amule"
 AMULE_EXTERNAL_CONNECTION_PORT="4712"
@@ -30,7 +31,7 @@ AMULE_WEB_SERVER_PORT="4711"
 apt-get -y install gksu
 # Create the necessary folders
 mkdir -p $AMULE_DOWNLOAD_FOLDER $AMULE_TEMP_FOLDER $homeFolder/.aMule
-chown $username:$username $AMULE_DOWNLOAD_FOLDER $AMULE_TEMP_FOLDER $homeFolder/.aMule/
+chown -R $username:$username $AMULE_DOWNLOAD_FOLDER $TEMP_FOLDER $homeFolder/.aMule/
 
 # Create backup of config files
 sudo -u $username cp $scriptRootFolder/etc/amule.conf $homeFolder/.aMule/

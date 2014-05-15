@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 07/05/2014
+# Last modified date (dd/mm/yyyy): 15/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -18,12 +18,17 @@ fi
 
 # Variables
 DELUGE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/deluge"
-DELUGE_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/deluge"
+TEMP_FOLDER="$homeFolder/.Temporal"
+DELUGE_DAEMON_TEMP_FOLDER="$TEMP_FOLDER/deluge"
 DELUGE_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 DELUGE_DAEMON_USERNAME="$username"
 DELUGE_DAEMON_PASSWORD="deluge"
 DELUGE_DAEMON_CLIENT_PORT="58846"
 DELUGE_DAEMON_WEB_PORT="8112"
+
+# Create the necessary folders
+mkdir -p $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER $homeFolder/.config/deluge
+chown -R $username:$username $DELUGE_DAEMON_DOWNLOAD_FOLDER $TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER $homeFolder/.config/deluge
 
 # Set variables in deluge-daemon config files
 echo "# Configuration for /etc/init.d/deluge-daemon
@@ -31,27 +36,26 @@ echo "# Configuration for /etc/init.d/deluge-daemon
 DELUGED_USER=\"$username\"
 # Should we run at startup?
 RUN_AT_STARTUP=\"YES\"" > /etc/default/deluge-daemon
+
 # Add username and password to Deluge's authentication file
-sudo -u $username deluged
-sudo -u $username mkdir -p "$homeFolder/.config/deluge"
 echo "$DELUGE_DAEMON_USERNAME:$DELUGE_DAEMON_PASSWORD:10" >> $homeFolder/.config/deluge/auth
 chown $username:$username $homeFolder/.config/deluge/auth
-# Set deluge folders
-sudo -u $username deluge-console "config -s move_completed_path \"$DELUGE_DAEMON_DOWNLOAD_FOLDER\""
-sudo -u $username deluge-console "config move_completed_path"
-sudo -u $username deluge-console "config -s download_location \"$DELUGE_DAEMON_TEMP_FOLDER\""
-sudo -u $username deluge-console "config download_location"
-sudo -u $username deluge-console "config -s torrentfiles_location \"$DELUGE_DAEMON_TORRENT_FOLDER\""
-sudo -u $username deluge-console "config torrentfiles_location"
-sudo -u $username deluge-console "config -s autoadd_location \"$DELUGE_DAEMON_TORRENT_FOLDER\""
-sudo -u $username deluge-console "config autoadd_location"
-# Allow remote connection
-sudo -u $username deluge-console "config -s allow_remote True"
-sudo -u $username deluge-console "config allow_remote"
-# Set Deluge daemon client port
-sudo -u $username deluge-console "config -s daemon_port $DELUGE_DAEMON_CLIENT_PORT"
-sudo -u $username deluge-console "config daemon_port"
-pkill deluged
+
+# Setup Deluge daemon's config file
+echo "{
+  \"file\": 1, 
+  \"format\": 1
+}{
+  \"download_location\": \"$DELUGE_DAEMON_TEMP_FOLDER\",
+  \"move_completed\": true,
+  \"move_completed_path\": \"$DELUGE_DAEMON_DOWNLOAD_FOLDER\",
+  \"autoadd_enable\": true, 
+  \"autoadd_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
+  \"copy_torrent_file\": true,
+  \"torrentfiles_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
+  \"daemon_port\": $DELUGE_DAEMON_CLIENT_PORT,
+  \"allow_remote\": true
+}" > "$homeFolder/.config/deluge/core.conf"
 
 # Set Deluge daemon web port
 echo "{

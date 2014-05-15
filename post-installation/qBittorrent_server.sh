@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 15/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -21,13 +21,15 @@ fi
 
 # Variables
 QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
-QBITTORRENT_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/qBittorrent"
+TEMP_FOLDER="$homeFolder/.Temporal"
+QBITTORRENT_DAEMON_TEMP_FOLDER="$TEMP_FOLDER/qBittorrent"
 QBITTORRENT_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 QBITTORRENT_DAEMON_USERNAME="$username"
 QBITTORRENT_DAEMON_WEB_PORT="8081"
 
-# Pre-requisites
-sudo -u $username mkdir -p $homeFolder/.config/qBittorrent
+# Create the necessary folders
+mkdir -p $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
+chown -R $username:$username $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
 
 # Copy qbittorrent daemon init script
 cp $scriptRootFolder/etc/qbittorrent-nox-daemon /etc/init.d/

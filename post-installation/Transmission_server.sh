@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 15/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -18,7 +18,8 @@ fi
 
 # Variables
 TRANSMISSION_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/Transmission"
-TRANSMISSION_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/Transmission"
+TEMP_FOLDER="$homeFolder/.Temporal"
+TRANSMISSION_DAEMON_TEMP_FOLDER="$TEMP_FOLDER/Transmission"
 TRANSMISSION_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 TRANSMISSION_DAEMON_USERNAME="$username"
 TRANSMISSION_DAEMON_USER_PASSWORD="transmission"
@@ -36,6 +37,7 @@ usermod -a -G debian-transmission $username
 # Create the necessary folders
 mkdir -p $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
 # Set the owner and permissions of the folders
+chown $username:$username $TEMP_FOLDER
 chown $username:debian-transmission $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
 chmod -R 770 $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
 
