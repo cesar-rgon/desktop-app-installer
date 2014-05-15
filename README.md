@@ -254,7 +254,6 @@ To **add** a new third-party repository subscript for an application follow next
   # scriptRootFolder: root folder of main script #
   # homeDownloadFolder: user's download folder   #
   # desktop: user session desktop                #
-  # distro: distribution identifier              #
   #                                              #
   ################################################
 
@@ -304,7 +303,6 @@ To **add** a new non-repository application subscript just follow next steps:
   # scriptRootFolder: root folder of main script #
   # homeDownloadFolder: user's download folder   #
   # desktop: user session desktop                #
-  # distro: distribution identifier              #
   #                                              #
   ################################################
 
@@ -356,7 +354,6 @@ To **add** a new subscript to setup an application after installation proccess j
   # scriptRootFolder: root folder of main script #
   # homeDownloadFolder: user's download folder   #
   # desktop: user session desktop                #
-  # distro: distribution identifier              #
   #                                              #
   ################################################
 
