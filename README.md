@@ -15,11 +15,11 @@ Advanced scripts to install applications from default repositories, third-party 
 >   - [Main script](#31-main-script)  
 >   - [Application script](#32-application-script)
 > 4. [Execution's lifecycle](#4-executions-lifecycle)
-> 5. [Extend functionallity and customize applications to install](#5-extend-functionallity-and-customize-applications-to-install)  
+> 5. [Extend functionality and customize applications to install](#5-extend-functionality-and-customize-applications-to-install)  
 >   - [Understanding project structure](#51-understanding-project-structure)  
 >   - [Add new application to a category. Modify or delete an existing one](#52-add-new-application-to-a-category-modify-or-delete-an-existing-one)  
 >   - [Add new subscript to install an application](#53-add-new-subscript-to-install-an-application)  
->   - [Add new subscript to add third-party repository](#54-add-new-subscript-to-add-third-party-repository)  
+>   - [Add new subscript to add a third-party repository](#54-add-new-subscript-to-add-third-party-repository)  
 >   - [Add new subscript to install a non-repository application](#55-add-new-subscript-to-install-a-non-repository-application)  
 >   - [Add new subscript to setup an application](#56-add-new-subscript-to-setup-an-application)  
 >   - [Add new subscript to setup EULA support](#57-add-new-subscript-to-setup-eula-support)
@@ -45,16 +45,16 @@ Last change: 10/05/2014 (dd/mm/yyyy)
 ---
 ### 1. Features
 * One main script that shows a menu of aplications wich can be selected for installation.
-* Alternatively, there is one separate script for each application, so it can be installed just executing the appropiate script.
+* Alternatively, there is one separate script for each application, so it can be installed by just executing the appropriate script.
 * Install official repository applications.
 * Add third-party repositories and install related applications when needed.
 * Download, extract and install non-repository applications through custom subscripts that extend the main script functionallity. It includes several subscripts by default.
 * Set up applications after they are installed through custom subscripts.
-* Customize your own application list to install and third party repositories to add just editing some config files (no need to edit main script at all for this purpose).
+* Customize your own application list to install and third party repositories to add by just editing some config files (no need to edit main script at all for this purpose).
 * EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
 * The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
-* Installation log file that shows installation steps and errors if they happened
-* Multilingual support. Easy to add new translations. At the moment: english and spanish languages are included. The script detect system language and it use the appropiate translation.  
+* Installation log file that shows installation steps and errors if they have occurred
+* Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detect system language and it use the appropiate translation.  
 
 ---
 [Back to index](#index)
@@ -81,12 +81,12 @@ $ cd ubuntu-app-installer-master
 ### 3. Executing a script
 
 #### 3.1 Main script
-It shows a menu of aplications to be installed ordered by categories. The user navigates through categories and selects the applications to be installed. After that, installation process begins.
+It shows a menu of applications to be installed which are ordered by categories. The user navigates through categories and selects the applications to be installed. After that, installation process begins.
 ```bash
 $ bash installer.sh
 ```
 #### 3.2 Application script
-There is one separate script for each application, so it can be installed just running the appropiate script.
+There is one separate script for each application, so it can be installed just by running the appropriate script.
 ```bash
 $ bash ./scripts/applicationName.sh
 ```
@@ -96,20 +96,20 @@ $ bash ./scripts/applicationName.sh
 
 ### 4. Execution's lifecycle
 1. The user must select the applications to install.
-2. The script adds third-party repositories of the selected third-party applications, if this is the case.
+2. The script would add third-party repositories of the selected third-party applications, when required.
 3. The script installs all the selected repository applications with EULA support if required.
 4. The script executes custom subscripts to install the selected non-repository applications.
 5. The script executes custom subscripts to setup selected applications.
-6. The script run final operations to finish installation process and to clean temporal files.
-7. The script shows an installation log file which contains installation steps and errors if they happened
+6. The script runs final operations to finish installation process and to clean temporal files.
+7. The script shows an installation log file which contains installation steps and errors if they have occurred.
 
-Main script run all the previous steps while separate application scripts skip step 1 and run the rest.
+Main script runs all the previous steps, whereas individual application scripts skip step 1 and run the remaining.
 
 ---
 [Back to index](#index)
 
-### 5. Extend functionallity and customize applications to install
-To extend script functionallity is required to add subscripts for custom purposes. To customize applications to install is necessary to edit some config files. This actions will be detailed in next chapters.
+### 5. Extend functionality and customize applications to install
+To extend script functionality is required to add subscripts for custom purposes. To customize applications to install, it's necessary to edit some config files. These actions will be detailed in next chapters.
 
 #### 5.1 Understanding project structure
 Tree of folders and some files:
@@ -119,13 +119,13 @@ Tree of folders and some files:
 │   ├── commonVariables.sh
 │   ├── menuFunctions.sh
 │   └── *
-├── config-apps             It contains subscripts to setup applications after install
+├── config-apps             It contains subscripts to setup applications after installation
 │   ├── template-config.sh
 │   └── *
-├── etc                     It contains application list and miscelanea files used by config subscripts
+├── etc                     It contains application list and miscellaneous files used by config subscripts
 │   ├── applicationList
 │   └── *
-├── eula                    It contains files who set parameters to skip questions during installation's proccess
+├── eula                    It contains files who set parameters to skip questions during installation's process
 │   ├── template-eula
 │   └── *
 ├── icons                   It contains sets of application icons used by subscripts
@@ -138,7 +138,7 @@ Tree of folders and some files:
 │   ├── template-non-repo-app.sh
 │   └── *
 ├── README.md
-├── scripts                 It contains one installation script by each application
+├── scripts                 It contains one installation script per application
 │   ├── template-script.sh
 │   └── *.sh
 └── third-party-repo        It contains subscripts to add third-party repository for some applications
@@ -179,29 +179,29 @@ To **add** an application to be installed follow next steps:
   * Blank or comment lines are ignored in this file.
   * First column - Category: is mandatory.
   * Category name is repeated once per application contained in it.
-  * If the category name is new in file, the script will generate a new window for this category.
+  * If the category name is new in the file, the script will generate a new window for this category.
   * Each category should contain at least one application.
-  * The category name shall contain only letters, digits and/or underscore '_' and do not begin with a digit.
+  * The category name shall contain only letters, digits and/or underscores '_' and it can't start with a digit.
   * Second column - Application name: is mandatory.
   * Just one row per application.
-  * The application name shall contain only letters, digits and/or underscore '_' and do not begin with a digit.
-  * The application source can be official repositories, third-party repository even other source (non-repository).
-  * The order in which applications are listed in menu is the same as set in this file.
+  * The application name shall contain only letters, digits and/or underscores '_' and it can't start with a digit.
+  * The application source can be official repositories, third-party repositories even other sources (non-repositories).
+  * The order in which applications are listed in the menu is the same as set in this file.
   * Third column - Packages: is mandatory only if the application belongs to a repository.
   * Packages must be separated by whitespaces.
   * Non-repository applications must leave this field empty.
 
-2. Edit [en.properties][en.properties] file and add description for category (if it's new) and application with the next syntax:
-  CategoryNameDescription=Here goes the category description that is used by main menu  
-  ApplicationNameDescription=Here goes the application description that is used by main menu
+2. Edit [en.properties][en.properties] file and add a description for categories (if it's new) and applications with the next syntax:
+  CategoryNameDescription=Here goes the category description that is used by the main menu  
+  ApplicationNameDescription=Here goes the application description that is used by the main menu
 
   Considerations:
-  * CategoryNameDescription is composed by _CategoryName_ word: must be identically (case-sensitive) to the category name defined in [applicationList][applicationList] file. _Description_ word: must always follow the category name word.
+  * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList][applicationList] file. _Description_ word: must always follow the category name word.
   * To be intuitive, CategoryNameDescription should be defined in the 'CATEGORIES' section of the file.
-  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identically (case-sensitive) to the application name defined in [applicationList][applicationList] file. _Description_ word: must always follow the category name word.
+  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList][applicationList] file. _Description_ word: must always follow the category name word.
   * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
-  * You can create new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
+  * You can create a new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
 
 To **modify** or **delete** an application or category just edit [applicationList][applicationList] file and change the corresponding lines.
 
