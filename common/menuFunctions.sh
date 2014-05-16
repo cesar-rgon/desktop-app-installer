@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 10/05/2014
+# Last modified date (dd/mm/yyyy): 17/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -15,7 +15,7 @@ function menuWidthHeight {
 		maxZenityHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
 		case "$desktop" in
 		"unity" )
-			zenityWidth=740
+			zenityWidth=780
 			zenityBaseHeight=162
 			zenityRowHeight=23;;
 		"gnome" )

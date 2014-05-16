@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.0                                                                                                          #
-# Last modified date (dd/mm/yyyy): 15/05/2014                                                                           #
+# Last modified date (dd/mm/yyyy): 16/05/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -47,8 +47,7 @@ downloads     aMule_client                amule-utils-gui
 downloads     aMule_server                amule-daemon
 downloads     Deluge_application          deluge
 downloads     Deluge_server               deluged deluge-webui
-# jDownloader is a non-repository application. The script ../non-repository-apps/jDownloader.sh handles the installation process
-downloads     jDownloader
+downloads     jDownloader                 jdownloader-installer
 # jDownloader2 is a non-repository application. The script ../non-repository-apps/jDownloader2_beta.sh handles the installation process
 downloads     jDownloader2_beta
 downloads     qBittorrent_application     qbittorrent

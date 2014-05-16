@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 14/05/2014
+# Last modified date (dd/mm/yyyy): 17/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -175,29 +175,43 @@ function installNeededPackages
 			sudo apt-get -y install dialog --fix-missing
 		fi
 	else
+		if [ "$desktop" != "kde" ]; then
+			sudoHundler="gksudo"; sudoOption="-S"; sudoPackage="gksu"
+		else
+			sudoHundler="kdesudo"; sudoOption="-c"; sudoPackage="kdesudo"
+		fi
+		if [ "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" == "" ]; then
+			echo "$needToInstallPackage $sudoPackage" > "$logFile"; echo "$needToInstallPackage $sudoPackage"
+			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" 2>>"$logFile"; zenity --error --text="$needToInstallPackage $sudoPackage" 2>>"$logFile"
+			exit 1
+		fi			
+		
 		local neededPackages=""
 		if [ "`dpkg -s zenity 2>&1 | grep "installed"`" == "" ]; then
 			neededPackages+="zenity"
 		fi
 		if [ "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" == "" ]; then
-			neededPackages+=" libnotify-bin"
+			if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
+			neededPackages+="libnotify-bin"
 		fi
 		if [ "$distro" == "ubuntu" ]; then
 			case "$desktop" in
 			"gnome" )
-				# Gnome-shell needs to install unity-gtk2-module package.
+				# Gnome-shell needs to install unity-gtk2-module package to install perl modules used by Debconf
 				if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
-					neededPackages+=" unity-gtk2-module"
+					if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
+					neededPackages+="unity-gtk2-module"
 				fi;;
 			"kde" )
 				# KDE needs to install Debconf dependencies.
 				if [ "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" == "" ]; then
-					neededPackages+=" libqtgui4-perl"
+					if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
+					neededPackages+="libqtgui4-perl"
 				fi
 			esac
 		fi
 		if [ "$neededPackages" != "" ]; then
-			gksudo -S "apt-get -y install $neededPackages --fix-missing"
+			`$sudoHundler $sudoOption "apt-get -y install $neededPackages" 1>/dev/null 2>>"$logFile"`
 		fi
 	fi
 }
@@ -216,7 +230,6 @@ function prepareScript
 {
 	initCommonVariables "${1}" "${2}"
 	selectLanguage
-	installNeededPackages
 	
 	# Create temporal folders and files
 	mkdir -p "$tempFolder"
@@ -224,9 +237,9 @@ function prepareScript
 		echo -e "#!/bin/bash\nzenity --password --title \"$askAdminPassword\"" > "$askpass"
 		chmod +x "$askpass"
 	fi
-
 	mkdir -p "$logsFolder"
-	echo "" > "$logFile"
+
+	installNeededPackages
 }
 
 ##########################################################################
