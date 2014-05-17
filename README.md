@@ -32,7 +32,7 @@ Valid for:   Ubuntu v14.04 and Debian 7 (for all desktops o server).
 Version:     1.1
 Last change: 17/05/2014 (dd/mm/yyyy)
 ```
-##### Task list
+##### DONE
 > - [x] Tested compatibility with Ubuntu 14.04 (unity/gnome/xfce/lxde/server)
 > - [x] Tested compatibility with Debian 7
 
