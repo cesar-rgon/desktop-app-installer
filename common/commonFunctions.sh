@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts.
 #
 # Author: César Rodríguez González
-# Version: 1.0
+# Version: 1.1
 # Last modified date (dd/mm/yyyy): 17/05/2014
 # Licence: MIT
 ##########################################################################
@@ -50,6 +50,7 @@
 ##########################################################################
 function initCommonVariables
 {
+	linuxAppInstallerTitle="Linux app installer v1.1 (Ubuntu-Debian)"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	username=`whoami`
 	if [ "$1" != "" ]; then
@@ -480,6 +481,9 @@ function executeCommands
 		dialogBoxFunction "$cleaningTempFiles ..."
 		commands+="bash -c \"$cleanTempFilesCommands\" $dialogBox;"
 
+		commands+="echo \"# $installationFinished\"; echo \"$installationFinished\" >> \"$logFile\";"
+		commands+="chown $username:$username \"$logFile\" 2>>\"$logFile\""
+
 		if [ -z $DISPLAY ]; then
 			clear; sudo bash -c "$commands"
 			# Show log
@@ -490,9 +494,7 @@ function executeCommands
 				autoclose="--auto-close"
 			fi
 
-			(	SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands"
-				echo "# $installationFinished"; echo "$installationFinished" >> "$logFile"
-			) |
+			( SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands" ) |
 			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate $autoclose --width=$zenityWidth
 			# Show notification and log
 			notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"

@@ -1,4 +1,13 @@
 #!/bin/bash
+##########################################################################
+# This script prepares the installation of Flash plugin package.
+#
+# Author: César Rodríguez González
+# Version: 1.1
+# Last modified date (dd/mm/yyyy): 13/05/2014
+# Licence: MIT
+##########################################################################
+
 # Get common variables and check if the script is being running by a root or sudoer user
 if [ "$1" != "" ]; then
 	scriptRootFolder="$1"

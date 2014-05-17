@@ -3,7 +3,7 @@
 # This script contains menu functions used only by main script.
 #
 # Author: César Rodríguez González
-# Version: 1.0
+# Version: 1.1
 # Last modified date (dd/mm/yyyy): 17/05/2014
 # Licence: MIT
 ##########################################################################

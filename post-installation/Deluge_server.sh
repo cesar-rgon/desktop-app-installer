@@ -3,7 +3,7 @@
 # This script configures Deluge daemon to be ready to use.
 #
 # Author: César Rodríguez González
-# Version: 1.0
+# Version: 1.1
 # Last modified date (dd/mm/yyyy): 15/05/2014
 # Licence: MIT
 ##########################################################################
