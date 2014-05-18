@@ -9,10 +9,10 @@
 ##########################################################################
 
 # Download jDownloader 2 beta
-if [ "`uname -i`" == "i686" ]; then
-	jDownloader2File="JD2SilentSetup_x86.sh"
-else
+if [ `uname -m` == "x86_64" ]; then
 	jDownloader2File="JD2SilentSetup_x64.sh"
+else
+	jDownloader2File="JD2SilentSetup_x86.sh"
 fi
 jDownloader2URL="/tmp/jdownloader2.sh http://installer.jdownloader.org/$jDownloader2File"
 wget -O /tmp/$jDownloader2File $jDownloader2URL 2>&1

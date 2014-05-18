@@ -17,10 +17,10 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-if [ "`uname -i`" == "i686" ]; then
-	grubCustomizerFile="grub-customizer_4.0.6-0ubuntu1~ppa1t_i386.deb"
-else
+if [ "`uname -m`" == "x86_64" ]; then
 	grubCustomizerFile="grub-customizer_4.0.6-0ubuntu1~ppa1t_amd64.deb"
+else
+	grubCustomizerFile="grub-customizer_4.0.6-0ubuntu1~ppa1t_i386.deb"
 fi
 grubCustomizerURL="https://launchpad.net/~danielrichter2007/+archive/grub-customizer/+files/$grubCustomizerFile"
 wget -P /var/cache/apt/archives $grubCustomizerURL 2>&1

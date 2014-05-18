@@ -50,7 +50,7 @@
 ##########################################################################
 function initCommonVariables
 {
-	linuxAppInstallerTitle="Linux app installer v1.1 (Ubuntu-Debian)"
+	linuxAppInstallerTitle="Linux app installer v1.11 (Ubuntu-Debian)"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	username=`whoami`
 	if [ "$1" != "" ]; then

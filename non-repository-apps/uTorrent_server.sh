@@ -23,7 +23,7 @@ fi
 
 # Variables
 utorrentFile="utserver.tar.gz"
-if [ `uname -i` == "x86_64" ]; then
+if [ `uname -m` == "x86_64" ]; then
 	utorrentURL="http://download-new.utorrent.com/endpoint/utserver/os/linux-x64-ubuntu-12-04/track/beta/$utorrentFile"
 else
 	utorrentURL="http://download-new.utorrent.com/endpoint/utserver/os/linux-i386-ubuntu-12-04/track/beta/$utorrentFile"

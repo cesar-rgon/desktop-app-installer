@@ -17,10 +17,10 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-if [ "`uname -i`" == "i686" ]; then
-	skypeFile="getskype-linux-beta-ubuntu-32"
-else
+if [ "`uname -m`" == "x86_64" ]; then
 	skypeFile="getskype-linux-beta-ubuntu-64"
+else
+	skypeFile="getskype-linux-beta-ubuntu-32"
 fi
 skypeURL="http://www.skype.com/go/$skypeFile"
 wget -P /var/cache/apt/archives $skypeURL 2>&1

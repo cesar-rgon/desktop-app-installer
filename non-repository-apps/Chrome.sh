@@ -17,10 +17,10 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-if [ "`uname -i`" == "i686" ]; then
-	chromeFile="google-chrome-stable_current_i386.deb"
-else
+if [ "`uname -m`" == "x86_64" ]; then
 	chromeFile="google-chrome-stable_current_amd64.deb"
+else
+	chromeFile="google-chrome-stable_current_i386.deb"
 fi
 chromeURL="https://dl.google.com/linux/direct/$chromeFile"
 wget -P /var/cache/apt/archives $chromeURL 2>&1

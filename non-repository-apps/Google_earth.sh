@@ -17,10 +17,10 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-if [ "`uname -i`" == "i686" ]; then
-	googleEarthFile="google-earth-stable_current_i386.deb"
-else
+if [ "`uname -m`" == "x86_64" ]; then
 	googleEarthFile="google-earth-stable_current_amd64.deb"
+else
+	googleEarthFile="google-earth-stable_current_i386.deb"
 fi
 googleEarthURL="http://dl.google.com/dl/earth/client/current/$googleEarthFile"
 wget -P /var/cache/apt/archives $googleEarthURL 2>&1
