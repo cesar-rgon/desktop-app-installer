@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Teamviewer full support application.
+# This script installs jDowloader application.
 #
 # Author: César Rodríguez González
 # Version: 1.11
@@ -16,14 +16,13 @@ else
 fi
 . $scriptRootFolder/common/commonVariables.sh
 
-# Commands to download, extract and install a non-repository application.
-# Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
-teamviewerFile="teamviewer_linux.deb"
-teamviewerURL="http://download.teamviewer.com/download/$teamviewerFile"
-wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
-dpkg -i /tmp/$teamviewerFile
-apt-get -y install -f
+# Pre-requisite
+apt-get -y install default-jre
 
-# Extract teamviewer icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
+# Commands to download, extract and install a non-repository application.
+jDownloaderFile="jd_unix_0_9.sh"
+jDownloaderURL="http://installer.jdownloader.org/$jDownloaderFile"
+wget -P /var/cache/apt/archives $jDownloaderURL
+bash /var/cache/apt/archives/$jDownloaderFile
+
 

@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.1                                                                                                          #
-# Last modified date (dd/mm/yyyy): 15/05/2014                                                                           #
+# Version: 1.11                                                                                                         #
+# Last modified date (dd/mm/yyyy): 18/05/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -44,29 +44,24 @@ downloads     aMule_client                amule-utils-gui
 downloads     aMule_server                amule-daemon
 downloads     Deluge_application          deluge
 downloads     Deluge_server               deluged deluge-webui
-# jDownloader is a non-repository application. The script ../non-repository-apps/jDownloader.sh handles the installation process
 downloads     jDownloader
-# jDownloader2 is a non-repository application. The script ../non-repository-apps/jDownloader2_beta.sh handles the installation process
 downloads     jDownloader2_beta
 downloads     qBittorrent_application     qbittorrent
 downloads     qBittorrent_server          qbittorrent-nox
 downloads     Transmission_application    transmission-gtk
 downloads     Transmission_client         transgui
 downloads     Transmission_server         transmission-daemon
-# uTorrent server is a non-repository application. The script ../non-repository-apps/uTorrent_server.sh handles the installation process
 downloads     uTorrent_server
 
-internet      Chrome                      google-chrome-stable
+internet      Chrome
 internet      Chromium                    chromium-browser
 internet      Dropbox                     nautilus-dropbox
 internet      Evolution                   evolution
 internet      Filezilla                   filezilla
-internet      Google_earth                google-earth-stable
+internet      Google_earth
 internet      Midori                      midori
 internet      Remmina                     remmina
-# Skype is a non-repository application. The script ../non-repository-apps/Skype.sh handles the installation
 internet      Skype
-# Teamviewer is a non-repository application. The scripts ../non-repository-apps/Teamviewer_full.sh and ../non-repository-apps/Teamviewer_quick_support.sh handle the installation process
 internet      Teamviewer_full
 internet      Teamviewer_quick_support
 
@@ -99,5 +94,5 @@ system        Synaptic                    synaptic software-properties-gtk
 system        Virtualbox                  virtualbox
 system        Wine                        wine
 
-themes        Faenza                      faenza-icon-theme faience-icon-theme
+themes        Faenza
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 ##########################################################################
-# This script installs jDowloader application.
+# This script installs Skype application.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 13/05/2014
+# Version: 1.11
+# Last modified date (dd/mm/yyyy): 18/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -17,9 +17,8 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-jDownloaderFile="jd_unix_0_9.sh"
-jDownloaderURL="http://installer.jdownloader.org/$jDownloaderFile"
-wget -P /var/cache/apt/archives $jDownloaderURL
-bash /var/cache/apt/archives/$jDownloaderFile
-
-
+skypeFile="getskype-linux-deb-32"
+skypeURL="http://www.skype.com/go/$skypeFile"
+wget -P /var/cache/apt/archives $skypeURL 2>&1
+dpkg -i /var/cache/apt/archives/$skypeFile
+apt-get -y install -f

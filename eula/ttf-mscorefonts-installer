@@ -6,9 +6,10 @@
 # See man debconf or debconf-set-selections for more information.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Version: 1.11
+# Last modified date (dd/mm/yyyy): 18/05/2014
 # Licence: MIT
 ##########################################################################
 
-ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true
+# Disabled by default. Must uncomment to enable
+# ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true

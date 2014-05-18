@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Teamviewer full support application.
+# This script installs Grub Customizer application.
 #
 # Author: César Rodríguez González
 # Version: 1.11
@@ -17,13 +17,12 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-# Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
-teamviewerFile="teamviewer_linux.deb"
-teamviewerURL="http://download.teamviewer.com/download/$teamviewerFile"
-wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
-dpkg -i /tmp/$teamviewerFile
+if [ "`uname -i`" == "i686" ]; then
+	grubCustomizerFile="grub-customizer_4.0.6-0ubuntu1~ppa1t_i386.deb"
+else
+	grubCustomizerFile="grub-customizer_4.0.6-0ubuntu1~ppa1t_amd64.deb"
+fi
+grubCustomizerURL="https://launchpad.net/~danielrichter2007/+archive/grub-customizer/+files/$grubCustomizerFile"
+wget -P /var/cache/apt/archives $grubCustomizerURL 2>&1
+dpkg -i /var/cache/apt/archives/$grubCustomizerFile
 apt-get -y install -f
-
-# Extract teamviewer icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
-

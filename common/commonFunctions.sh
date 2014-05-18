@@ -3,8 +3,8 @@
 # This script contains common functions used by installation scripts.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 17/05/2014
+# Version: 1.11
+# Last modified date (dd/mm/yyyy): 18/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -239,6 +239,7 @@ function prepareScript
 		chmod +x "$askpass"
 	fi
 	mkdir -p "$logsFolder"
+	rm -f "$logFile"
 
 	installNeededPackages
 }
@@ -470,11 +471,6 @@ function executeCommands
 
 		# Install repositories and packages
 		commands+="$packageCommands $nonRepoAppCommands $postInstallationCommands"
-
-		commands+="echo \"# $finishingInstallation\"; echo \"$finishingInstallation ...\" >> \"$logFile\";"
-		local finishingInstallationCommands="apt-get install -f 2>>\"$logFile\" 2>>\"$logFile\";"
-		dialogBoxFunction "$finishingInstallation ..."
-		commands+="bash -c \"$finishingInstallationCommands\" $dialogBox;"
 
 		commands+="echo \"# $cleaningTempFiles\"; echo \"$cleaningTempFiles ...\" >> \"$logFile\";"
 		local cleanTempFilesCommands="apt-get -y autoremove 2>>\"$logFile\"; apt-get clean 2>>\"$logFile\"; rm -rf \"$tempFolder\";"

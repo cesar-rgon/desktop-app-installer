@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Teamviewer full support application.
+# This script installs Faenza icon theme.
 #
 # Author: César Rodríguez González
 # Version: 1.11
@@ -17,13 +17,8 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-# Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
-teamviewerFile="teamviewer_linux.deb"
-teamviewerURL="http://download.teamviewer.com/download/$teamviewerFile"
-wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
-dpkg -i /tmp/$teamviewerFile
+faenzaFile="faenza-icon-theme_1.3.1_all.deb"
+faenzaURL="https://launchpad.net/~tiheum/+archive/equinox/+files/$faenzaFile"
+wget -P /var/cache/apt/archives $faenzaURL 2>&1
+dpkg -i /var/cache/apt/archives/$faenzaFile
 apt-get -y install -f
-
-# Extract teamviewer icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
-

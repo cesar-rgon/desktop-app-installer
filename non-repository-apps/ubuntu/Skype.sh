@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Teamviewer full support application.
+# This script installs Skype application.
 #
 # Author: César Rodríguez González
 # Version: 1.11
@@ -17,13 +17,12 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-# Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
-teamviewerFile="teamviewer_linux.deb"
-teamviewerURL="http://download.teamviewer.com/download/$teamviewerFile"
-wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
-dpkg -i /tmp/$teamviewerFile
+if [ "`uname -i`" == "i686" ]; then
+	skypeFile="getskype-linux-beta-ubuntu-32"
+else
+	skypeFile="getskype-linux-beta-ubuntu-64"
+fi
+skypeURL="http://www.skype.com/go/$skypeFile"
+wget -P /var/cache/apt/archives $skypeURL 2>&1
+dpkg -i /var/cache/apt/archives/$skypeFile
 apt-get -y install -f
-
-# Extract teamviewer icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
-

@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.1                                                                                                          #
-# Last modified date (dd/mm/yyyy): 16/05/2014                                                                           #
+# Version: 1.11                                                                                                         #
+# Last modified date (dd/mm/yyyy): 18/05/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -47,29 +47,26 @@ downloads     aMule_client                amule-utils-gui
 downloads     aMule_server                amule-daemon
 downloads     Deluge_application          deluge
 downloads     Deluge_server               deluged deluge-webui
-downloads     jDownloader                 jdownloader-installer
-# jDownloader2 is a non-repository application. The script ../non-repository-apps/jDownloader2_beta.sh handles the installation process
+downloads     jDownloader
 downloads     jDownloader2_beta
 downloads     qBittorrent_application     qbittorrent
 downloads     qBittorrent_server          qbittorrent-nox
 downloads     Transmission_application    transmission-gtk
 downloads     Transmission_client         transmission-remote-gtk
 downloads     Transmission_server         transmission-daemon
-# uTorrent server is a non-repository application. The script ../non-repository-apps/uTorrent_server.sh handles the installation process
 downloads     uTorrent_server
-# Steam is under repositories but it fails to install on Kubuntu. So download and install from official webpage with a non-repository subscript.
+
 games         Steam
 
-internet      Chrome                      google-chrome-stable
+internet      Chrome
 internet      Chromium                    chromium-browser
 internet      Dropbox                     nautilus-dropbox
 internet      Evolution                   evolution
 internet      Filezilla                   filezilla
-internet      Google_earth                google-earth-stable
+internet      Google_earth
 internet      Midori                      midori
 internet      Remmina                     remmina
-internet      Skype                       skype
-# Teamviewer is a non-repository application. The scripts ../non-repository-apps/Teamviewer_full.sh and ../non-repository-apps/Teamviewer_quick_support.sh handle the installation
+internet      Skype
 internet      Teamviewer_full
 internet      Teamviewer_quick_support
 internet      Thunderbird                 thunderbird
@@ -95,7 +92,7 @@ system        Bleachbit                   bleachbit
 system        Compiz                      compiz compizconfig-settings-manager fusion-icon
 system        Gdebi                       gdebi
 system        Gparted                     gparted
-system        Grub_customizer             grub-customizer
+system        Grub_customizer
 system        Hardinfo                    hardinfo
 system        Htop                        htop
 system        Log_viewer                  gnome-system-log
@@ -106,5 +103,5 @@ system        Synaptic                    synaptic software-properties-gtk
 system        Virtualbox                  virtualbox
 system        Wine                        wine
 
-themes        Faenza                      faenza-icon-theme faience-icon-theme
+themes        Faenza
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Teamviewer full support application.
+# This script installs Google Earth application.
 #
 # Author: César Rodríguez González
 # Version: 1.11
@@ -17,13 +17,12 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-# Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
-teamviewerFile="teamviewer_linux.deb"
-teamviewerURL="http://download.teamviewer.com/download/$teamviewerFile"
-wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
-dpkg -i /tmp/$teamviewerFile
+if [ "`uname -i`" == "i686" ]; then
+	googleEarthFile="google-earth-stable_current_i386.deb"
+else
+	googleEarthFile="google-earth-stable_current_amd64.deb"
+fi
+googleEarthURL="http://dl.google.com/dl/earth/client/current/$googleEarthFile"
+wget -P /var/cache/apt/archives $googleEarthURL 2>&1
+dpkg -i /var/cache/apt/archives/$googleEarthFile
 apt-get -y install -f
-
-# Extract teamviewer icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"
-

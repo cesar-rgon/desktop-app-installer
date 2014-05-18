@@ -29,8 +29,8 @@ Advanced scripts to install applications from default repositories, third-party 
 ```
 Valid for:   Ubuntu v14.04 and Debian 7 (for all desktops o server).
              With some changes in config files, it can be 100% compatible with previous versions.
-Version:     1.1
-Last change: 17/05/2014 (dd/mm/yyyy)
+Version:     1.11
+Last change: 18/05/2014 (dd/mm/yyyy)
 ```
 ##### DONE
 > - [x] Tested compatibility with Ubuntu 14.04 (unity/gnome/xfce/lxde/server)
@@ -325,7 +325,6 @@ To add a new subscript to install a non-repository application just follow next 
   * No need to use 'sudo' in commands because the subscript will be executed as root user.
   * Use common variables supplied by main script as needed.
   * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
-  * No need to execute 'apt-get install -f' command because main script will execute it at the end of installation proccess.
 
 ---
 [Back to index](#index)

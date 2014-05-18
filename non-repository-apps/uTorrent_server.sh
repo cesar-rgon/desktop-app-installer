@@ -3,8 +3,8 @@
 # This script installs and configures uTorrent server application.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Version: 1.11
+# Last modified date (dd/mm/yyyy): 18/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -32,7 +32,7 @@ fi
 # Delete previous uTorrent's file downloaded before.
 rm -f /var/cache/apt/archives/$utorrentFile
 # Download uTorrent
-wget -P /var/cache/apt/archives $utorrentURL
+wget -P /var/cache/apt/archives $utorrentURL 2>&1
 # Decompress to system folder
 tar -xzf /var/cache/apt/archives/$utorrentFile -C /usr/share
 installationFolder=`ls /usr/share/utorrent* -d | awk -F "/" '{print $4}'`

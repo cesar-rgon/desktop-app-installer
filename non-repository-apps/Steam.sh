@@ -3,8 +3,8 @@
 # This script installs Steam application.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 14/05/2014
+# Version: 1.11
+# Last modified date (dd/mm/yyyy): 18/05/2014
 # Licence: MIT
 ##########################################################################
 # Get common variables and check if the script is being running by a root or sudoer user
@@ -16,13 +16,8 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-steamURL="http://media.steampowered.com/client/installer/steam.deb"
-wget -P /var/cache/apt/archives $steamURL
-
-if [ "$desktop" == "kde" ]; then
-	apt-get -y install qapt-deb-installer
-	qapt-deb-installer /var/cache/apt/archives/steam.deb
-else
-	apt-get -y install gdebi
-	gdebi --n /var/cache/apt/archives/steam.deb
-fi
+steamFile="steam.deb"
+steamURL="http://media.steampowered.com/client/installer/$steamFile"
+wget -P /var/cache/apt/archives $steamURL 2>&1
+dpkg -i /var/cache/apt/archives/$steamFile
+apt-get -y install -f
