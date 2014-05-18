@@ -1,8 +1,6 @@
 Linux app installer (Ubuntu / Debian)
 =====================================
-Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 14.04 or Debian 7 system (desktop or server).  
-There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc.  
-In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 14.04 or Debian 7 system (desktop or server). There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 ![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
 
