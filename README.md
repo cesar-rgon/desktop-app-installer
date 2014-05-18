@@ -33,7 +33,7 @@ Version:     1.11
 Last change: 18/05/2014 (dd/mm/yyyy)
 ```
 ##### DONE
-> - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/xfce/lxde/server)
+> - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
 > - [x] Added compatibility with Debian 7
 
 ##### TODO
