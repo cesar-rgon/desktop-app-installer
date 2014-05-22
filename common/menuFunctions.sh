@@ -3,8 +3,8 @@
 # This script contains menu functions used only by main script.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 17/05/2014
+# Version: 1.2
+# Last modified date (dd/mm/yyyy): 22/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -33,7 +33,11 @@ function menuWidthHeight {
 		"kde" )
 			zenityWidth=680
 			zenityBaseHeight=162
-			zenityRowHeight=24;;			
+			zenityRowHeight=24;;
+		"x-cinnamon" )
+			zenityWidth=720
+			zenityBaseHeight=150
+			zenityRowHeight=22;;			
 		* )
 			zenityWidth=790
 			zenityBaseHeight=177
@@ -54,7 +58,7 @@ function menu {
 	# Check if dialog or zenity has been installed
 	if [ "`dpkg -s $box 2>&1 | grep "installed"`" != "" ]; then
 		# Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
-		local categoryArray=(`cat "$appListFile" | awk '!/^($|[:space:]*#)/{ print $1; }' | awk '!x[$0]++'`)
+		local categoryArray=(`cat "$appListFile" | awk '!/^($|[[:space:]]*#)/{ print $1; }' | awk '!x[$0]++'`)
 		local categoryName=""
 		local categoryDescription=""
 		local categoryNumber=1
@@ -75,7 +79,7 @@ function menu {
 			# Each category has it's own screen
 			eval categoryDescription=\$$categoryName"Description"
 			# Delete blank and comment lines,then filter by category name and take application list (second column)
-			appNameArray=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|[:space:]*#)/{ if ($1 == category) print $2; }'`)
+			appNameArray=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|[[:space:]]*#)/{ if ($1 == category) print $2; }'`)
 			appNumber=${#appNameArray[@]}
 			index=1
 	

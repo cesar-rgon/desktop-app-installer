@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.11                                                                                                         #
-# Last modified date (dd/mm/yyyy): 18/05/2014                                                                           #
+# Version: 1.2                                                                                                          #
+# Last modified date (dd/mm/yyyy): 22/05/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -100,7 +100,7 @@ system        Lxtask                      lxtask
 system        Luckybackup                 luckybackup
 system        Schedule                    gnome-schedule
 system        Synaptic                    synaptic software-properties-gtk
-system        Virtualbox                  virtualbox
+system        Virtualbox                  virtualbox-qt
 system        Wine                        wine
 
 themes        Faenza

@@ -1,6 +1,6 @@
-Linux app installer (Ubuntu / Debian)
-=====================================
-Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 14.04 or Debian 7 system (desktop or server). There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+Linux app installer (Ubuntu / Debian / Mint)
+============================================
+Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 14.04, Debian 7 or Linux Mint 17 system (desktop or server). There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 ![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
 
@@ -27,17 +27,18 @@ Menu to install applications from default repositories, third-party ones or exte
 > 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
-Valid for:   Ubuntu v14.04 and Debian 7 (for all desktops o server).
+Valid for:   Ubuntu v14.04, Debian 7 and Linux Mint 17 (for all desktops o server).
              With some changes in config files, it can be 100% compatible with previous versions.
-Version:     1.11
-Last change: 18/05/2014 (dd/mm/yyyy)
+Version:     1.2
+Last change: 22/05/2014 (dd/mm/yyyy)
 ```
 ##### DONE
 > - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
 > - [x] Added compatibility with Debian 7
+> - [x] Added compatibility with Linux Mint 17 (cinnamon)
 
 ##### TODO
-> - [ ] Test compatibility with Linux Mint 17 (all desktops)
+> - [ ] Test compatibility with Linux Mint 17 (all other desktops)
 > - [ ] Develop Github web page
 > - [ ] Create spanish translation of this README file
 
@@ -122,6 +123,7 @@ Tree of folders and some files:
 │
 ├── etc                     It contains application list and some config files used by subscripts
 │   ├── applicationList.debian
+│   ├── applicationList.linuxmint
 │   ├── applicationList.ubuntu
 │   └── *
 │
@@ -144,6 +146,8 @@ Tree of folders and some files:
 │   ├── *                   Subscripts used on any linux system
 │   ├── debian              Subscripts only used on a Debian system
 │   │   └── *
+│   ├── linuxmint           Subscripts only used on a Linux Mint system
+│   │   └── *
 │   └── ubuntu              Subscripts only used on an Ubuntu system
 │       └── *
 │
@@ -152,6 +156,8 @@ Tree of folders and some files:
 │   ├── *                   Subscripts used on any linux system
 │   ├── debian              Subscripts only used on a Debian system
 │   │   └── *
+│   ├── linuxmint           Subscripts only used on a Linux Mint system
+│   │   └── *
 │   └── ubuntu              Subscripts only used on an Ubuntu system
 │       └── *
 │
@@ -159,6 +165,8 @@ Tree of folders and some files:
 │   ├── template-pre-installation.sh
 │   ├── *                   Subscripts used on any linux system
 │   ├── debian              Subscripts only used on a Debian system
+│   │   └── *
+│   ├── linuxmint           Subscripts only used on a Linux Mint system
 │   │   └── *
 │   └── ubuntu              Subscripts only used on an Ubuntu system
 │       └── *
@@ -175,26 +183,29 @@ Tree of folders and some files:
     │   └── *
     ├── keys                It contains key files used by third-party repository's subscripts
     │   └── *
+    ├── linuxmint           Subscripts only used on a Linux Mint system
+    │   └── *
     └── ubuntu              Subscripts only used on an Ubuntu system
         └── *
 ```
 
-| Some important files                                           | Description                                                                                 |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                           |
-| [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all subscripts                                   |
-| [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                        |
-| [applicationList.debian][applicationList.debian]               | It defines categories, applications and packages used by main script for a Debian system    |
-| [applicationList.ubuntu][applicationList.ubuntu]               | It defines categories, applications and packages used by main script for an Ubuntu system   |
-| [installer.sh][installer.sh]                                   | Main script file                                                                            |
-| [en.properties][en.properties]                                 | English translation file                                                                    |
-| [es.properties][es.properties]                                 | Spanish translation file                                                                    |
-| [template-script.sh][template-script.sh]                       | Template file to help to create new script file to install an application                   |
-| [template-repository.sh][template-repository.sh]               | Template file to help to create new subscript to add a third-party repository               |
-| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create new application subscript to run pre-installation commands  |
-| [template-eula][template-eula]                                 | Template file to help to create new subscript to setup EULA support for a package           |
-| [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create new subscript to install a non-repository application       |
-| [template-post-installation.sh][template-post-installation.sh] | Template file to help to create new application subscript to run post-installation commands |
+| Some important files                                           | Description                                                                                  |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                            |
+| [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all subscripts                                    |
+| [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                         |
+| [applicationList.debian][applicationList.debian]               | It defines categories, applications and packages used by main script for a Debian system     |
+| [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and packages used by main script for a Linux Mint system |
+| [applicationList.ubuntu][applicationList.ubuntu]               | It defines categories, applications and packages used by main script for an Ubuntu system    |
+| [installer.sh][installer.sh]                                   | Main script file                                                                             |
+| [en.properties][en.properties]                                 | English translation file                                                                     |
+| [es.properties][es.properties]                                 | Spanish translation file                                                                     |
+| [template-script.sh][template-script.sh]                       | Template file to help to create new script file to install an application                    |
+| [template-repository.sh][template-repository.sh]               | Template file to help to create new subscript to add a third-party repository                |
+| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create new application subscript to run pre-installation commands   |
+| [template-eula][template-eula]                                 | Template file to help to create new subscript to setup EULA support for a package            |
+| [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create new subscript to install a non-repository application        |
+| [template-post-installation.sh][template-post-installation.sh] | Template file to help to create new application subscript to run post-installation commands  |
 
 ---
 
@@ -203,7 +214,7 @@ Tree of folders and some files:
 #### 5.2 Add new application to a category. Modify or delete an existing one
 To add an application to be installed follow next steps:
 
-1. Edit [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file and add a new line with the next syntax:
+1. Edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file and add a new line with the next syntax:
 
 | 1st column - Category (*)  | 2nd column - Application Name (*) | Other columns (Packages) |
 | -------------------------- | --------------------------------- | ------------------------ |
@@ -230,14 +241,14 @@ To add an application to be installed follow next steps:
   ApplicationNameDescription=Here goes the application description that is used by the main menu
 
   Considerations:
-  * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file. _Description_ word: must always follow the category name word.
+  * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file. _Description_ word: must always follow the category name word.
   * To be intuitive, CategoryNameDescription should be defined in the 'CATEGORIES' section of the file.
-  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file. _Description_ word: must always follow the category name word.
+  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file. _Description_ word: must always follow the category name word.
   * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
   * You can create a new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
 
-To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file and change the corresponding lines.
+To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file and change the corresponding lines.
 
 ---
 [Back to index](#index)
@@ -259,7 +270,7 @@ To add a new installation script for an application follow next steps:
 
 2. Modify content to asign values to variables: _appName_ and _logFile_  
   Considerations:
-  * appName value must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file.
+  * appName value must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file.
   * logFile value is used to create the log file ~/logs/logFile.
 
 ---
@@ -271,7 +282,7 @@ To add a new subscript to add a third-party repository for an application follow
 1. Create a new file 'applicationName.sh' taking, as base, the [template-repository.sh][template-repository.sh] file.
 
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file.
   * If the script is valid for all linux distros, it must be placed in _./third-party-repo_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./third-party-repo/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./third-party-repo/debian_ folder.
@@ -293,7 +304,7 @@ To add a new subscript to prepare the installation of an application before the 
 1. Create a new file 'applicationName.sh' taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file.
 
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file.
   * If the script is valid for all linux distros, it must be placed in _./pre-installation_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./pre-installation/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./pre-installation/debian_ folder.
@@ -314,7 +325,7 @@ To add a new subscript to install a non-repository application just follow next 
 1. Create a new file 'applicationName.sh' taking, as base, the [template-non-repo-app.sh][template-non-repo-app.sh] file.
 
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file.
   * If the script is valid for all linux distros, it must be placed in _./non-repository-apps_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./non-repository-apps/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./non-repository-apps/debian_ folder.
@@ -335,7 +346,7 @@ To add a new subscript to setup an application after installation proccess just 
 1. Create a new file 'applicationName.sh' taking, as base, the [template-post-installation.sh][template-post-installation.sh] file.
 
   Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file.
+  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file.
   * If the script is valid for all linux distros, it must be placed in _./post-installation_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./post-installation/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./post-installation/debian_ folder.
@@ -366,7 +377,7 @@ To add a new subscript to setup EULA support for a package just follow next step
   # ...
   ```
   Considerations:
-  * The filename must be identically (case-sensitive) to the related application package defined in [applicationList.ubuntu][applicationList.ubuntu] or [applicationList.debian][applicationList.debian] file.
+  * The filename must be identically (case-sensitive) to the related application package defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian] or [applicationList.linuxmint][applicationList.linuxmint] file.
 
 2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
 
@@ -396,6 +407,7 @@ I hope you find it useful.
 [commonVariables.sh]:./common/commonVariables.sh
 [menuFunctions.sh]:./common/menuFunctions.sh
 [applicationList.debian]:./etc/applicationList.debian
+[applicationList.linuxmint]:./etc/applicationList.linuxmint
 [applicationList.ubuntu]:./etc/applicationList.ubuntu
 [installer.sh]:./installer.sh
 [en.properties]:./languages/en.properties

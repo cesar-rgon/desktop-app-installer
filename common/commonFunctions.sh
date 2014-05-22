@@ -3,8 +3,8 @@
 # This script contains common functions used by installation scripts.
 #
 # Author: César Rodríguez González
-# Version: 1.11
-# Last modified date (dd/mm/yyyy): 18/05/2014
+# Version: 1.2
+# Last modified date (dd/mm/yyyy): 22/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -50,7 +50,7 @@
 ##########################################################################
 function initCommonVariables
 {
-	linuxAppInstallerTitle="Linux app installer v1.11 (Ubuntu-Debian)"
+	linuxAppInstallerTitle="Linux app installer v1.2 (Ubuntu-Debian-Mint)"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	username=`whoami`
 	if [ "$1" != "" ]; then
@@ -531,7 +531,7 @@ function installAndSetupApplications
 			fi
 
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
-			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|[:space:]*#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
+			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|[[:space:]]*#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 
 			# Check if exists subscript to install a non-repository application
 			checkFolderThatContainsFile "$nonRepositoryAppsFolder" "$appName"
