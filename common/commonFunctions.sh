@@ -117,14 +117,18 @@ function getDesktop
 		desktop="none"
 	else
 		if [ "$XDG_CURRENT_DESKTOP" != "" ]; then
-			desktop=$XDG_CURRENT_DESKTOP
-			# convert to lower case
-			desktop=${desktop,,}  
+			if [ "$XDG_CURRENT_DESKTOP" != "default.desktop" ]; then
+				desktop="$XDG_CURRENT_DESKTOP"
+				# convert to lower case
+				desktop=${desktop,,}  
+			else
+				desktop="mate"
+			fi
 		else
 			if [ "$KDE_FULL_SESSION" == "true" ]; then
 				desktop="kde"
 			else
-				local dataDirs=$(echo "$XDG_DATA_DIRS" | grep -Eo 'ubuntu|xubuntu|lubuntu|xfce|kde|gnome|lxde' | sed -n 1p)
+				local dataDirs=$(echo "$XDG_DATA_DIRS" | grep -Eo 'ubuntu|xubuntu|lubuntu|xfce|kde|gnome|lxde|default.desktop' | sed -n 1p)
 				case "$dataDirs" in
 				"ubuntu" )
 					desktop="unity";;
@@ -132,6 +136,12 @@ function getDesktop
 					desktop="xfce";;
 				"lubuntu" )
 					desktop="lxde";;
+				"default.desktop" )
+					if [ -d "/usr/share/cinnamon" ]; then
+						desktop="x-cinnamon"
+					else
+						desktop="mate"
+					fi;;
 				* )
 					desktop="$dataDirs"
 				esac				

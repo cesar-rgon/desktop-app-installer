@@ -37,7 +37,11 @@ function menuWidthHeight {
 		"x-cinnamon" )
 			zenityWidth=720
 			zenityBaseHeight=150
-			zenityRowHeight=22;;			
+			zenityRowHeight=22;;
+		"mate" )
+			zenityWidth=720
+			zenityBaseHeight=150
+			zenityRowHeight=22;;
 		* )
 			zenityWidth=790
 			zenityBaseHeight=177
