@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.2
-# Last modified date (dd/mm/yyyy): 22/05/2014
+# Last modified date (dd/mm/yyyy): 23/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -52,6 +52,13 @@ function initCommonVariables
 {
 	linuxAppInstallerTitle="Linux app installer v1.2 (Ubuntu-Debian-Mint)"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
+	if [ "$distro" == "linuxmint" ]; then
+		local codename="`lsb_release -c | awk '{print $2}'`"
+		if [ "$codename" == "debian" ]; then
+			distro="lmde"
+		fi
+	fi
+
 	username=`whoami`
 	if [ "$1" != "" ]; then
 		scriptRootFolder="${1}"
@@ -116,15 +123,16 @@ function getDesktop
 	if [ -z $DISPLAY ]; then
 		desktop="none"
 	else
-		if [ "$XDG_CURRENT_DESKTOP" != "" ]; then
-			if [ "$XDG_CURRENT_DESKTOP" != "default.desktop" ]; then
-				desktop="$XDG_CURRENT_DESKTOP"
-				# convert to lower case
-				desktop=${desktop,,}  
+		case "${XDG_CURRENT_DESKTOP,,}" in
+		"gnome" )
+			if [ "$distro" == "lmde" ]; then
+				desktop="x-cinnamon"
 			else
-				desktop="mate"
-			fi
-		else
+				desktop="gnome"
+			fi;;
+		"default.desktop" )
+			desktop="mate";;
+		"" )
 			if [ "$KDE_FULL_SESSION" == "true" ]; then
 				desktop="kde"
 			else
@@ -132,6 +140,12 @@ function getDesktop
 				case "$dataDirs" in
 				"ubuntu" )
 					desktop="unity";;
+				"gnome" )
+					if [ "$distro" == "lmde" ]; then
+						desktop="x-cinnamon"
+					else
+						desktop="gnome"
+					fi;;				
 				"xubuntu" )
 					desktop="xfce";;
 				"lubuntu" )
@@ -142,11 +156,17 @@ function getDesktop
 					else
 						desktop="mate"
 					fi;;
-				* )
+				"" )
+					desktop="mate";;
+				* ) 
+					# xfce, kde, lxde
 					desktop="$dataDirs"
-				esac				
-			fi
-		fi
+				esac								
+			fi;;
+		*)
+			# ubuntu (unity), xfce, lxde, x-cinnamon
+			desktop="${XDG_CURRENT_DESKTOP,,}"
+		esac
 	fi
 	echo "$desktop"
 }
