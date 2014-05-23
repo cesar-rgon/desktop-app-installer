@@ -36,10 +36,9 @@ Last change: 23/05/2014 (dd/mm/yyyy)
 > - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
 > - [x] Added compatibility with Debian 7
 > - [x] Added compatibility with Linux Mint 17 (cinnamon/mate)
-> - [x] Added compatibility with LMDE (cinnamon)
+> - [x] Added compatibility with LMDE (cinnamon/mate)
 
 ##### TODO
-> - [ ] Test compatibility with LMDE (mate)
 > - [ ] Develop Github web page
 > - [ ] Create spanish translation of this README file
 
