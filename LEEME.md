@@ -2,18 +2,18 @@ Linux app installer
 ===================
 Menú de instalación de aplicaciones desde los repositorios por defecto, de terceros o fuentes externas en cualquier sistema Ubuntu 14.04, Debian 7, Linux Mint 17 o LMDE (escritorio o servidor). Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado puede ser modificado por el usuario tan sólo editando un fichero de texto. Además, los usuarios pueden añadir subscripts que extiendan la funcionalidad del menú, por ejemplo, añadir nuevos repositorios, configurar aplicaciones, etc. Por otro lado, existe un script individual por cada aplicación como modo alternativo de realizar el proceso de instalación sin el menú principal. 
 
-![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
+![Captura de pantalla del menú usando Zenity para escritorio][screenshot zenity]
 
-![Main menu screenshot through Dailog box for terminal system][screenshot dialog]
+![Captura de pantalla del menú usando Dailog para terminal][screenshot dialog]
 
-##### Índice
+##### Indice
 > 1. [Características](#1-características)
 > 2. [Instalando este proyecto](#2-instalando-este-proyecto)  
 >   - [Método 1. Clonar este repositorio](#21-método-1-clonar-este-repositorio)  
 >   - [Método 2. Descargar y extraer ficheros](#22-método-2-descargar-y-extraer-ficheros)
 > 3. [Ejecutando un script](#3-ejecutando-un-script)  
 >   - [Script principal](#31-script-principal)  
->   - [Script de aplicación](#32-script-de-aplicacion)
+>   - [Script de aplicación](#32-script-de-aplicación)
 > 4. [Ciclo de vida de ejecución](#4-ciclo-de-vida-de-ejecución)
 > 5. [Extender funcionalidad y personalizar aplicaciones a instalar](#5-extender-funcionalidad-y-personalizar-aplicaciones-a-instalar)  
 >   - [Entendiendo la estructura del proyecto](#51-entendiendo-la-estructura-del-proyecto)  
@@ -33,32 +33,31 @@ Versión:       1.2
 Último cambio: 23/05/2014 (dd/mm/yyyy)
 ```
 ##### HECHO
-> - [x] Añadido compatibilidad con Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
-> - [x] Añadido compatibilidad con Debian 7
-> - [x] Añadido compatibilidad con Linux Mint 17 (cinnamon/mate)
-> - [x] Añadido compatibilidad con LMDE (cinnamon/mate)
+> - [x] Añadida compatibilidad con Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
+> - [x] Añadida compatibilidad con Debian 7
+> - [x] Añadida compatibilidad con Linux Mint 17 (cinnamon/mate)
+> - [x] Añadida compatibilidad con LMDE (cinnamon/mate)
 
 ##### POR HACER
 > - [ ] Desarrollar página web en Github
 
 ---
-[En construcción][under construction]
 
 ### 1. Características
-* One main script that shows a menu of aplications wich can be selected for installation.
-* Alternatively, there is one separate script for each application, so it can be installed by just executing the appropriate script.
-* Install official repository applications.
-* Add third-party repositories and install related applications when needed.
-* Download, extract and install non-repository applications through custom subscripts that extend the main script functionality. It includes several subscripts by default.
-* Set up applications after they are installed through custom subscripts.
-* Customize your own application list to install and third party repositories to add by just editing some config files (no need to edit main script at all for this purpose).
-* EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
-* The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
-* Installation log file that shows installation steps and errors if they have occurred.
-* Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
+* Un script principal que muestra un menú de aplicaciones a ser seleccionado para instalación.
+* Alternativamente, hay un script individual por cada aplicación que se encarga de instalar dicha aplicación.
+* Instala aplicaciones de repositorios oficiales.
+* Añade repositorios de terceros e instala las aplicaciones relacionadas cuando sea necesario.
+* Descarga, extrae e instala aplicaciones externas a repositorios mediante subscripts propios que extienden la funcionalidad del script principal. Se incluyen varios por defecto.
+* Configura aplicaciones después de que sean instaladas mediante subscripts propios. Se incluyen varios por defecto.
+* Personaliza tu propia lista de aplicaciones a instalar y repositorios de terceros a agregar editando algunos ficheros de configuración (no hay necesidad de editar el script principal para este propósito).
+* Soporte EULA. Instala aplicaciones automáticamente sin necesidad de interacción del usuario para aceptar acuerdos legales de la aplicación.
+* El script se ejecuta con una interfaz adaptada al entorno detectado: Dialog para terminal. Zenity para escritorio o emulador de terminal.
+* Fichero de log que muestra los pasos de instalación y posibles errores si ocurrieran.
+* Soporte multilenguaje. Es sencillo añadir un nuevo idioma. Por el momento están incluidos Inglés y Español. El script detecta el idioma del sistema y usa la traducción apropiada.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 ### 2. Instalando este proyecto
 
@@ -77,38 +76,41 @@ $ cd linux-app-installer-master
 ```
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 ### 3. Ejecutando un script
 
 #### 3.1 Script principal
-It shows a menu of applications to be installed which are ordered by categories. The user navigates through categories and selects the applications to be installed. After that, installation process begins.
+Muestra un menú de aplicaciones a ser instaladas que están ordenadas por categorías. El usuario navega a través de las categorías y selecciona las aplicaciones a ser instaladas. Después de esto, el proceso de instalación comienza.
 ```bash
 $ bash installer.sh
 ```
 #### 3.2 Script de aplicación
-There is one separate script for each application, so it can be installed just by running the appropriate script.
+Existe un script individual por cada aplicación, de forma que, puede ser instalada ejecutando dicho script.
 ```bash
 $ bash ./scripts/applicationName.sh
 ```
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 ### 4. Ciclo de vida de ejecución
-1. The user must select the applications to install.
-2. The script would add third-party repositories of the selected third-party applications, when required.
-3. The script executes custom subscripts to prepare the installation of some applications.
-4. The script installs all the selected repository applications with EULA support if required.
-5. The script executes custom subscripts to install the selected non-repository applications.
-6. The script executes custom subscripts to setup selected applications.
-7. The script runs final operations to finish installation process and to clean temporal files.
-8. The script shows an installation log file which contains installation steps and errors if they have occurred.
+1. El usuario debe seleccionar las aplicaciones a instalar.
+2. El script añade los repositorios de terceros de las aplicaciones de terceros seleccionadas, cuando sea requerido.
+3. El script ejecuta subscripts propios para preparar la instalación de algunas aplicaciones.
+4. El script instala todas las aplicaciones de repositorios seleccionadas con soporte EULA si es requerido.
+5. El script ejecuta subscripts propios para instalar las aplicaciones externas a repositorios.
+6. El script ejecuta subscripts propios para configurar las aplicaciones seleccionadas.
+7. El script ejecuta operaciones finales para terminal el proceso de instalación y limpiar ficheros temporales.
+8. El script muestra un fichero de log que contiene los pasos de instalación y posibles errores si ocurrieran.
 
-Main script runs all the previous steps, whereas individual application scripts skip step 1 and run the remaining.
+El script principal ejecuta todos los pasos previos, mientras que los scripts individuales omiten el paso 1 y ejecutan el resto.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
+
+En construcción
+![En construcción][under construction]
 
 ### 5. Extender funcionalidad y personalizar aplicaciones a instalar
 To extend script functionality is required to add subscripts for custom purposes. To customize applications to install, it's necessary to edit some config files. These actions will be detailed in next chapters.
@@ -220,7 +222,7 @@ Tree of folders and some files:
 
 ---
 
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.2 Añadir nueva aplicación a una categoría. Modificar o borrar una existente
 To add an application to be installed follow next steps:
@@ -262,7 +264,7 @@ To add an application to be installed follow next steps:
 To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and change the corresponding lines.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.3 Añadir nuevo subscript para instalar una aplicación
 To add a new installation script for an application follow next steps:
@@ -285,7 +287,7 @@ To add a new installation script for an application follow next steps:
   * logFile value is used to create the log file ~/logs/logFile.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.4 Añadir nuevo subscript para agregar un repositorio de tercero
 To add a new subscript to add a third-party repository for an application follow next steps:
@@ -307,7 +309,7 @@ To add a new subscript to add a third-party repository for an application follow
   * If commands need to use a key file, it should be placed in [keys][keys] folder.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.5 Añadir nuevo subscript para preparar la instalación de una aplicación
 To add a new subscript to prepare the installation of an application before the installation proccess begins just follow next steps:
@@ -328,7 +330,7 @@ To add a new subscript to prepare the installation of an application before the 
   * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.6 Añadir nuevo subscript para instalar una aplicación externa a repositorios
 To add a new subscript to install a non-repository application just follow next steps:
@@ -349,7 +351,7 @@ To add a new subscript to install a non-repository application just follow next 
   * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.7 Añadir nuevo subscript para configurar una aplicación
 To add a new subscript to setup an application after installation proccess just follow next steps:
@@ -370,7 +372,7 @@ To add a new subscript to setup an application after installation proccess just 
   * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 #### 5.8 Añadir nuevo subscript para configurar el soporte EULA
 To add a new subscript to setup EULA support for a package just follow next steps:
@@ -393,7 +395,7 @@ To add a new subscript to setup EULA support for a package just follow next step
 2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 ### 6. Añadir nuevo fichero de traducción
 To add a new translation file for a specific language just follow next steps:
@@ -407,7 +409,7 @@ To add a new translation file for a specific language just follow next steps:
   * The variable names must not be changed at all.
 
 ---
-[Regresar al índice](#índice)
+[Regresar al índice](#indice)
 
 ### Notas del autor
 Any contribution to this project would be appreciated.  
@@ -433,6 +435,6 @@ I hope you find it useful.
 [keys]:./third-party-repo/keys
 [screenshot dialog]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/screenshot-dialog.jpg
 [screenshot zenity]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/screenshot-zenity.jpg
-[ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+[ISO639]:http://es.wikipedia.org/wiki/ISO_639-1
 [tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
