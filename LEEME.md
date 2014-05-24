@@ -109,120 +109,120 @@ El script principal ejecuta todos los pasos previos, mientras que los scripts in
 ---
 [Regresar al índice](#indice)
 
-En construcción
-![En construcción][under construction]
-
 ### 5. Extender funcionalidad y personalizar aplicaciones a instalar
-To extend script functionality is required to add subscripts for custom purposes. To customize applications to install, it's necessary to edit some config files. These actions will be detailed in next chapters.
+Para extender la funcionalidad del script principal es necesario añadir subscripts para tareas concretas. Para personalizar la lista de aplicaciones a instalar, es necesario editar varios ficheros de configuración. Estas acciones serán detalladas en los siguientes capítulos.
 
 #### 5.1 Entendiendo la estructura del proyecto
-Tree of folders and some files:
+Árbol de directorios y algunos ficheros:
 ```
-├── common                  It contains common functions and variables used by installation scripts
+├── common                  Contiene funciones comúnes y variables usadas por los scripts de instalación
 │   ├── commonFunctions.sh
 │   ├── commonVariables.sh
 │   ├── menuFunctions.sh
 │   └── *
 │
-├── etc                     It contains application list and some config files used by subscripts
+├── etc                     Contiene lista de aplicaciones y algunos ficheros de configuración usados por subscripts
 │   ├── applicationList.debian
 │   ├── applicationList.linuxmint
 │   ├── applicationList.lmde
 │   ├── applicationList.ubuntu
 │   └── *
 │
-├── eula                    It contains files who set parameters to skip questions during installation's process
+├── eula                    Contiene ficheros que inicializan parámetros para saltar preguntas durante el proceso de instalación
 │   ├── template-eula
 │   └── *
 │
-├── icons                   It contains sets of application icons used by subscripts
+├── icons                   Contiene conjuntos de iconos de aplicaciones usados por subscripts
 │   ├── *
-│   └── installer           It contains icons used by installation scripts
+│   └── installer           Contiene iconos usados por los scripts de instalación
 │       └── *
 ├── installer.sh
 │
-├── languages               It contains language translations used by installation scripts
+├── languages               Contiene ficheros de traducción usados por los scripts de instalación
 │   ├── en.properties
 │   └── es.properties
 │
-├── non-repository-apps     It contains subscripts to install non-repository applications
+├── non-repository-apps     Contiene subscripts para instalar aplicaciones externas a repositorios
 │   ├── template-non-repo-app.sh
-│   ├── *                   Subscripts used on any linux system
-│   ├── debian              Subscripts only used on a Debian system
+│   ├── *                   Subscripts usados en cualquier sistema linux
+│   ├── debian              Subscripts usados sólamente en sistemas Debian
 │   │   └── *
-│   ├── linuxmint           Subscripts only used on a Linux Mint system
+│   ├── linuxmint           Subscripts usados sólamente en sistemas Linux Mint
 │   │   └── *
-│   ├── lmde                Subscripts only used on a LMDE system
+│   ├── lmde                Subscripts usados sólamente en sistemas LMDE
 │   │   └── *
-│   └── ubuntu              Subscripts only used on an Ubuntu system
+│   └── ubuntu              Subscripts usados sólamente en sistemas Ubuntu
 │       └── *
 │
-├── post-installation       It contains subscripts to setup applications after installation
+├── post-installation       Contiene subscripts para configurar aplicaciones después de la instalación
 │   ├── template-post-installation.sh
-│   ├── *                   Subscripts used on any linux system
-│   ├── debian              Subscripts only used on a Debian system
+│   ├── *                   Subscripts usados en cualquier sistema linux
+│   ├── debian              Subscripts usados sólamente en sistemas Debian
 │   │   └── *
-│   ├── linuxmint           Subscripts only used on a Linux Mint system
+│   ├── linuxmint           Subscripts usados sólamente en sistemas Linux Mint
 │   │   └── *
-│   ├── lmde                Subscripts only used on a LMDE system
+│   ├── lmde                Subscripts usados sólamente en sistemas LMDE
 │   │   └── *
-│   └── ubuntu              Subscripts only used on an Ubuntu system
+│   └── ubuntu              Subscripts usados sólamente en sistemas Ubuntu
 │       └── *
 │
-├── pre-installation       It contains subscripts to prepare the installation of some applications
+├── pre-installation        Contiene subscripts para preparar la instalación de algunas aplicaciones
 │   ├── template-pre-installation.sh
-│   ├── *                   Subscripts used on any linux system
-│   ├── debian              Subscripts only used on a Debian system
+│   ├── *                   Subscripts usados en cualquier sistema linux
+│   ├── debian              Subscripts usados sólamente en sistemas Debian
 │   │   └── *
-│   ├── linuxmint           Subscripts only used on a Linux Mint system
+│   ├── linuxmint           Subscripts usados sólamente en sistemas Linux Mint
 │   │   └── *
-│   ├── lmde                Subscripts only used on a LMDE system
+│   ├── lmde                Subscripts usados sólamente en sistemas LMDE
 │   │   └── *
-│   └── ubuntu              Subscripts only used on an Ubuntu system
+│   └── ubuntu              Subscripts usados sólamente en sistemas Ubuntu
 │       └── *
 ├── README.md
 │
-├── scripts                 It contains one installation script per application
+├── scripts                 Contiene un script de instalación por aplicación
 │   ├── template-script.sh
 │   └── *.sh
 │
-└── third-party-repo        It contains subscripts to add third-party repositories for some applications
+└── third-party-repo        Contiene subscripts que añaden repositorios de terceros para algunas aplicaciones
     ├── template-repository.sh
-    ├── *                   Subscripts used on any linux system
-    ├── debian              Subscripts only used on a Debian system
+    ├── *                   Subscripts usados en cualquier sistema linux
+    ├── debian              Subscripts usados sólamente en sistemas Debian
     │   └── *
-    ├── keys                It contains key files used by third-party repository's subscripts
+    ├── keys                Contiene ficheros de clave usados por subscripts de repositorios de terceros
     │   └── *
-    ├── linuxmint           Subscripts only used on a Linux Mint system
+    ├── linuxmint           Subscripts usados sólamente en sistemas Linux Mint
     │   └── *
-    ├── lmde                Subscripts only used on a LMDE system
+    ├── lmde                Subscripts usados sólamente en sistemas LMDE
     │   └── *
-    └── ubuntu              Subscripts only used on an Ubuntu system
+    └── ubuntu              Subscripts usados sólamente en sistemas Ubuntu
         └── *
 ```
 
-| Some important files                                           | Description                                                                                  |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                            |
-| [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all subscripts                                    |
-| [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                         |
-| [applicationList.debian][applicationList.debian]               | It defines categories, applications and packages used by main script for a Debian system     |
-| [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and packages used by main script for a Linux Mint system |
-| [applicationList.lmde][applicationList.lmde]                   | It defines categories, applications and packages used by main script for a LMDE system       |
-| [applicationList.ubuntu][applicationList.ubuntu]               | It defines categories, applications and packages used by main script for an Ubuntu system    |
-| [installer.sh][installer.sh]                                   | Main script file                                                                             |
-| [en.properties][en.properties]                                 | English translation file                                                                     |
-| [es.properties][es.properties]                                 | Spanish translation file                                                                     |
-| [template-script.sh][template-script.sh]                       | Template file to help to create new script file to install an application                    |
-| [template-repository.sh][template-repository.sh]               | Template file to help to create new subscript to add a third-party repository                |
-| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create new application subscript to run pre-installation commands   |
-| [template-eula][template-eula]                                 | Template file to help to create new subscript to setup EULA support for a package            |
-| [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create new subscript to install a non-repository application        |
-| [template-post-installation.sh][template-post-installation.sh] | Template file to help to create new application subscript to run post-installation commands  |
+| Algunos ficheros importantes                                   | Descripción                                                                                          |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [commonFunctions.sh][commonFunctions.sh]                       | Contiene funciones comunes usados por todos los scripts de instalación                               |
+| [commonVariables.sh][commonVariables.sh]                       | Contiene variables comunes disponibles para todos los subscripts                                     |
+| [menuFunctions.sh][menuFunctions.sh]                           | Contiene funciones del menú. Usado sólamente por el script principal                                 |
+| [applicationList.debian][applicationList.debian]               | Define categorías, aplicaciones y paquetes usados por el script principal para un sistema Debian     |
+| [applicationList.linuxmint][applicationList.linuxmint]         | Define categorías, aplicaciones y paquetes usados por el script principal para un sistema Linux Mint |
+| [applicationList.lmde][applicationList.lmde]                   | Define categorías, aplicaciones y paquetes usados por el script principal para un sistema LMDE       |
+| [applicationList.ubuntu][applicationList.ubuntu]               | Define categorías, aplicaciones y paquetes usados por el script principal para un sistema Ubuntu     |
+| [installer.sh][installer.sh]                                   | Fichero del script principal                                                                         |
+| [en.properties][en.properties]                                 | Fichero de traducción Inglesa                                                                        |
+| [es.properties][es.properties]                                 | Fichero de traducción Español                                                                        |
+| [template-script.sh][template-script.sh]                       | Plantilla para ayudar a crear un nuevo script para instalar una aplicación                           |
+| [template-repository.sh][template-repository.sh]               | Plantilla para ayudar a crear un nuevo subscript para añadir un repositorio de tercero               |
+| [template-pre-installation.sh][template-pre-installation.sh]   | Plantilla para ayudar a crear un nuevo subscript con comandos de pre-instalación de una aplicación   |
+| [template-eula][template-eula]                                 | Plantilla para ayudar a crear un nuevo subscript para configurar soporte EULA para un paquete        |
+| [template-non-repo-app.sh][template-non-repo-app.sh]           | Plantilla para ayudar a crear un nuevo subscript para instalar una aplicación externa a repositorios |
+| [template-post-installation.sh][template-post-installation.sh] | Plantilla para ayudar a crear un nuevo subscript con comandos de post-instalación de una aplicación  |
 
 ---
 
 [Regresar al índice](#indice)
+
+En construcción  
+![En construcción][under construction]
 
 #### 5.2 Añadir nueva aplicación a una categoría. Modificar o borrar una existente
 To add an application to be installed follow next steps:
