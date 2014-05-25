@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.2
-# Last modified date (dd/mm/yyyy): 23/05/2014
+# Last modified date (dd/mm/yyyy): 25/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -561,7 +561,7 @@ function installAndSetupApplications
 			fi
 
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
-			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|[[:space:]]*#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
+			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 
 			# Check if exists subscript to install a non-repository application
 			checkFolderThatContainsFile "$nonRepositoryAppsFolder" "$appName"
