@@ -30,17 +30,17 @@ Menu to install applications from default repositories, third-party ones or exte
 Valid for:   Ubuntu v14.04, Debian 7, Linux Mint 17 and LMDE (for all desktops o server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.2
-Last change: 23/05/2014 (dd/mm/yyyy)
+Last change: 25/05/2014 (dd/mm/yyyy)
 ```
 ##### DONE
 > - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
 > - [x] Added compatibility with Debian 7
 > - [x] Added compatibility with Linux Mint 17 (cinnamon/mate)
 > - [x] Added compatibility with LMDE (cinnamon/mate)
+> - [x] Created spanish translation of this document in LEEME.md file 
 
 ##### TODO
 > - [ ] Develop Github web page
-> - [ ] Create spanish translation of this README file
 
 ---
 ### 1. Features
@@ -253,7 +253,7 @@ To add an application to be installed follow next steps:
   Considerations:
   * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the category name word.
   * To be intuitive, CategoryNameDescription should be defined in the 'CATEGORIES' section of the file.
-  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the category name word.
+  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the application name word.
   * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
   * You can create a new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
@@ -271,7 +271,7 @@ To add a new installation script for an application follow next steps:
   #!/bin/bash
   scriptRootFolder=`pwd`/..
   . $scriptRootFolder/common/commonFunctions.sh
-  appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applicationList.ubuntu or ../etc/applicationList.debian file.
+  appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applicationList.<distro> file.
   logFile=""  # Here goes log file name that will be created in ~/logs/logFile
 
   prepareScript "$scriptRootFolder" "$logFile"
@@ -296,6 +296,8 @@ To add a new subscript to add a third-party repository for an application follow
   * If the script is valid for all linux distros, it must be placed in _./third-party-repo_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./third-party-repo/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./third-party-repo/debian_ folder.
+  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
+  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
   * The scripts placed within the specific distro folders have more preference over the scripts placed in _./third-party-repo_ folder.
 
 2. Add neccessary commands at the end of the file to add the repository  
@@ -318,6 +320,8 @@ To add a new subscript to prepare the installation of an application before the 
   * If the script is valid for all linux distros, it must be placed in _./pre-installation_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./pre-installation/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./pre-installation/debian_ folder.
+  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
+  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
   * The scripts placed within the specific distro folders have more preference over the scripts placed in _./pre-installation_ folder.
 
 2. Add neccessary commands at the end of the file to setup the application
@@ -339,6 +343,8 @@ To add a new subscript to install a non-repository application just follow next 
   * If the script is valid for all linux distros, it must be placed in _./non-repository-apps_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./non-repository-apps/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./non-repository-apps/debian_ folder.
+  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
+  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
   * The scripts placed within the specific distro folders have more preference over the scripts placed in _./non-repository-apps_ folder.
 
 2. Add neccessary commands at the end of the file to download and install the non-repository application
@@ -360,6 +366,8 @@ To add a new subscript to setup an application after installation proccess just 
   * If the script is valid for all linux distros, it must be placed in _./post-installation_ folder.
   * If the script is only valid for Ubuntu distros, it must be placed in _./post-installation/ubuntu_ folder.
   * If the script is only valid for Debian distros, it must be placed in _./post-installation/debian_ folder.
+  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
+  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
   * The scripts placed within the specific distro folders have more preference over the scripts placed in _./post-installation_ folder.
 
 2. Add neccessary commands at the end of the file to setup the application
@@ -397,7 +405,7 @@ To add a new subscript to setup EULA support for a package just follow next step
 ### 6. Add new translation file
 To add a new translation file for a specific language just follow next steps:
 
-1. Create a new file "./languages/xx.properties" with the content of an existing translation file, for example, [en.properties][en.properties]
+1. Create a new file './languages/xx.properties' with the content of an existing translation file, for example, [en.properties][en.properties]
   Considerations:
   * 'xx' must consist of two lowercase characters based on [ISO639-1 code][ISO639] for the specific language.
 

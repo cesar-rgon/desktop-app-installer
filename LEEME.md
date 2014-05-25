@@ -30,13 +30,14 @@ Menú de instalación de aplicaciones desde los repositorios por defecto, de ter
 Válido para:   Ubuntu v14.04, Debian 7, Linux Mint 17 y LMDE (para todos los escritorios y servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.2
-Último cambio: 23/05/2014 (dd/mm/yyyy)
+Último cambio: 25/05/2014 (dd/mm/yyyy)
 ```
 ##### HECHO
 > - [x] Añadida compatibilidad con Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
 > - [x] Añadida compatibilidad con Debian 7
 > - [x] Añadida compatibilidad con Linux Mint 17 (cinnamon/mate)
 > - [x] Añadida compatibilidad con LMDE (cinnamon/mate)
+> - [x] Se ha creado este documento traducido a partir del fichero README.md
 
 ##### POR HACER
 > - [ ] Desarrollar página web en Github
@@ -221,199 +222,200 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 
 [Regresar al índice](#indice)
 
-En construcción  
-![En construcción][under construction]
-
 #### 5.2 Añadir nueva aplicación a una categoría. Modificar o borrar una existente
 To add an application to be installed follow next steps:
 
-1. Edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and add a new line with the next syntax:
+1. Editar fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde] y añadir una nueva línea con la siguiente sintaxis:
 
-| 1st column - Category (*)  | 2nd column - Application Name (*) | Other columns (Packages) |
-| -------------------------- | --------------------------------- | ------------------------ |
-| Existing/New_category_name | Application_name                  | repository package(s)    |
+| 1ra columna - Categoría (*) | 2da columna - Aplicación (*) | Othas columnas - Paquetes |
+| ----------------------------| ---------------------------- | ------------------------- |
+| NombreCategoria             | NombreAplicacion             | paquete(s) de repositorio |
 
-  Considerations:
-  * Blank or comment lines are ignored in this file.
-  * First column - Category: is mandatory.
-  * Category name is repeated once per application contained in it.
-  * If the category name is new in the file, the script will generate a new window for this category.
-  * Each category should contain at least one application.
-  * The category name shall contain only letters, digits and/or underscores '_' and it can't start with a digit.
-  * Second column - Application name: is mandatory.
-  * Just one row per application.
-  * The application name shall contain only letters, digits and/or underscores '_' and it can't start with a digit.
-  * The application source can be official repositories, third-party repositories even other sources (non-repositories).
-  * The order in which applications are listed in the menu is the same as set in this file.
-  * Third column - Packages: is mandatory only if the application belongs to a repository.
-  * Packages must be separated by whitespaces.
-  * Non-repository applications must leave this field empty.
+  Consideraciones:
+  * Las líneas en blanco o de comentarios son ignoradas por el script.
+  * La primera columna - Categoría: es obligatorioa.
+  * El nombre de la categoría se repite una vez por aplicación contenida en ella.
+  * Si el nombre de categoría es nuevo en este fichero, el script genera una nueva ventana para ésta.
+  * Cada categoría debe contener al menos una aplicación.
+  * El nombre de categoría debe contener sólo letras, dígitos y/o guión bajo '_' y no puede comenzar con un dígito.
+  * La segunda columna - Nombre aplicación: es obligatoria.
+  * Sólo debe haber una fila por aplicación.
+  * El nombre de aplicación debe contener sólo letras, dígitos y/o guión bajo '_' y no puede comenzar con un dígito.
+  * La fuente de la aplicación puede venir de repositorios oficiales, de terceros o incluso otras (sin repositorios).
+  * El orden en la que se listan las aplicaciones en el menú es la misma que el especificado en este fichero.
+  * Tercera columna en adelante - Paquetes: es obligatoria sólo si la aplicación proviene de un repositorio.
+  * Los paquetes deben estar separados por espacios en blanco.
+  * Las aplicaciones sin repositorio no deben especificar paquete alguno.
 
-2. Edit [en.properties][en.properties] file and add a description for categories (if it's new) and applications with the next syntax:
-  CategoryNameDescription=Here goes the category description that is used by the main menu  
-  ApplicationNameDescription=Here goes the application description that is used by the main menu
+2. Editar fichero [es.properties][es.properties] y añadir una descripción para categorías (si hay nuevas) y aplicaciones con la siguiente sintaxis:
+  NombreCategoriaDescription=Aquí va la descripción de la categoría tal y como se verá en el menú principal
+  ApplicationNameDescription=Aquí va la descripción de la aplicación tal y como se verá en el menú principal
 
-  Considerations:
-  * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the category name word.
-  * To be intuitive, CategoryNameDescription should be defined in the 'CATEGORIES' section of the file.
-  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the category name word.
-  * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
-  * It's recommended, but not mandatory, to add those descriptions to other translation files.
-  * You can create a new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
+  Consideraciones:
+  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser identica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de categoría.
+  * Para que sea intuitivo, NombreCategoriaDescription debe ser definido en la sección 'CATEGORIAS' de este fichero.
+  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser identica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de aplicación.
+  * Para que sea intuitivo, NombreAplicacionDescription debe ser definido en la sección 'APLICACIONES' de este fichero.
+  * Es recomendado, pero no obligatorio, añadir estas descripciones a otros ficheros de traducción.  
+  * Puede crear un nuevo fichero de traducción en tu idioma nativo para facilitar la comprensión. Vea el capítulo [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción) para más información.
 
-To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and change the corresponding lines.
+Para modificar o eliminar una aplicación o categoría, debe editar el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] y cambiar las líneas correspondientes.
 
 ---
 [Regresar al índice](#indice)
 
 #### 5.3 Añadir nuevo subscript para instalar una aplicación
-To add a new installation script for an application follow next steps:
+Para añadir un nuevo script de instalación de una aplicación siga los siguientes pasos:
 
-1. Create a new file './scripts/application-name.sh' taking, as base, next commands from [template-script.sh][template-script.sh] file
+1. Crear un nuevo fichero './scripts/nombre-aplicacion.sh' tomando como base los siguientes comandos de la plantilla [template-script.sh][template-script.sh]
   ```bash
   #!/bin/bash
   scriptRootFolder=`pwd`/..
   . $scriptRootFolder/common/commonFunctions.sh
-  appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applicationList.ubuntu or ../etc/applicationList.debian file.
-  logFile=""  # Here goes log file name that will be created in ~/logs/logFile
+  appName=""  # Aquí va el nombre de aplicación. Debe ser igual (sensible a mayúsculas) a la definida en el fichero ../etc/applicationList.<distro>
+  logFile=""  # Aquí va el nombre del fichero de logs que será creado en ~/logs/logFile
 
   prepareScript "$scriptRootFolder" "$logFile"
   installAndSetupApplications $appName
   ```
 
-2. Modify content to asign values to variables: _appName_ and _logFile_  
-  Considerations:
-  * appName value must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * logFile value is used to create the log file ~/logs/logFile.
+2. Modificar contenido para asignar valores a las variables: _appName_ y _logFile_  
+  Consideraciones:
+  * el valor de _appName_ debe ser idéntico (sensible a mayúsculas) al definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde].
+  * el valor de _logFile_ es usado para crear el fichero ~/logs/logFile.
 
 ---
 [Regresar al índice](#indice)
 
 #### 5.4 Añadir nuevo subscript para agregar un repositorio de tercero
-To add a new subscript to add a third-party repository for an application follow next steps:
+Para añadir un nuevo subscript que agregue un repositorio de terceros para una aplicación, siga los siguientes pasos:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-repository.sh][template-repository.sh] file.
+1. Crear un nuevo fichero 'NombreAplicacion.sh' tomando como base la plantilla [template-repository.sh][template-repository.sh].
+  Consideraciones:
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * Si el script es válido para todas las distros linux, debe ser colocado en la carpeta _./third-party-repo_.
+  * Si el script es válido sólo para distros Ubuntu, debe ser colocado en la carpeta _./third-party-repo/ubuntu_.
+  * Si el script es válido sólo para distros Debian, debe ser colocado en la carpeta _./third-party-repo/debian_.
+  * Si el script es válido sólo para distros Linux Mint, debe ser colocado en la carpeta _./third-party-repo/linuxmint_.
+  * Si el script es válido sólo para distros LMDE, debe ser colocado en la carpeta _./third-party-repo/lmde_.
+  * Los scripts ubicados en carpetas específicas de distribución tienen mayor prioridad frente a los scripts ubicados en la carpeta _./third-party-repo_.
 
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./third-party-repo_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./third-party-repo/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./third-party-repo/debian_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./third-party-repo_ folder.
-
-2. Add neccessary commands at the end of the file to add the repository  
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
-  * If commands need to use a key file, it should be placed in [keys][keys] folder.
+2. Añadir los comandos necesarios al final del fichero para agregar el repositorio.
+  Consideraciones:
+  * No es necesario usar 'sudo' ya que el subscript será ejecutado como usuario administrador.
+  * Se pueden usar las variables comunes suministradas por el script principal según sea necesario.
+  * Este script no debe ser interactivo, es decir, no enviar mensajes al monitor, no leer de teclado, no esperar confirmación.
+  * Si los comandos necesitan usar un fichero llave, debería ser ubicado en la carpeta [keys][keys].
 
 ---
 [Regresar al índice](#indice)
 
 #### 5.5 Añadir nuevo subscript para preparar la instalación de una aplicación
-To add a new subscript to prepare the installation of an application before the installation proccess begins just follow next steps:
+Para añadir un nuevo subscript que prepare una aplicación antes de que comience el proceso de instalación, siga los siguientes pasos:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file.
+1. Crear un nuevo fichero 'NombreAplicacion.sh' tomando como base la plantilla [template-pre-installation.sh][template-pre-installation.sh].
+  Consideraciones:
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * Si el script es válido para todas las distros linux, debe ser colocado en la carpeta _./third-party-repo_.
+  * Si el script es válido sólo para distros Ubuntu, debe ser colocado en la carpeta _./third-party-repo/ubuntu_.
+  * Si el script es válido sólo para distros Debian, debe ser colocado en la carpeta _./third-party-repo/debian_.
+  * Si el script es válido sólo para distros Linux Mint, debe ser colocado en la carpeta _./third-party-repo/linuxmint_.
+  * Si el script es válido sólo para distros LMDE, debe ser colocado en la carpeta _./third-party-repo/lmde_.
+  * Los scripts ubicados en carpetas específicas de distribución tienen mayor prioridad frente a los scripts ubicados en la carpeta _./third-party-repo_.
 
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./pre-installation_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./pre-installation/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./pre-installation/debian_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./pre-installation_ folder.
-
-2. Add neccessary commands at the end of the file to setup the application
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
+2. Añadir los comandos necesarios al final del fichero para configurar la aplicación
+  Consideraciones:
+  * No es necesario usar 'sudo' ya que el subscript será ejecutado como usuario administrador.
+  * Se pueden usar las variables comunes suministradas por el script principal según sea necesario.
+  * Este script no debe ser interactivo, es decir, no enviar mensajes al monitor, no leer de teclado, no esperar confirmación.
 
 ---
 [Regresar al índice](#indice)
 
 #### 5.6 Añadir nuevo subscript para instalar una aplicación externa a repositorios
-To add a new subscript to install a non-repository application just follow next steps:
+Para añadir un nuevo subscript para instalar una aplicación externa a repositorios, siga los siguientes pasos:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-non-repo-app.sh][template-non-repo-app.sh] file.
+1. Crear un nuevo fichero 'NombreAplicacion.sh' tomando como base la plantilla [template-non-repo-app.sh][template-non-repo-app.sh].
+  Consideraciones:
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * Si el script es válido para todas las distros linux, debe ser colocado en la carpeta _./third-party-repo_.
+  * Si el script es válido sólo para distros Ubuntu, debe ser colocado en la carpeta _./third-party-repo/ubuntu_.
+  * Si el script es válido sólo para distros Debian, debe ser colocado en la carpeta _./third-party-repo/debian_.
+  * Si el script es válido sólo para distros Linux Mint, debe ser colocado en la carpeta _./third-party-repo/linuxmint_.
+  * Si el script es válido sólo para distros LMDE, debe ser colocado en la carpeta _./third-party-repo/lmde_.
+  * Los scripts ubicados en carpetas específicas de distribución tienen mayor prioridad frente a los scripts ubicados en la carpeta _./third-party-repo_.
 
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./non-repository-apps_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./non-repository-apps/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./non-repository-apps/debian_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./non-repository-apps_ folder.
-
-2. Add neccessary commands at the end of the file to download and install the non-repository application
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
+2. Añadir los comandos necesarios al final del fichero para descargar e instalar la aplicación externa.
+  Consideraciones:
+  * No es necesario usar 'sudo' ya que el subscript será ejecutado como usuario administrador.
+  * Se pueden usar las variables comunes suministradas por el script principal según sea necesario.
+  * Este script no debe ser interactivo, es decir, no enviar mensajes al monitor, no leer de teclado, no esperar confirmación.
 
 ---
 [Regresar al índice](#indice)
 
 #### 5.7 Añadir nuevo subscript para configurar una aplicación
-To add a new subscript to setup an application after installation proccess just follow next steps:
+Para añadir un nuevo subscript que configure una aplicación después del proceso de instalación, siga los siguientes pasos:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-post-installation.sh][template-post-installation.sh] file.
+1. Crear un nuevo fichero 'NombreAplicacion.sh' tomando como base la plantilla [template-post-installation.sh][template-post-installation.sh].
+  Consideraciones:
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * Si el script es válido para todas las distros linux, debe ser colocado en la carpeta _./third-party-repo_.
+  * Si el script es válido sólo para distros Ubuntu, debe ser colocado en la carpeta _./third-party-repo/ubuntu_.
+  * Si el script es válido sólo para distros Debian, debe ser colocado en la carpeta _./third-party-repo/debian_.
+  * Si el script es válido sólo para distros Linux Mint, debe ser colocado en la carpeta _./third-party-repo/linuxmint_.
+  * Si el script es válido sólo para distros LMDE, debe ser colocado en la carpeta _./third-party-repo/lmde_.
+  * Los scripts ubicados en carpetas específicas de distribución tienen mayor prioridad frente a los scripts ubicados en la carpeta _./third-party-repo_.
 
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./post-installation_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./post-installation/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./post-installation/debian_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./post-installation_ folder.
-
-2. Add neccessary commands at the end of the file to setup the application
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
+2. Añadir comandos necesarios al final del fichero para configurar la aplicación
+  Consideraciones:
+  * No es necesario usar 'sudo' ya que el subscript será ejecutado como usuario administrador.
+  * Se pueden usar las variables comunes suministradas por el script principal según sea necesario.
+  * Este script no debe ser interactivo, es decir, no enviar mensajes al monitor, no leer de teclado, no esperar confirmación.
 
 ---
 [Regresar al índice](#indice)
 
 #### 5.8 Añadir nuevo subscript para configurar el soporte EULA
-To add a new subscript to setup EULA support for a package just follow next steps:
+Para añadir un nuevo subscript que configure el soporte EULA para un paquete, siga los siguientes pasos:
 
-1. Create a new file './eula/packageName' taking, as base, next commands from [template-eula][template-eula] file.
+1. Crear un nuevo fichero './eula/nombrePaquete' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
   ```bash
   ##########################################################################
-  # This file contains debconf's parameters to avoid interactive
-  # installation of the package to confirm EULA.
+  # Este fichero contiene parámetros del comando debconf para evitar la
+  # instalación interactiva del paquete para confirmar EULA.
   #
-  # Format: <package> <module>/<parameter> <command> <value>.
-  # See man debconf or debconf-set-selections for more information.
+  # Formato: <paquete> <módulo>/<parámetro> <comando> <valor>.
+  # Vea "man debconf" o "man debconf-set-selections" para más información.
   ##########################################################################
 
   # ...
   ```
-  Considerations:
-  * The filename must be identically (case-sensitive) to the related application package defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+  Consideraciones:
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) al paquete asociado a la aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
 
-2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
+2. Añadir parámetros al final del fichero con la sintaxis indicada en la plantilla para evitar las preguntas EULA durante el proceso de instalación.
 
 ---
 [Regresar al índice](#indice)
 
 ### 6. Añadir nuevo fichero de traducción
-To add a new translation file for a specific language just follow next steps:
+Para añadir un nuevo fichero de traducción a otro idioma, siga los siguientes pasos:
 
-1. Create a new file "./languages/xx.properties" with the content of an existing translation file, for example, [en.properties][en.properties]
-  Considerations:
-  * 'xx' must consist of two lowercase characters based on [ISO639-1 code][ISO639] for the specific language.
+1. Crear un nuevo fichero './languages/xx.properties' con el contenido de un fichero de traducción existente, por ejemplo, [en.properties][en.properties]
+  Consideraciones:
+  * 'xx' debe ser dos caracteres minúsculas basado en [ISO639-1 code][ISO639] para el idioma concreto.
 
-2. Translate values of all variables to the specific language.  
-  Considerations:
-  * The variable names must not be changed at all.
+2. Traducir los valores de todas las variables al idioma concreto.
+  Consideraciones:
+  * Los nombres de variables no deben ser cambiados bajo ninguna circunstancia.
 
 ---
 [Regresar al índice](#indice)
 
 ### Notas del autor
-Any contribution to this project would be appreciated.  
-I hope you find it useful.
+Se apreciaría cualquier contribución a este proyecto.
+Espero que lo encontréis útil.
 
 <!-- Referencias -->
 [commonFunctions.sh]:./common/commonFunctions.sh
