@@ -223,7 +223,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 [Regresar al índice](#indice)
 
 #### 5.2 Añadir nueva aplicación a una categoría. Modificar o borrar una existente
-To add an application to be installed follow next steps:
+Para añadir una aplicación a ser instalada, siga los siguientes pasos:
 
 1. Editar fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde] y añadir una nueva línea con la siguiente sintaxis:
 
@@ -252,9 +252,9 @@ To add an application to be installed follow next steps:
   ApplicationNameDescription=Aquí va la descripción de la aplicación tal y como se verá en el menú principal
 
   Consideraciones:
-  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser identica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de categoría.
+  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de categoría.
   * Para que sea intuitivo, NombreCategoriaDescription debe ser definido en la sección 'CATEGORIAS' de este fichero.
-  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser identica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de aplicación.
+  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de aplicación.
   * Para que sea intuitivo, NombreAplicacionDescription debe ser definido en la sección 'APLICACIONES' de este fichero.
   * Es recomendado, pero no obligatorio, añadir estas descripciones a otros ficheros de traducción.  
   * Puede crear un nuevo fichero de traducción en tu idioma nativo para facilitar la comprensión. Vea el capítulo [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción) para más información.
@@ -414,7 +414,7 @@ Para añadir un nuevo fichero de traducción a otro idioma, siga los siguientes 
 [Regresar al índice](#indice)
 
 ### Notas del autor
-Se apreciaría cualquier contribución a este proyecto.
+Sería apreciada cualquier contribución a este proyecto.  
 Espero que lo encontréis útil.
 
 <!-- Referencias -->
