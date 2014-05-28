@@ -3,8 +3,8 @@
 # This script contains common functions used by installation scripts.
 #
 # Author: César Rodríguez González
-# Version: 1.2
-# Last modified date (dd/mm/yyyy): 25/05/2014
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 28/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -50,7 +50,7 @@
 ##########################################################################
 function initCommonVariables
 {
-	linuxAppInstallerTitle="Linux app installer v1.2 (Ubuntu-Debian-Mint)"
+	linuxAppInstallerTitle="Linux app installer v1.3 (Ubuntu-Debian-Mint-LMDE)"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	if [ "$distro" == "linuxmint" ]; then
 		local codename="`lsb_release -c | awk '{print $2}'`"
@@ -60,16 +60,12 @@ function initCommonVariables
 	fi
 
 	username=`whoami`
+	homeFolder=`sudo -u $username -i eval 'echo $HOME'`
 	if [ "$1" != "" ]; then
 		scriptRootFolder="${1}"
 	fi
 	if [ "$2" != "" ]; then
-		# $HOME variable not match to `whoami` if executed on desktop mode with root priviledges. So skipped to use $HOME
-		if [ "$username" == "root" ]; then
-			logsFolder="/root/logs"
-		else
-			logsFolder="/home/$username/logs"
-		fi
+		logsFolder="$homeFolder/logs"
 		logFile="$logsFolder/${2}"
 	fi
 	tempFolder="/tmp/linux-app-installer-`date +\"%D-%T\" | tr '/' '.'`"
@@ -87,8 +83,6 @@ function initCommonVariables
 	dialogHeight=$((`tput lines` - 6))
 	zenityWidth=770
 	zenityHeight=400
-	zenityFontFamily="Ubuntu"
-	zenityFontSize="18"
 
 	repoCommands=""
 	preInstallationCommands=""
@@ -213,7 +207,8 @@ function installNeededPackages
 		fi
 		if [ "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" == "" ]; then
 			echo "$needToInstallPackage $sudoPackage" > "$logFile"; echo "$needToInstallPackage $sudoPackage"
-			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" 2>>"$logFile"; zenity --error --text="$needToInstallPackage $sudoPackage" 2>>"$logFile"
+			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" 2>>"$logFile";
+			zenity --error --text="$needToInstallPackage $sudoPackage" --window-icon="$installerIconFolder/tux32.png" 2>>"$logFile"
 			exit 1
 		fi			
 		
@@ -521,10 +516,10 @@ function executeCommands
 			fi
 
 			( SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands" ) |
-			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate $autoclose --width=$zenityWidth
+			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate $autoclose --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
 			# Show notification and log
 			notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
-			zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight
+			zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 		fi
 	fi
 }

@@ -6,8 +6,8 @@
 # installation steps and posible errors.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 10/05/2014
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 28/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -18,7 +18,7 @@ logFile="linux-app-installer.log"
 
 prepareScript "$scriptRootFolder" "$logFile"
 if [ -n $DISPLAY ]; then
-	notify-send -i "$installerIconFolder/text-x-script.svg" "$linuxAppInstallerTitle" "$linuxAppInstallerComment\n$linuxAppInstallerAuthor"
+	notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$linuxAppInstallerComment\n$linuxAppInstallerAuthor"
 fi
 
 appsToInstall=$(menu)
