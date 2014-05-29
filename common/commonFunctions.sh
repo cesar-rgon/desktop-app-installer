@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 28/05/2014
+# Last modified date (dd/mm/yyyy): 29/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -45,7 +45,6 @@
 #	postInstallationCommands: commands to execute after installing an
 #				  application.
 #	debconfInterface: Interface used for Debconf (Dialog/Zenity).
-#	desktop: Current user session desktop .
 #       distro: Distribution name (ubuntu/debian)
 ##########################################################################
 function initCommonVariables
@@ -91,78 +90,16 @@ function initCommonVariables
 	postInstallationCommands=""
 	targetFolder=""
 
-	desktop=$(getDesktop)
 	# Set debconf interface
-	case "$desktop" in
-	"kde" )
-		debconfInterface="Kde";;
-	"none" )
-		debconfInterface="Dialog";;
-	* )
-		debconfInterface="Gnome"
-	esac
-}
-
-
-##########################################################################
-# This funtion detects current session desktop.
-#
-# Parameters: none
-# Return:
-#	desktop: Current session desktop
-##########################################################################
-function getDesktop
-{
-	local desktop
 	if [ -z $DISPLAY ]; then
-		desktop="none"
+		debconfInterface="Dialog"
 	else
-		case "${XDG_CURRENT_DESKTOP,,}" in
-		"gnome" )
-			if [ "$distro" == "lmde" ]; then
-				desktop="x-cinnamon"
-			else
-				desktop="gnome"
-			fi;;
-		"default.desktop" )
-			desktop="mate";;
-		"" )
-			if [ "$KDE_FULL_SESSION" == "true" ]; then
-				desktop="kde"
-			else
-				local dataDirs=$(echo "$XDG_DATA_DIRS" | grep -Eo 'ubuntu|xubuntu|lubuntu|xfce|kde|gnome|lxde|default.desktop' | sed -n 1p)
-				case "$dataDirs" in
-				"ubuntu" )
-					desktop="unity";;
-				"gnome" )
-					if [ "$distro" == "lmde" ]; then
-						desktop="x-cinnamon"
-					else
-						desktop="gnome"
-					fi;;				
-				"xubuntu" )
-					desktop="xfce";;
-				"lubuntu" )
-					desktop="lxde";;
-				"default.desktop" )
-					if [ -d "/usr/share/cinnamon" ]; then
-						desktop="x-cinnamon"
-					else
-						desktop="mate"
-					fi;;
-				"" )
-					desktop="mate";;
-				* ) 
-					# xfce, kde, lxde
-					desktop="$dataDirs"
-				esac								
-			fi;;
-		*)
-			# ubuntu (unity), xfce, lxde, x-cinnamon
-			desktop="${XDG_CURRENT_DESKTOP,,}"
-		esac
+		if [ "$KDE_FULL_SESSION" != "true" ]; then
+			debconfInterface="Gnome"
+		else
+			debconfInterface="Kde"
+		fi
 	fi
-	echo "$desktop"
 }
 
 
@@ -200,7 +137,7 @@ function installNeededPackages
 			sudo apt-get -y install dialog --fix-missing
 		fi
 	else
-		if [ "$desktop" != "kde" ]; then
+		if [ "$KDE_FULL_SESSION" != "true" ]; then
 			sudoHundler="gksudo"; sudoOption="-S"; sudoPackage="gksu"
 		else
 			sudoHundler="kdesudo"; sudoOption="-c"; sudoPackage="kdesudo"
@@ -220,21 +157,12 @@ function installNeededPackages
 			if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
 			neededPackages+="libnotify-bin"
 		fi
-		if [ "$distro" == "ubuntu" ]; then
-			case "$desktop" in
-			"gnome" )
-				# Gnome-shell needs to install unity-gtk2-module package to install perl modules used by Debconf
-				if [ "`dpkg -s unity-gtk2-module 2>&1 | grep "installed"`" == "" ]; then
-					if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
-					neededPackages+="unity-gtk2-module"
-				fi;;
-			"kde" )
-				# KDE needs to install Debconf dependencies.
-				if [ "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" == "" ]; then
-					if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
-					neededPackages+="libqtgui4-perl"
-				fi
-			esac
+		if [ "$distro" == "ubuntu" ] && [ "$KDE_FULL_SESSION" == "true" ]; then
+			# KDE needs to install Debconf dependencies.
+			if [ "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" == "" ]; then
+				if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
+				neededPackages+="libqtgui4-perl"
+			fi
 		fi
 		if [ "$neededPackages" != "" ]; then
 			`$sudoHundler $sudoOption "apt-get -y install $neededPackages" 1>/dev/null 2>>"$logFile"`
@@ -356,7 +284,7 @@ function prepareThirdPartyRepository
 		local appFile=$appName".sh"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -377,7 +305,7 @@ function preparePreInstallationCommands
 		local appFile=$appName".sh"
 		preInstallationCommands+="echo \"# $preparingInstallationOf $appName\"; echo \"$preparingInstallationOf $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$preparingInstallationOf $appName ..."
-		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -443,7 +371,7 @@ function prepareNonRepositoryApplication
 			nonRepoAppCommands+="clear;"
 		fi
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		nonRepoAppCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\";"
+		nonRepoAppCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\";"
 	fi
 }
 
@@ -464,7 +392,7 @@ function preparePostInstallationCommands
 		local appFile=$appName".sh"
 		postInstallationCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $desktop 2>>\"$logFile\" $dialogBox;"
+		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 

@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 28/05/2014
+# Last modified date (dd/mm/yyyy): 29/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -15,38 +15,14 @@ function menuAttributes
 		maxHeight=$((`tput lines` - 5))
 	else
 		width=900
+		baseHeight=180
+		rowHeight=28
 		maxHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
 		fontFamilyText="Sans"
 		fontSizeText="16"
-
-		case "$desktop" in
-		"unity" )
-			baseHeight=162
-			rowHeight=23;;
-		"gnome" )
-			baseHeight=177
-			rowHeight=27;;
-		"xfce" )
-			baseHeight=162
-			rowHeight=23;;
-		"lxde" )
-			baseHeight=174
-			rowHeight=23;;
-		"kde" )
-			baseHeight=162
-			rowHeight=24;;
-		"x-cinnamon" )
-			baseHeight=150
-			rowHeight=22;;
-		"mate" )
-			baseHeight=150
-			rowHeight=22;;
-		* )
-			baseHeight=177
-			rowHeight=27
-		esac
 	fi
 }
+
 
 function getHeight
 {
@@ -67,16 +43,16 @@ function getHeight
 }
 
 
+
 function selectAppsToInstall
 {
 	local appList="${1}"
 	local checklistText="${2}"
-	local height=$3
 	local selection=""
 	local command=""
 
 	if [ -z $DISPLAY ]; then
-		local appNumber=$4
+		local appNumber=$3
 		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
 		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$checklistText\" $height $width $appNumber $appList"`
 	else
@@ -134,7 +110,7 @@ function menu
 				appList+="off \"$appNameForMenu\" \"$appDescription\" \"$appObservation\" "		
 			fi
 		done
-		selectAppsToInstall "$appList" "$checklistText" $height $appNumber
+		selectAppsToInstall "$appList" "$checklistText" $appNumber
 		categoryNumber=$(($categoryNumber+1))
 	done
 

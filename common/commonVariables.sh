@@ -5,7 +5,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 27/05/2014
+# Last modified date (dd/mm/yyyy): 29/05/2014
 # Licence: MIT
 ##########################################################################
 
@@ -19,10 +19,6 @@ else
 	username=`whoami`
 fi
 homeFolder=`sudo -u $username -i eval 'echo $HOME'`
-if [ "$3" != "" ]; then
-	desktop="$3"
-fi
-
 homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 
 ########################################################################################################################
