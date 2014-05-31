@@ -45,34 +45,44 @@ function getHeight
 
 function selectCategoriesToBrowse
 {
+	declare firstTime="$1"
 	declare rows selection
 
 	if [ -z $DISPLAY ]; then
 		declare -i totalCategoriesNumber=${#categoryArray[@]}
 		# Order by category descriptions
-		rows=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k1)`
-		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$selectCatogories\" $height $width $totalCategoriesNumber $rows"`
+		[ "$firstTime" != "true" ] && rows="\"[$all]\" \"\" off" || rows="\"[$all]\" \"\" on"
+		rows+=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k1)`
+		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$$selectCatogories\n$noSelectCatogories\" $height $width $totalCategoriesNumber $rows"`
 	else
-		declare formattedText="<span font='$fontFamilyText $fontSizeText'>$selectCatogories</span>"
+		declare formattedText="<span font='$fontFamilyText 11'>$selectCatogories\n$noSelectCategories</span>"
 		# Order by category descriptions
-		rows=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k3)`
-		selection=`eval "zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows --hide-column=2 --window-icon=\"$installerIconFolder/tux32.png\""`
+		rows="$firstTime \"[$all]\" \"[$all]\" \"\" "		
+		rows+=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k3)`
+		selection=`eval "zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=600 --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows --hide-column=2 --window-icon=\"$installerIconFolder/tux32.png\""`
 	fi
 	if [[ $? -ne 0 ]]; then
 		exit 0    # Exit the script
 	fi
 	if [ "$selection" != "" ]; then
-		if [ -z $DISPLAY ]; then
-			declare -a selectedCategoryDescriptions=(`echo "$selection" | tr '|' ' '`)
-			declare -i index=0
-			selectedCategories=()
-			# Get category name from category description
-			for categoryDescription in "${selectedCategoryDescriptions[@]}"; do
-				selectedCategories[$index]=${mapCategory[$categoryDescription]}
-				index=$(($index+1))
-			done
+		declare -a selectionArray
+		IFS='|' read -a selectionArray <<< `echo $selection`
+
+		if [ "${selectionArray[0]}" == "[$all]" ]; then
+			selectedCategories=( "${categoryArray[@]}" )
 		else
-			selectedCategories=(`echo "$selection" | tr '|' ' '`)
+			if [ -z $DISPLAY ]; then
+				declare -a selectedCategoryDescriptions=(`echo "$selection" | tr '|' ' '`)
+				declare -i index=0
+				selectedCategories=()
+				# Get category name from category description
+				for categoryDescription in "${selectedCategoryDescriptions[@]}"; do
+					selectedCategories[$index]=${mapCategory[$categoryDescription]}
+					index=$(($index+1))
+				done
+			else
+				selectedCategories=(`echo "$selection" | tr '|' ' '`)
+			fi
 		fi
 	else
 		selectedCategories=()
@@ -103,6 +113,7 @@ function selectAppsToInstallByCategory
 	fi
 }
 
+
 function menu
 {
 	declare -A mapCategory		# Associatie map wich gets category name from category description
@@ -111,7 +122,7 @@ function menu
 	declare -a categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | awk '!x[$0]++'`)  # Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
   	declare -a selectedCategories appNameArray selectedApps sortedCategoryDescriptions
 	declare -i totalCategoriesNumber=${#categoryArray[@]} categoryNumber=1 appsNumber=0 totalSelectedCategories index
-	declare categoryName appName appDescription appRows checklistText appNameForMenu selectedApp enabled exitWhile="false"
+	declare categoryName appName appDescription appRows checklistText appNameForMenu selectedApp enabled exitWhile="false" firstTime="true"
 
 	menuAttributes
 	# Set category rows for Dialog/Zenity window
@@ -128,7 +139,8 @@ function menu
 	while [ "$exitWhile" == "false" ] ; do
 		getHeight $totalCategoriesNumber
 		categoryNumber=1
-		selectCategoriesToBrowse
+		selectCategoriesToBrowse $firstTime
+		firstTime="false"
 		if [ "`echo ${selectedCategories[@]}`" == "" ]; then
 			exitWhile="true"
 			break
@@ -181,7 +193,6 @@ function menu
 		for categoryName in "${!mapSelectedApps[@]}"; do
 			appsFormatted=`echo ${mapSelectedApps[$categoryName]}`
 			seledtedApps+="`echo ${appsFormatted//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
-			dialog --title "$mainMenuLabel" --backtitle "$backtitle" --stdout --msgbox "$seledtedApps" $height $width
 		done
 		echo "$seledtedApps"
 	else
