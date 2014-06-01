@@ -29,8 +29,8 @@ Menú de instalación de aplicaciones desde los repositorios por defecto, de ter
 ```
 Válido para:   Ubuntu v14.04, Debian 7, Linux Mint 17 y LMDE (para todos los escritorios y servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
-Versión:       1.2
-Último cambio: 25/05/2014 (dd/mm/yyyy)
+Versión:       1.3
+Último cambio: 01/06/2014 (dd/mm/yyyy)
 ```
 ##### HECHO
 > - [x] Añadida compatibilidad con Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)

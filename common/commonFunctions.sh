@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 29/05/2014
+# Last modified date (dd/mm/yyyy): 01/06/2014
 # Licence: MIT
 ##########################################################################
 
@@ -52,7 +52,7 @@ function initCommonVariables
 	linuxAppInstallerTitle="Linux app installer v1.3 (Ubuntu-Debian-Mint-LMDE)"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	if [ "$distro" == "linuxmint" ]; then
-		local codename="`lsb_release -c | awk '{print $2}'`"
+		declare codename="`lsb_release -c | awk '{print $2}'`"
 		if [ "$codename" == "debian" ]; then
 			distro="lmde"
 		fi
@@ -112,8 +112,8 @@ function initCommonVariables
 ##########################################################################
 function selectLanguage
 {
-	local ISO639_1=${LANG:0:2}
-	local LANGUAGE_FILE="$scriptRootFolder/languages/"$ISO639_1".properties"
+	declare ISO639_1=${LANG:0:2}
+	declare LANGUAGE_FILE="$scriptRootFolder/languages/"$ISO639_1".properties"
 
 	if [ -f "$LANGUAGE_FILE" ]; then
 		. $LANGUAGE_FILE
@@ -149,7 +149,7 @@ function installNeededPackages
 			exit 1
 		fi			
 		
-		local neededPackages=""
+		declare neededPackages
 		if [ "`dpkg -s zenity 2>&1 | grep "installed"`" == "" ]; then
 			neededPackages+="zenity"
 		fi
@@ -207,9 +207,7 @@ function prepareScript
 ##########################################################################
 function setDebconfFromFile
 {
-	local eulaFilename="$1"
-	local line=""
-	local lineWithoutSpaces=""
+	declare eulaFilename="$1" line lineWithoutSpaces
 	# Result of the function
 	debconfCommands=""	
 
@@ -253,8 +251,7 @@ function dialogBoxFunction
 function checkFolderThatContainsFile
 {
 	if [ "$1" != "" ] && [ "$2" != "" ]; then
-		local rootFolder="$1"
-		local appFile=$2".sh"
+		declare rootFolder="$1" appFile=$2".sh"
 
 		if [ -f "$rootFolder/$distro/$appFile" ]; then
 			targetFolder="$rootFolder/$distro"
@@ -280,8 +277,7 @@ function checkFolderThatContainsFile
 function prepareThirdPartyRepository
 {
 	if [ "$1" != "" ]; then
-		local appName="$1"
-		local appFile=$appName".sh"
+		declare appName="$1" appFile="$1.sh"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
 		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
@@ -301,8 +297,7 @@ function prepareThirdPartyRepository
 function preparePreInstallationCommands
 {
 	if [ "$1" != "" ]; then
-		local appName="$1"
-		local appFile=$appName".sh"
+		declare appName="$1" appFile="$1.sh"
 		preInstallationCommands+="echo \"# $preparingInstallationOf $appName\"; echo \"$preparingInstallationOf $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$preparingInstallationOf $appName ..."
 		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
@@ -321,10 +316,9 @@ function preparePreInstallationCommands
 function prepareRepositoryPackages
 {
 	if [ "$1" != "" ]; then
-		local packagesToInstall=($1)
-		local totalPackagesToInstall=${#packagesToInstall[@]}
-		local index=1
-		local package=""
+		declare -a packagesToInstall=($1)
+		declare -i totalPackagesToInstall=${#packagesToInstall[@]} index=1
+		declare package
 
 		for package in "${packagesToInstall[@]}"; do
 			# If package has EULA
@@ -365,8 +359,7 @@ function prepareRepositoryPackages
 function prepareNonRepositoryApplication
 {
 	if [ "$1" != "" ]; then
-		local appName="$1"
-		local appFile=$appName".sh"
+		declare appName="$1" appFile="$1.sh"
 		if [ -z $DISPLAY ]; then
 			nonRepoAppCommands+="clear;"
 		fi
@@ -388,8 +381,7 @@ function prepareNonRepositoryApplication
 function preparePostInstallationCommands
 {
 	if [ "$1" != "" ]; then
-		local appName="$1"
-		local appFile=$appName".sh"
+		declare appName="$1" appFile="$1.sh"
 		postInstallationCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
 		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
@@ -410,7 +402,7 @@ function executeCommands
 {
 	if [ "$repoCommands" != "" ] || [ "$preInstallationCommands" != "" ] || [ "$packageCommands" != "" ] || [ "$nonRepoAppCommands" != "" ] || [ "$postInstallationCommands" != "" ]; then
 		# Set default Debconf interface to use	
-		local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
+		declare commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingDebconfInterface"
 		commands+="echo debconf debconf/frontend select $debconfInterface | debconf-set-selections 2>>\"$logFile\" $dialogBox;"
 
@@ -426,7 +418,7 @@ function executeCommands
 		commands+="$packageCommands $nonRepoAppCommands $postInstallationCommands"
 
 		commands+="echo \"# $cleaningTempFiles\"; echo \"$cleaningTempFiles ...\" >> \"$logFile\";"
-		local cleanTempFilesCommands="apt-get -y autoremove 2>>\"$logFile\"; apt-get clean 2>>\"$logFile\"; rm -rf \"$tempFolder\";"
+		declare cleanTempFilesCommands="apt-get -y autoremove 2>>\"$logFile\"; apt-get clean 2>>\"$logFile\"; rm -rf \"$tempFolder\";"
 		dialogBoxFunction "$cleaningTempFiles ..."
 		commands+="bash -c \"$cleanTempFilesCommands\" $dialogBox;"
 
@@ -438,7 +430,7 @@ function executeCommands
 			# Show log
 			dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
 		else
-			local autoclose=""
+			declare autoclose
 			if [ "$nonRepoAppCommands" == "" ]; then
 				autoclose="--auto-close"
 			fi
@@ -466,9 +458,8 @@ function executeCommands
 function installAndSetupApplications
 {
 	if [ "$1" != "" ]; then
-		local appsToInstall=(${1})
-		local appName=""
-		local packagesToInstall=""
+		declare -a appsToInstall=(${1})
+		declare appName packagesToInstall
 
 		for appName in "${appsToInstall[@]}"; do
 			# Check if exists subscript to add third-party repository

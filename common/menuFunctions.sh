@@ -4,10 +4,23 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 31/05/2014
+# Last modified date (dd/mm/yyyy): 01/06/2014
 # Licence: MIT
 ##########################################################################
 
+##########################################################################
+# This function sets attributes used by other menu functions.
+#
+# Parameters: none 
+# Return:
+#	width: width of Dialog/Zenity boxes
+#	maxHeight: maximun height allowed for Dialog/Zenity boxes
+#	baseHeight: minimun height allowed for Zenity boxes
+#	rowHeight: height by element of the list for Zenity boxes
+#	fontFamilyText: Font family used in main text for Zenity boxes
+#	fontSizeCategory: Font size used in text for Zenity's category box
+#	fontSizeApps: Font size used in text for Zenity's apps boxes
+##########################################################################
 function menuAttributes
 {
 	if [ -z $DISPLAY ]; then
@@ -19,17 +32,18 @@ function menuAttributes
 		rowHeight=28
 		maxHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
 		fontFamilyText="Sans"
-		fontSizeText="16"
+		fontSizeCategory="11"
+		fontSizeApps="16"
 	fi
 }
 
 ##########################################################################
-# description
+# This function get the height of a Dialog/Zenity box.
 #
 # Parameters: 
-#	rowsNumber:
+#	rowsNumber: Number of rows (elements) of the list
 # Return:
-#	height:
+#	height: Height of Dialog/Zenity box
 ##########################################################################
 function getHeight
 {
@@ -50,12 +64,15 @@ function getHeight
 }
 
 ##########################################################################
-# description
+# This function gets values for category rows used by Dialog/Zenity
+# category window.
 #
 # Parameters: none
 # Return:
-#	mapCategoryRows:
-#	mapCategory:
+#	mapCategoryRows: gets values of category rows associated to a
+#			 category name
+#	mapCategory: gets category name associated to a category
+#		     description
 ##########################################################################
 function getCategoryRows
 {
@@ -73,12 +90,13 @@ function getCategoryRows
 }
 
 ##########################################################################
-# description
+# This function shows a Dialog/Zenity box to let the user selects
+# categories to browse.
 #
 # Parameters: 
-#	firstTime:
+#	firstTime: "true" if it's the first time you access this window
 # Return:
-#	selectedCategories:
+#	selectedCategories: selected categories to browse them.
 ##########################################################################
 function selectCategoriesToBrowse
 {
@@ -92,7 +110,7 @@ function selectCategoriesToBrowse
 		rows+=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k1)`
 		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$$selectCatogories\n$noSelectCatogories\" $height $width $totalCategoriesNumber $rows"`
 	else
-		declare formattedText="<span font='$fontFamilyText 11'>$selectCatogories\n$noSelectCategories</span>"
+		declare formattedText="<span font='$fontFamilyText $fontSizeCategory'>$selectCatogories\n$noSelectCategories</span>"
 		# Order by category descriptions
 		rows="$firstTime \"[$all]\" \"[$all]\" \"\" "		
 		rows+=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k3)`
@@ -127,11 +145,12 @@ function selectCategoriesToBrowse
 }
 
 ##########################################################################
-# description
+# This function gets the number of rows needed by a Dialog/Zenity
+# application box. 
 #
 # Parameters: none
 # Return:
-#	appRows:
+#	appRows: number of rows (elements of the list)
 ##########################################################################
 function getApplicationRows
 {
@@ -167,10 +186,15 @@ function getApplicationRows
 }
 
 ##########################################################################
-# description
+# This function shows a Dialog/Zenity box to let the user selects
+# applications to install from a category.
 #
 # Parameters: 
+#	categoryName: applications must belong to this category
+#	checklistText: main text showed at the top of the box
+#	appsNumber: number of applications in the list
 # Return:
+#	mapSelectedApps: gets selected apps from a specific category
 ##########################################################################
 function selectAppsToInstallByCategory
 {
@@ -182,7 +206,7 @@ function selectAppsToInstallByCategory
 		declare backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
 		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$checklistText\" $height $width $appsNumber $appRows"`
 	else
-		declare formattedText="<span font='$fontFamilyText $fontSizeText'>$checklistText</span>"
+		declare formattedText="<span font='$fontFamilyText $fontSizeApps'>$checklistText</span>"
 		selection=`eval "zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $appRows --window-icon=\"$installerIconFolder/tux32.png\""`
 	fi
 	if [[ $? -eq 0 ]]; then
@@ -205,11 +229,12 @@ function selectAppsToInstallByCategory
 }
 
 ##########################################################################
-# description
+# This function calls other functions to show category box and all others
+# application boxes to let the user selects applications to install. 
 #
 # Parameters: none
 # Return:
-#	seledtedApps:
+#	seledtedApps: selected applications to be installed
 ##########################################################################
 function menu
 {

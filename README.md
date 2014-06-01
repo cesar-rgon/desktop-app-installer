@@ -29,8 +29,8 @@ Menu to install applications from default repositories, third-party ones or exte
 ```
 Valid for:   Ubuntu v14.04, Debian 7, Linux Mint 17 and LMDE (for all desktops o server).
              With some changes in config files, it can be 100% compatible with previous versions.
-Version:     1.2
-Last change: 25/05/2014 (dd/mm/yyyy)
+Version:     1.3
+Last change: 01/06/2014 (dd/mm/yyyy)
 ```
 ##### DONE
 > - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
