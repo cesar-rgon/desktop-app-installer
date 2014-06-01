@@ -20,21 +20,35 @@
 # Category    Application-Name            Application-packages                                                          #
 #########################################################################################################################
 
-base          Clementine                  clementine
-base          Evince                      evince
-base          Eye_of_Gnome                eog
-base          Firefox                     firefox
-base          Flash_plugin                flashplugin-installer
-base          Libreoffice                 libreoffice
-base          Microsoft_Fonts             ttf-mscorefonts-installer
-base          OpenJRE                     openjdk-7-jre
-base          Pidgin                      pidgin pidgin-extprefs
-base          System_monitor              gnome-system-monitor
-base          Videolan                    vlc
+base              Clementine                clementine
+base              Evince                    evince
+base              Eye_of_Gnome              eog
+base              Firefox                   firefox
+base              Flash_plugin              flashplugin-installer
+base              Libreoffice               libreoffice
+base              Microsoft_Fonts           ttf-mscorefonts-installer
+base              Pidgin                    pidgin pidgin-extprefs
+base              System_monitor            gnome-system-monitor
+base              Videolan                  vlc
 
-development   Bluefish                    bluefish
-development   Geany                       geany
-development   OpenJDK                     openjdk-7-jdk
+developer_tools   Bluefish                  bluefish
+developer_tools   Eclipse                   eclipse
+developer_tools   Emacs                     emacs
+developer_tools   Geany                     geany
+developer_tools   Git                       git
+developer_tools   Git_Cola                  git-cola
+developer_tools   Meld                      meld
+developer_tools   MySQL_workbench           mysql-workbench
+developer_tools   NetBeans                  netbeans
+developer_tools   Openjdk_7_development     openjdk-7-jdk
+developer_tools   Pgadmin_iii               pgadmin3
+developer_tools   Qt_creator                qtcreator
+developer_tools   SQLite_database_browser   sqlitebrowser
+
+education         GoldenDict                goldenDict
+education         Klavaro                   klavaro
+education         Ktouch                    ktouch
+education         Marble                    marble-qt
 
 downloads     aMule_application           amule
 downloads     aMule_client                amule-utils-gui
@@ -50,7 +64,13 @@ downloads     Transmission_client         transmission-remote-gtk
 downloads     Transmission_server         transmission-daemon
 downloads     uTorrent_server
 
+games         Battle_for_Wesnoth          wesnoth
+games         Frogatto                    Frogatto
+games         Gbrainy                     gbrainy
+games         Pingus                      pingus
 games         Steam
+games         Supertux                    supertux-stable
+games         Supertuxkart                supertuxkart
 
 internet      Chrome
 internet      Chromium                    chromium-browser
@@ -59,6 +79,7 @@ internet      Evolution                   evolution
 internet      Filezilla                   filezilla
 internet      Google_earth
 internet      Midori                      midori
+internet      Openjdk_7_Runtime           openjdk-7-jre
 internet      Remmina                     remmina
 internet      Skype
 internet      Teamviewer_full
@@ -82,6 +103,12 @@ office        Klavaro                     klavaro
 office        Mcomix                      mcomix
 office        Tomboy                      tomboy
 
+science_and_engineering   Celestia        celestia-gnome
+science_and_engineering   Geogebra        geogebra
+science_and_engineering   Stellarium      stellarium
+science_and_engineering   gElemental      gelemental
+science_and_engineering   Kalzium         kalzium
+
 system        Bleachbit                   bleachbit
 system        Compiz                      compiz compizconfig-settings-manager fusion-icon
 system        Gdebi                       gdebi
@@ -102,7 +129,6 @@ themes        Faenza
 
 utilities     Byobu                       byobu
 utilities     Compressors                 p7zip-full rar unrar
-utilities     Emacs                       emacs
 utilities     Gedit                       gedit
 utilities     Guake_terminal              guake
 utilities     Keepassx                    keepassx
