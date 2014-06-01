@@ -32,7 +32,7 @@ function menuAttributes
 		rowHeight=28
 		maxHeight=$((`xdpyinfo | grep dimensions | awk '{print $2}' | awk -F "x" '{print $2}'` - 100))
 		fontFamilyText="Sans"
-		fontSizeCategory="11"
+		fontSizeCategory="12"
 		fontSizeApps="16"
 	fi
 }
@@ -104,17 +104,29 @@ function selectCategoriesToBrowse
 	declare rows selection
 
 	if [ -z $DISPLAY ]; then
-		declare -i totalCategoriesNumber=${#categoryArray[@]}
+		declare -i totalCategoriesNumber=$((${#categoryArray[@]}+1))
+		declare backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
 		# Order by category descriptions
-		[ "$firstTime" != "true" ] && rows="\"[$all]\" \"\" off" || rows="\"[$all]\" \"\" on"
+		[ "$firstTime" != "true" ] && rows="\"[$all]\" \"\" off " || rows="\"[$all]\" \"\" on "
 		rows+=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k1)`
-		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$$selectCatogories\n$noSelectCatogories\" $height $width $totalCategoriesNumber $rows"`
+		selection=`eval "dialog --title \"$mainMenuLabel\" --backtitle \"$backtitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$selectCategories\n$noSelectCategories\" $height $width $totalCategoriesNumber $rows"`
 	else
-		declare formattedText="<span font='$fontFamilyText $fontSizeCategory'>$selectCatogories\n$noSelectCategories</span>"
+		declare hideColumns="--hide-column=2" text
+		declare -i zenityWidth=0
+		if [ "`echo ${mapSelectedApps[@]}`" != "" ]; then
+			text="$selectCategories\n$noSelectCategories"
+			hideColumns="--hide-column=2"			
+			zenityWidth=$width
+		else
+			hideColumns="--hide-column=2,4"
+			text="$selectCategories"
+			zenityWidth=0
+		fi
+		declare formattedText="<span font='$fontFamilyText $fontSizeCategory'>$text</span>"
 		# Order by category descriptions
-		rows="$firstTime \"[$all]\" \"[$all]\" \"\" "		
+		rows="$firstTime \"[$all]\" \"[$all]\" \"\" "
 		rows+=`echo $(for categoryName in "${!mapCategoryRows[@]}"; do echo ${mapCategoryRows[$categoryName]}; done | sort -k3)`
-		selection=`eval "zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows --hide-column=2 --window-icon=\"$installerIconFolder/tux32.png\""`
+		selection=`eval "zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$zenityWidth --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows $hideColumns --window-icon=\"$installerIconFolder/tux32.png\""`
 	fi
 	if [[ $? -ne 0 ]]; then
 		exit 0    # Exit the script
@@ -243,7 +255,7 @@ function menu
 	declare -A mapCategoryRows	# Associate map wich gets category rows used by dialog and zenity
 	declare -a categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | awk '!x[$0]++'`)  # Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
   	declare -a selectedCategories appNameArray
-	declare -i totalCategoriesNumber=${#categoryArray[@]} categoryNumber appsNumber totalSelectedCategories
+	declare -i totalCategoriesNumber=$((${#categoryArray[@]}+1)) categoryNumber appsNumber totalSelectedCategories
 	declare categoryName categoryDescription checklistText exitWhile="false" firstTime="true"
 
 	menuAttributes
@@ -275,7 +287,7 @@ function menu
 			if [ -z $DISPLAY ]; then
 				mapCategoryRows[$categoryName]="\"$categoryDescription\" \"`echo ${mapSelectedApps[$categoryName]}`\" off"
 			else
-				mapCategoryRows[$categoryName]="false \"$categoryName\" \"$categoryDescription\" \"`echo ${mapSelectedApps[$categoryName]}`\" "		
+				mapCategoryRows[$categoryName]="false \"$categoryName\" \"$categoryDescription\" \"`echo ${mapSelectedApps[$categoryName]}`\""		
 			fi
 		done
 	done

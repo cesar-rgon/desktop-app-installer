@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 28/05/2014                                                                           #
+# Last modified date (dd/mm/yyyy): 01/06/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -21,22 +21,16 @@
 #########################################################################################################################
 
 base          Clementine                  clementine
-base          Compressors                 p7zip-full rar unrar
 base          Evince                      evince
 base          Eye_of_Gnome                eog
 base          Firefox                     firefox
 base          Flash_plugin                flashplugin-installer
-base          Gedit                       gedit
 base          Libreoffice                 libreoffice
 base          Microsoft_Fonts             ttf-mscorefonts-installer
 base          OpenJRE                     openjdk-7-jre
 base          Pidgin                      pidgin pidgin-extprefs
 base          System_monitor              gnome-system-monitor
 base          Videolan                    vlc
-
-accesories    Gmount_iso                  gmountiso
-accesories    Py_par2                     pypar2
-accesories    Usb_creator                 usb-creator-gtk
 
 development   Bluefish                    bluefish
 development   Geany                       geany
@@ -91,17 +85,33 @@ office        Tomboy                      tomboy
 system        Bleachbit                   bleachbit
 system        Compiz                      compiz compizconfig-settings-manager fusion-icon
 system        Gdebi                       gdebi
+system        Gmount_iso                  gmountiso
 system        Gparted                     gparted
 system        Grub_customizer
 system        Hardinfo                    hardinfo
 system        Htop                        htop
 system        Log_viewer                  gnome-system-log
 system        Lxtask                      lxtask
-system        Luckybackup                 luckybackup
 system        Schedule                    gnome-schedule
+system        Startup_disk_creator_Gtk    usb-creator-gtk
+system        Startup_disk_creator_Kde    usb-creator-kde
 system        Synaptic                    synaptic software-properties-gtk
-system        Virtualbox                  virtualbox-qt
 system        Wine                        wine
 
 themes        Faenza
+
+utilities     Byobu                       byobu
+utilities     Compressors                 p7zip-full rar unrar
+utilities     Emacs                       emacs
+utilities     Gedit                       gedit
+utilities     Guake_terminal              guake
+utilities     Keepassx                    keepassx
+utilities     Luckybackup                 luckybackup
+utilities     Midnight_commander          mc
+utilities     Py_par2                     pypar2
+utilities     Pyrenamer                   pyrenamer
+utilities     Speedcrunch                 speedcrunch
+utilities     Vim                         vim
+utilities     Virtualbox                  virtualbox-qt
+utilities     Yakuake                     yakuake
 
