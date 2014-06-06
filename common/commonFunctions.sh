@@ -49,7 +49,7 @@
 ##########################################################################
 function initCommonVariables
 {
-	linuxAppInstallerTitle="Linux app installer v1.3 (Ubuntu-Debian-Mint-LMDE)"
+	linuxAppInstallerTitle="Linux app installer v1.3"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	if [ "$distro" == "linuxmint" ]; then
 		declare codename="`lsb_release -c | awk '{print $2}'`"
@@ -435,7 +435,7 @@ function executeCommands
 				autoclose="--auto-close"
 			fi
 
-			( SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands" ) |
+			( SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands" ) | 
 			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate $autoclose --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
 			# Show notification and log
 			notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
