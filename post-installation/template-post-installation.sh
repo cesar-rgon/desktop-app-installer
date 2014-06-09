@@ -12,6 +12,7 @@ fi
 # Common variables supplied by main script:    #
 #                                              #
 # username: system username                    #
+# tempFolder: main script temporal folder      #
 # homeFolder: user's home folder               #
 # scriptRootFolder: root folder of main script #
 # homeDownloadFolder: user's download folder   #

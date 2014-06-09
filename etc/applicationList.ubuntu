@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 06/06/2014                                                                           #
+# Last modified date (dd/mm/yyyy): 09/06/2014                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -17,7 +17,7 @@
 #                                                                                                                       #
 # Lines begining with comment character "#" or blank ones are ignored                                                   #
 #########################################################################################################################
-# Category            Application-Name               Application-packages                                                          #
+# Category            Application-Name               Application-packages                                               #
 #########################################################################################################################
 
 developer_tools       Bluefish                       bluefish
@@ -33,7 +33,9 @@ developer_tools       Openjdk_7_development          openjdk-7-jdk
 developer_tools       Pgadmin_iii                    pgadmin3
 developer_tools       Qt_creator                     qtcreator
 developer_tools       SQLite_database_browser        sqlitebrowser
+developer_tools       Sublime_text
 
+education             Draftsight
 education             Goldendict                     goldenDict
 education             Klavaro                        klavaro
 education             Ktouch                         ktouch
@@ -48,6 +50,7 @@ games                 Pingus                         pingus
 games                 Steam
 games                 Supertux                       supertux-stable
 games                 Supertuxkart                   supertuxkart
+games                 Xonotic
 
 graphics              Blender                        blender
 graphics              Gimp                           gimp
@@ -58,6 +61,7 @@ graphics              Mcomix                         mcomix
 graphics              Pinta                          pinta
 graphics              Scribus                        scribus
 graphics              Shutter                        shutter
+graphics              Xnconvert
 
 internet              aMule_application              amule
 internet              aMule_client                   amule-utils-gui

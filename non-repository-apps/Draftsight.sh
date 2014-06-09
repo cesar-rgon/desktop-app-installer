@@ -1,13 +1,12 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Faenza icon theme.
+# This script installs Draftsight application.
 #
-# Author: César Rodríguez González
-# Version: 1.11
-# Last modified date (dd/mm/yyyy): 18/05/2014
+# Author: Isidro Rodríguez González & César Rodríguez González
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 08/06/2014
 # Licence: MIT
 ##########################################################################
-
 # Get common variables and check if the script is being running by a root or sudoer user
 if [ "$1" != "" ]; then
 	scriptRootFolder="$1"
@@ -17,8 +16,7 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-faenzaFile="faenza-icon-theme_1.3.1_all.deb"
-faenzaURL="https://launchpad.net/~tiheum/+archive/equinox/+files/$faenzaFile"
-wget -P /var/cache/apt/archives $faenzaURL 2>&1
-dpkg -i /var/cache/apt/archives/$faenzaFile
+draftSightFile="draftSight.deb"
+wget -P /var/cache/apt/archives http://www.draftsight.com/download-linux-ubuntu 2>&1
+dpkg -i /var/cache/apt/archives/$draftSightFile
 apt-get -y install -f

@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 01/06/2014
+# Last modified date (dd/mm/yyyy): 09/06/2014
 # Licence: MIT
 ##########################################################################
 
@@ -280,7 +280,7 @@ function prepareThirdPartyRepository
 		declare appName="$1" appFile="$1.sh"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
+		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -300,7 +300,7 @@ function preparePreInstallationCommands
 		declare appName="$1" appFile="$1.sh"
 		preInstallationCommands+="echo \"# $preparingInstallationOf $appName\"; echo \"$preparingInstallationOf $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$preparingInstallationOf $appName ..."
-		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
+		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
@@ -364,7 +364,7 @@ function prepareNonRepositoryApplication
 			nonRepoAppCommands+="clear;"
 		fi
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		nonRepoAppCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\";"
+		nonRepoAppCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\";"
 	fi
 }
 
@@ -384,7 +384,7 @@ function preparePostInstallationCommands
 		declare appName="$1" appFile="$1.sh"
 		postInstallationCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username 2>>\"$logFile\" $dialogBox;"
+		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
 	fi
 }
 
