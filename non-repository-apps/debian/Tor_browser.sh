@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 09/06/2014
+# Last modified date (dd/mm/yyyy): 14/06/2014
 # Licence: MIT
 ##########################################################################
 # Get common variables and check if the script is being running by a root or sudoer user
@@ -66,11 +66,9 @@ else
 fi
 torBrowserURL="https://www.torproject.org/dist/torbrowser/$version/$torBrowserFile"
 # Download Tor browser
-wget -P /var/cache/apt/archives $torBrowserURL 2>&1
-# Install application
-dpkg -i /var/cache/apt/archives/$torBrowserURL
-apt-get -y install -f
+wget -O $tempFolder/$torBrowserFile $torBrowserURL 2>&1
 
-# add-apt-repository -y ppa:webupd8team/tor-browser
-# apt-get update
-# apt-get -y install tor-browser
+# Install application
+tar -C $tempFolder -xvf $tempFolder/$torBrowserFile
+bash $tempFolder/tor-browser_$region/start-tor-browser
+
