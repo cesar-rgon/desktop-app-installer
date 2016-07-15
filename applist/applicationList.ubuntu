@@ -41,7 +41,7 @@ education             Klavaro                        klavaro
 education             Ktouch                         ktouch
 education             Marble                         marble-qt
 
-fonts                 Microsoft_Fonts                ttf-mscorefonts-installer
+fonts                 Microsoft_Fonts                 ttf-mscorefonts-installer
 
 games                 Battle_for_Wesnoth             wesnoth
 games                 Frogatto                       frogatto
@@ -73,7 +73,7 @@ internet              Deluge_server                  deluged deluge-webui
 internet              Dropbox                        nautilus-dropbox
 internet              Filezilla                      filezilla
 internet              Firefox                        firefox
-internet              Google_earth                   google-earth-stable
+internet              Google_earth                   googleearth-package
 internet              jDownloader                    jdownloader-installer
 internet              jDownloader2_beta
 internet              Kget                           kget

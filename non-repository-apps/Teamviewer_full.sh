@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.11
-# Last modified date (dd/mm/yyyy): 18/05/2014
+# Last modified date (dd/mm/yyyy): 15/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -19,7 +19,7 @@ fi
 # Commands to download, extract and install a non-repository application.
 # Download Teamviewer full. Always 32 bits deb because 64 bits version has broken dependencies
 teamviewerFile="teamviewer_linux.deb"
-teamviewerURL="http://download.teamviewer.com/download/$teamviewerFile"
+teamviewerURL="http://download.teamviewer.com/download/teamviewer_i386.deb"
 wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
 dpkg -i /tmp/$teamviewerFile
 apt-get -y install -f

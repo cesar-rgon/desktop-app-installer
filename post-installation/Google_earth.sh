@@ -26,18 +26,10 @@ fi
 #	* Use auto-confirm for commands. Example: apt-get -y install <package>
 #	* etc.
 
-# Variables
-distroName="$(lsb_release -sc)"
-repositoryURL="..."
-repository="deb $repositoryURL <parameters>"
-repositorySource="deb-src $repositoryURL <parameters>"
-targetFilename="destinationFilename"
+# Commands to setup an installed application
+mkdir /tmp/google_earth_package
+cd /tmp/google_earth_package
+make-googleearth-package
+dpkg -i /tmp/google_earth_package/googleearth*.deb
 
-# Commands to add third-party repository of the application.
-if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
-	# Command to add repository key if needed
-	# ...
-	echo "$repository" >> "/etc/apt/sources.list.d/$targetFilename"
-	# Uncomment if needed [optional]
-	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$targetFilename"
-fi
+

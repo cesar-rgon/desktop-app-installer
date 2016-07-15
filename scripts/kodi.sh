@@ -6,14 +6,14 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 15/07/2016
 # Licence: MIT
 ##########################################################################
 
 scriptRootFolder=`pwd`/..
 . $scriptRootFolder/common/commonFunctions.sh
-appName="uTorrent_server"
-logFile="utorrent-server.log"
+appName="Kodi"
+logFile="kodi.log"
 
 prepareScript "$scriptRootFolder" "$logFile"
 installAndSetupApplications $appName

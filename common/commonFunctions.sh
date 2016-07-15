@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 09/06/2014
+# Last modified date (dd/mm/yyyy): 15/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -75,7 +75,7 @@ function initCommonVariables
 	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
 	installerIconFolder="$scriptRootFolder/icons/installer"
 
-	appListFile="$scriptRootFolder/etc/applicationList.$distro"
+	appListFile="$scriptRootFolder/applist/applicationList.$distro"
 	askpass="$tempFolder/askpass.sh"
 	
 	dialogWidth=$((`tput cols` - 4))

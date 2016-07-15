@@ -5,7 +5,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 12/05/2014
+# Last modified date (dd/mm/yyyy): 15/07/2016
 # Licence: MIT
 ##########################################################################
 if [ "$1" != "" ]; then
@@ -15,4 +15,14 @@ else
 fi
 . $scriptRootFolder/common/commonVariables.sh
 
-add-apt-repository -y ppa:jd-team/jdownloader 2>&1
+# Variables
+distroName="$(lsb_release -sc)"
+repositoryURL="http://ppa.launchpad.net/jd-team/jdownloader/ubuntu"
+#repository="deb $repositoryURL $distroName main"
+#repositorySource="deb-src $repositoryURL $distroName main"
+targetFilename="*jdownloader*.list"
+
+# Commands to add third-party repository of the application.
+if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
+	add-apt-repository -y ppa:jd-team/jdownloader 2>&1
+fi

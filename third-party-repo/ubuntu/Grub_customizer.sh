@@ -5,8 +5,18 @@
 #
 # Author: César Rodríguez González
 # Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Last modified date (dd/mm/yyyy): 15/07/2016
 # Licence: MIT
 ##########################################################################
 
-add-apt-repository -y ppa:danielrichter2007/grub-customizer 2>&1
+# Variables
+distroName="$(lsb_release -sc)"
+repositoryURL="http://ppa.launchpad.net/danielrichter2007/grub-customizer/ubuntu"
+#repository="deb $repositoryURL $distroName main"
+#repositorySource="deb-src $repositoryURL $distroName main"
+targetFilename="*grub-customizer*.list"
+
+# Commands to add third-party repository of the application.
+if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
+	add-apt-repository -y ppa:danielrichter2007/grub-customizer 2>&1
+fi

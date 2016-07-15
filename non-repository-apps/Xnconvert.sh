@@ -4,7 +4,7 @@
 #
 # Author: Isidro Rodríguez González and César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 09/06/2014
+# Last modified date (dd/mm/yyyy): 15/07/2016
 # Licence: MIT
 ##########################################################################
 # Get common variables and check if the script is being running by a root or sudoer user
@@ -23,6 +23,6 @@ else
 fi
 
 wget -P /var/cache/apt/archives http://download.xnview.com/$package 2>&1
-dpkg -i $package
+dpkg -i /var/cache/apt/archives/$package
 apt-get -y install -f
 

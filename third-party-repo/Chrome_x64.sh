@@ -1,7 +1,7 @@
 #!/bin/bash
 ##########################################################################
 # This script executes commands to add third-party repository of Google
-# Earth application.
+# Chrome application.
 #
 # Author: César Rodríguez González
 # Version: 1.0
@@ -11,10 +11,10 @@
 
 # Variables
 distroName="$(lsb_release -sc)"
-repositoryURL="http://dl.google.com/linux/earth/deb/"
+repositoryURL="http://dl.google.com/linux/chrome/deb/"
 repository="deb $repositoryURL stable main"
 repositorySource="deb-src $repositoryURL stable main"
-targetFilename="google-earth.list"
+targetFilename="google-chrome.list"
 
 # Commands to add third-party repository of the application.
 if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
@@ -24,6 +24,3 @@ if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
 	# Uncomment if needed [optional]
 	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$targetFilename"
 fi
-
-
-

@@ -30,7 +30,7 @@ Menu to install applications from default repositories, third-party ones or exte
 Valid for:   Ubuntu v14.04, Debian 7, Linux Mint 17 and LMDE (for all desktops o server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 01/06/2014 (dd/mm/yyyy)
+Last change: 15/07/2016 (dd/mm/yyyy)
 ```
 ##### DONE
 > - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
@@ -115,17 +115,18 @@ To extend script functionality is required to add subscripts for custom purposes
 #### 5.1 Understanding project structure
 Tree of folders and some files:
 ```
+├── applist                 It contains application list available to install for every linux distribution supported
+│   ├── applicationList.debian
+│   ├── applicationList.linuxmint
+│   ├── applicationList.lmde
+│   └── applicationList.ubuntu
 ├── common                  It contains common functions and variables used by installation scripts
 │   ├── commonFunctions.sh
 │   ├── commonVariables.sh
 │   ├── menuFunctions.sh
 │   └── *
 │
-├── etc                     It contains application list and some config files used by subscripts
-│   ├── applicationList.debian
-│   ├── applicationList.linuxmint
-│   ├── applicationList.lmde
-│   ├── applicationList.ubuntu
+├── etc                     It contains some config files used by some subscripts
 │   └── *
 │
 ├── eula                    It contains files who set parameters to skip questions during installation's process
@@ -271,7 +272,7 @@ To add a new installation script for an application follow next steps:
   #!/bin/bash
   scriptRootFolder=`pwd`/..
   . $scriptRootFolder/common/commonFunctions.sh
-  appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applicationList.<distro> file.
+  appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../applist/applicationList.<distro> file.
   logFile=""  # Here goes log file name that will be created in ~/logs/logFile
 
   prepareScript "$scriptRootFolder" "$logFile"
@@ -424,10 +425,10 @@ I hope you find it useful.
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.sh]:./common/commonVariables.sh
 [menuFunctions.sh]:./common/menuFunctions.sh
-[applicationList.debian]:./etc/applicationList.debian
-[applicationList.linuxmint]:./etc/applicationList.linuxmint
-[applicationList.lmde]:./etc/applicationList.lmde
-[applicationList.ubuntu]:./etc/applicationList.ubuntu
+[applicationList.debian]:./applist/applicationList.debian
+[applicationList.linuxmint]:./applist/applicationList.linuxmint
+[applicationList.lmde]:./applist/applicationList.lmde
+[applicationList.ubuntu]:./applist/applicationList.ubuntu
 [installer.sh]:./installer.sh
 [en.properties]:./languages/en.properties
 [es.properties]:./languages/es.properties

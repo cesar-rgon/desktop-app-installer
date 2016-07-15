@@ -30,7 +30,7 @@ Menú de instalación de aplicaciones desde los repositorios por defecto, de ter
 Válido para:   Ubuntu v14.04, Debian 7, Linux Mint 17 y LMDE (para todos los escritorios y servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 01/06/2014 (dd/mm/yyyy)
+Último cambio: 15/07/2016 (dd/mm/yyyy)
 ```
 ##### HECHO
 > - [x] Añadida compatibilidad con Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
@@ -116,17 +116,18 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 #### 5.1 Entendiendo la estructura del proyecto
 Árbol de directorios y algunos ficheros:
 ```
+├── applist                 Contiene listado de aplicaciones disponibles para instalar en cada distribucion linux soportada
+│   ├── applicationList.debian
+│   ├── applicationList.linuxmint
+│   ├── applicationList.lmde
+│   └── applicationList.ubuntu
 ├── common                  Contiene funciones comúnes y variables usadas por los scripts de instalación
 │   ├── commonFunctions.sh
 │   ├── commonVariables.sh
 │   ├── menuFunctions.sh
 │   └── *
 │
-├── etc                     Contiene lista de aplicaciones y algunos ficheros de configuración usados por subscripts
-│   ├── applicationList.debian
-│   ├── applicationList.linuxmint
-│   ├── applicationList.lmde
-│   ├── applicationList.ubuntu
+├── etc                     Contiene algunos ficheros de configuración usados por subscripts
 │   └── *
 │
 ├── eula                    Contiene ficheros que inicializan parámetros para saltar preguntas durante el proceso de instalación
@@ -272,7 +273,7 @@ Para añadir un nuevo script de instalación de una aplicación siga los siguien
   #!/bin/bash
   scriptRootFolder=`pwd`/..
   . $scriptRootFolder/common/commonFunctions.sh
-  appName=""  # Aquí va el nombre de aplicación. Debe ser igual (sensible a mayúsculas) a la definida en el fichero ../etc/applicationList.<distro>
+  appName=""  # Aquí va el nombre de aplicación. Debe ser igual (sensible a mayúsculas) a la definida en el fichero ../applist/applicationList.<distro>
   logFile=""  # Aquí va el nombre del fichero de logs que será creado en ~/logs/logFile
 
   prepareScript "$scriptRootFolder" "$logFile"
@@ -421,10 +422,10 @@ Espero que lo encontréis útil.
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.sh]:./common/commonVariables.sh
 [menuFunctions.sh]:./common/menuFunctions.sh
-[applicationList.debian]:./etc/applicationList.debian
-[applicationList.linuxmint]:./etc/applicationList.linuxmint
-[applicationList.lmde]:./etc/applicationList.lmde
-[applicationList.ubuntu]:./etc/applicationList.ubuntu
+[applicationList.debian]:./applist/applicationList.debian
+[applicationList.linuxmint]:./applist/applicationList.linuxmint
+[applicationList.lmde]:./applist/applicationList.lmde
+[applicationList.ubuntu]:./applist/applicationList.ubuntu
 [installer.sh]:./installer.sh
 [en.properties]:./languages/en.properties
 [es.properties]:./languages/es.properties
