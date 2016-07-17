@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.11
-# Last modified date (dd/mm/yyyy): 15/07/2016
+# Last modified date (dd/mm/yyyy): 17/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -21,7 +21,7 @@ fi
 teamviewerFile="teamviewer_linux.deb"
 teamviewerURL="http://download.teamviewer.com/download/teamviewer_i386.deb"
 wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
-dpkg -i /tmp/$teamviewerFile
+gdebi --n /tmp/$teamviewerFile
 apt-get -y install -f
 
 # Extract teamviewer icons

@@ -29,7 +29,7 @@ developer_tools       Git_cola                       git-cola
 developer_tools       Meld                           meld
 developer_tools       MySQL_workbench                mysql-workbench
 developer_tools       Netbeans                       netbeans
-developer_tools       OpenJdk			     default-jdk
+developer_tools       OpenJdk			     		 default-jdk
 developer_tools       Pgadmin_iii                    pgadmin3
 developer_tools       Qt_creator                     qtcreator
 developer_tools       SQLite_database_browser        sqlitebrowser
@@ -115,7 +115,7 @@ science_engineering   Stellarium                     stellarium
 
 sound_video           Audacity                       audacity
 sound_video           Clementine                     clementine
-sound_video	      Cinellerra		     cinellerra
+sound_video	      	  Cinelerra		     			 cinelerra
 sound_video           Gstreamer                      gstreamer0.10-plugins-good
 sound_video           Guvcview                       guvcview
 sound_video           Kodi                           kodi

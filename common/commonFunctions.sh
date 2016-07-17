@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 15/07/2016
+# Last modified date (dd/mm/yyyy): 17/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -52,7 +52,7 @@ function initCommonVariables
 	linuxAppInstallerTitle="Linux app installer v1.3"
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
 	if [ "$distro" == "linuxmint" ]; then
-		declare codename="`lsb_release -c | awk '{print $2}'`"
+		local codename="`lsb_release -c | awk '{print $2}'`"
 		if [ "$codename" == "debian" ]; then
 			distro="lmde"
 		fi
@@ -88,7 +88,6 @@ function initCommonVariables
 	packageCommands=""
 	nonRepoAppCommands=""
 	postInstallationCommands=""
-	targetFolder=""
 
 	# Set debconf interface
 	if [ -z $DISPLAY ]; then
@@ -112,8 +111,7 @@ function initCommonVariables
 ##########################################################################
 function selectLanguage
 {
-	declare ISO639_1=${LANG:0:2}
-	declare LANGUAGE_FILE="$scriptRootFolder/languages/"$ISO639_1".properties"
+	local LANGUAGE_FILE="$scriptRootFolder/languages/"${LANG:0:2}".properties"
 
 	if [ -f "$LANGUAGE_FILE" ]; then
 		. $LANGUAGE_FILE
@@ -149,7 +147,7 @@ function installNeededPackages
 			exit 1
 		fi			
 		
-		declare neededPackages
+		local neededPackages
 		if [ "`dpkg -s zenity 2>&1 | grep "installed"`" == "" ]; then
 			neededPackages+="zenity"
 		fi
@@ -207,7 +205,7 @@ function prepareScript
 ##########################################################################
 function setDebconfFromFile
 {
-	declare eulaFilename="$1" line lineWithoutSpaces
+	local eulaFilename="$1" line lineWithoutSpaces
 	# Result of the function
 	debconfCommands=""	
 
@@ -238,31 +236,45 @@ function dialogBoxFunction
 	fi
 }
 
-
 ##########################################################################
-# This funtion checks if exist an application subscript file in a distro
-# subfolder or in a root folder specified by parameter.
-#
-# Parameters: 
-#	rootFolder: root folder where to check if the file exits.
+# Parameters:
+#	targetFolder: root folder that contains file script
 #	appName: application name
-# Return: none
+# Return: 
+#	scriptCommands: complete list of commands to execute
 ##########################################################################
-function checkFolderThatContainsFile
+function scriptCommands
 {
-	if [ "$1" != "" ] && [ "$2" != "" ]; then
-		declare rootFolder="$1" appFile=$2".sh"
-
-		if [ -f "$rootFolder/$distro/$appFile" ]; then
-			targetFolder="$rootFolder/$distro"
+	local scriptCommands = ""
+	if [ "$1" != "" && "$2" != "" ]; then
+		local targetFolder="$1" appName="$2" i386="_i386" x64="_x64"
+	
+		if [ `uname -m` == "x86_64" ]; then	
+			# For 64 bits OS
+			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then
+				scriptCommands+="bash \"$targetFolder/$distro/$appName$x64.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+			fi
+			if [ -f "$targetFolder/$appName$x64.sh" ]; then
+				scriptCommands+="bash \"$targetFolder/$appName$x64.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+			fi
 		else
-			if [ -f "$rootFolder/$appFile" ]; then
-				targetFolder="$rootFolder"
-			else
-				targetFolder=""
+			# For 32 bits OS
+			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then
+				scriptCommands+="bash \"$targetFolder/$distro/$appName$i386.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+			fi
+			if [ -f "$targetFolder/$appName$i386.sh" ]; then
+				scriptCommands+="bash \"$targetFolder/$appName$i386.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
 			fi
 		fi
+		# For all CPU arquitectures
+		if [ -f "$targetFolder/$distro/$appName.sh" ]; then
+			scriptCommands+="bash \"$targetFolder/$distro/$appName.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+		fi
+		if [ -f "$targetFolder/$appName.sh" ]; then
+			scriptCommands+="bash \"$targetFolder/$appName.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+		fi
 	fi
+	echo "$scriptCommands"
 }
 
 ##########################################################################
@@ -277,10 +289,10 @@ function checkFolderThatContainsFile
 function prepareThirdPartyRepository
 {
 	if [ "$1" != "" ]; then
-		declare appName="$1" appFile="$1.sh"
+		local appName="$1"
 		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+		repoCommands+=$(scriptCommands $thirdPartyRepoFolder $appName)		
 	fi
 }
 
@@ -297,10 +309,10 @@ function prepareThirdPartyRepository
 function preparePreInstallationCommands
 {
 	if [ "$1" != "" ]; then
-		declare appName="$1" appFile="$1.sh"
+		local appName="$1"
 		preInstallationCommands+="echo \"# $preparingInstallationOf $appName\"; echo \"$preparingInstallationOf $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$preparingInstallationOf $appName ..."
-		preInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+		preInstallationCommands+=$(scriptCommands $preInstallationFolder $appName)		
 	fi
 }
 
@@ -318,7 +330,7 @@ function prepareRepositoryPackages
 	if [ "$1" != "" ]; then
 		declare -a packagesToInstall=($1)
 		declare -i totalPackagesToInstall=${#packagesToInstall[@]} index=1
-		declare package
+		local package
 
 		for package in "${packagesToInstall[@]}"; do
 			# If package has EULA
@@ -359,12 +371,12 @@ function prepareRepositoryPackages
 function prepareNonRepositoryApplication
 {
 	if [ "$1" != "" ]; then
-		declare appName="$1" appFile="$1.sh"
+		local appName="$1"
 		if [ -z $DISPLAY ]; then
 			nonRepoAppCommands+="clear;"
 		fi
 		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		nonRepoAppCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\";"
+		nonRepoAppCommands+=$(scriptCommands $nonRepositoryAppsFolder $appName)		
 	fi
 }
 
@@ -381,10 +393,10 @@ function prepareNonRepositoryApplication
 function preparePostInstallationCommands
 {
 	if [ "$1" != "" ]; then
-		declare appName="$1" appFile="$1.sh"
+		local appName="$1"
 		postInstallationCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		postInstallationCommands+="bash \"$targetFolder/$appFile\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+		postInstallationCommands+=$(scriptCommands $postInstallationFolder $appName)		
 	fi
 }
 
@@ -402,7 +414,7 @@ function executeCommands
 {
 	if [ "$repoCommands" != "" ] || [ "$preInstallationCommands" != "" ] || [ "$packageCommands" != "" ] || [ "$nonRepoAppCommands" != "" ] || [ "$postInstallationCommands" != "" ]; then
 		# Set default Debconf interface to use	
-		declare commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
+		local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingDebconfInterface"
 		commands+="echo debconf debconf/frontend select $debconfInterface | debconf-set-selections 2>>\"$logFile\" $dialogBox;"
 
@@ -416,9 +428,14 @@ function executeCommands
 
 		# Install repositories and packages
 		commands+="$packageCommands $nonRepoAppCommands $postInstallationCommands"
+		# Update repositories again
+		commands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
+		dialogBoxFunction "$updatingRepositories"
+		commands+="apt-get update --fix-missing 2>>\"$logFile\" $dialogBox;"
 
+		# Delete temp files and packages
 		commands+="echo \"# $cleaningTempFiles\"; echo \"$cleaningTempFiles ...\" >> \"$logFile\";"
-		declare cleanTempFilesCommands="apt-get -y autoremove 2>>\"$logFile\"; apt-get clean 2>>\"$logFile\"; rm -rf \"$tempFolder\";"
+		local cleanTempFilesCommands="apt-get -y autoremove 2>>\"$logFile\"; apt-get clean 2>>\"$logFile\"; rm -rf \"$tempFolder\";"
 		dialogBoxFunction "$cleaningTempFiles ..."
 		commands+="bash -c \"$cleanTempFilesCommands\" $dialogBox;"
 
@@ -430,7 +447,7 @@ function executeCommands
 			# Show log
 			dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
 		else
-			declare autoclose
+			local autoclose
 			if [ "$nonRepoAppCommands" == "" ]; then
 				autoclose="--auto-close"
 			fi
@@ -459,18 +476,16 @@ function installAndSetupApplications
 {
 	if [ "$1" != "" ]; then
 		declare -a appsToInstall=(${1})
-		declare appName packagesToInstall
+		local appName packagesToInstall
 
 		for appName in "${appsToInstall[@]}"; do
 			# Check if exists subscript to add third-party repository
-			checkFolderThatContainsFile "$thirdPartyRepoFolder" "$appName"
-			if [ "$targetFolder" != "" ]; then
+			if [ -f "$thirdPartyRepoFolder/$appFile" || -f "$thirdPartyRepoFolder/$distro/$appFile" ]; then
 				prepareThirdPartyRepository "$appName"
 			fi
 
 			# Check if exists subscript to execute pre-installation commands
-			checkFolderThatContainsFile "$preInstallationFolder" "$appName"
-			if [ "$targetFolder" != "" ]; then
+			if [ -f "$preInstallationFolder/$appFile" || -f "$preInstallationFolder/$distro/$appFile" ]; then
 				preparePreInstallationCommands "$appName"
 			fi
 
@@ -478,14 +493,12 @@ function installAndSetupApplications
 			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 
 			# Check if exists subscript to install a non-repository application
-			checkFolderThatContainsFile "$nonRepositoryAppsFolder" "$appName"
-			if [ "$targetFolder" != "" ]; then
+			if [ -f "$nonRepositoryAppsFolder/$appFile" || -f "$nonRepositoryAppsFolder/$distro/$appFile" ]; then
 				prepareNonRepositoryApplication "$appName"
 			fi
 
 			# Check if exists subscript to execute post-installation commands
-			checkFolderThatContainsFile "$postInstallationFolder" "$appName"
-			if [ "$targetFolder" != "" ]; then
+			if [ -f "$postInstallationFolder/$appFile" || -f "$postInstallationFolder/$distro/$appFile" ]; then
 				preparePostInstallationCommands "$appName"
 			fi
 		done

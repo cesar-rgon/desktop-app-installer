@@ -1,6 +1,7 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Skype application.
+# This script prepares Skype application to be ready to be installed on 
+# 64 bits OS linux
 #
 # Author: César Rodríguez González
 # Version: 1.3
@@ -16,8 +17,7 @@ else
 fi
 . $scriptRootFolder/common/commonVariables.sh
 
-# Commands to download, extract and install a non-repository application.
-skypeURL="http://www.skype.com/go/getskype-linux-deb"
-wget -O /var/cache/apt/archives/skype.deb $skypeURL 2>&1
-gdebi --n /var/cache/apt/archives/skype.deb
-apt-get -y install -f
+# We must add 32 bits architecture to be able to install Skype 32 bits in 64 bits OS
+dpkg --add-architecture i386
+
+

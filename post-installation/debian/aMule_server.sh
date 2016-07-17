@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Skype application.
+# This script configures aMule daemon application to be ready to use.
 #
 # Author: César Rodríguez González
 # Version: 1.3
@@ -16,8 +16,6 @@ else
 fi
 . $scriptRootFolder/common/commonVariables.sh
 
-# Commands to download, extract and install a non-repository application.
-skypeURL="http://www.skype.com/go/getskype-linux-deb"
-wget -O /var/cache/apt/archives/skype.deb $skypeURL 2>&1
-gdebi --n /var/cache/apt/archives/skype.deb
-apt-get -y install -f
+# After install aMule application the system must be returned to stable default repository
+sed -i 's/stretch main/jessie main/g' /etc/apt/sources.list
+

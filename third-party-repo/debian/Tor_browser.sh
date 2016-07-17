@@ -1,11 +1,11 @@
 #!/bin/bash
 ##########################################################################
-# This script executes commands to add third-party repository of Tor
-# browser application.
+# This script executes commands to add third-party repository of 
+# Tor browser application.
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 16/07/2016
+# Last modified date (dd/mm/yyyy): 17/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -16,8 +16,15 @@ repositoryURL="http://ppa.launchpad.net/webupd8team/tor-browser/ubuntu"
 #repositorySource="deb-src $repositoryURL $distroName main"
 targetFilename="*tor-browser*.list"
 
+# Pre-requisites
+apt-get -y install debian-keyring 1>/dev/null 2>/dev/null
 # Commands to add third-party repository of the application.
 if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
-	add-apt-repository -y ppa:webupd8team/tor-browser 2>&1
+	# Commands to import repository key
+	gpg --keyserver keyserver.ubuntu.com --recv-key EEA14886
+	gpg --armor --export EEA14886 | apt-key add -
+	# Commands to add repository URL
+	echo "deb $repositoryURL xenial main" > /ect/apt/sources.list.d/webupd8team-tor-browser.list
+	echo "deb-src $repositoryURL xenial main" >> /ect/apt/sources.list.d/webupd8team-tor-browser.list
 fi 2>/dev/null
 

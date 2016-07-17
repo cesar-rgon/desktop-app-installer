@@ -4,8 +4,8 @@
 # Customizer application.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 15/07/2016
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 16/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -19,4 +19,4 @@ targetFilename="*grub-customizer*.list"
 # Commands to add third-party repository of the application.
 if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
 	add-apt-repository -y ppa:danielrichter2007/grub-customizer 2>&1
-fi
+fi 2>/dev/null

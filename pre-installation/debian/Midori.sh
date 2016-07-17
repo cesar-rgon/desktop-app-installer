@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Skype application.
+# This script prepares Midori application to be ready to be installed.
 #
 # Author: César Rodríguez González
 # Version: 1.3
@@ -16,8 +16,5 @@ else
 fi
 . $scriptRootFolder/common/commonVariables.sh
 
-# Commands to download, extract and install a non-repository application.
-skypeURL="http://www.skype.com/go/getskype-linux-deb"
-wget -O /var/cache/apt/archives/skype.deb $skypeURL 2>&1
-gdebi --n /var/cache/apt/archives/skype.deb
-apt-get -y install -f
+# Debian Jessie has disabled midori package by default. We must enable testing branch to be able to install the application
+sed -i 's/jessie main/stretch main/g' /etc/apt/sources.list

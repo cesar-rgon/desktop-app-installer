@@ -4,8 +4,8 @@
 # Earth application.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 15/07/2016
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 17/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -23,7 +23,7 @@ if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
 	echo "$repository" >> "/etc/apt/sources.list.d/$targetFilename"
 	# Uncomment if needed [optional]
 	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$targetFilename"
-fi
+fi 2>/dev/null
 
 
 

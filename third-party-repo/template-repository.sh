@@ -40,4 +40,5 @@ if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
 	echo "$repository" >> "/etc/apt/sources.list.d/$targetFilename"
 	# Uncomment if needed [optional]
 	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$targetFilename"
-fi
+fi 2>/dev/null
+
