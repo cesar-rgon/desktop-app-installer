@@ -31,9 +31,9 @@ games         Xonotic
 graphics      Gimp                        gimp
 graphics      Mcomix                      mcomix
 
-internet      aMule_application           amule
-internet      aMule_client                amule-utils-gui
-internet      aMule_server                amule-daemon
+internet      aMule_application
+internet      aMule_client
+internet      aMule_server
 internet      Chrome                      google-chrome-stable
 internet      Chromium                    chromium
 internet      Deluge_application          deluge
@@ -44,7 +44,7 @@ internet      Filezilla                   filezilla
 internet      Google_earth                google-earth-stable
 internet      jDownloader
 internet      jDownloader2_beta
-internet      Midori                      midori
+internet      Midori
 internet      OpenJRE                     default-jre
 internet      Pidgin                      pidgin pidgin-extprefs
 internet      qBittorrent_application     qbittorrent

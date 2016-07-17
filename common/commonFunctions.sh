@@ -432,10 +432,6 @@ function executeCommands
 
 		# Install repositories and packages
 		commands+="$packageCommands $nonRepoAppCommands $postInstallationCommands"
-		# Update repositories again
-		commands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
-		dialogBoxFunction "$updatingRepositories"
-		commands+="apt-get update --fix-missing 2>>\"$logFile\" $dialogBox;"
 
 		# Delete temp files and packages
 		commands+="echo \"# $cleaningTempFiles\"; echo \"$cleaningTempFiles ...\" >> \"$logFile\";"
