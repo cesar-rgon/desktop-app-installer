@@ -19,7 +19,7 @@ targetFilename="*tor-browser*.list"
 # Pre-requisites
 apt-get -y install debian-keyring 1>/dev/null 2>/dev/null
 # Commands to add third-party repository of the application.
-if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
+if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
 	# Commands to import repository key
 	gpg --keyserver keyserver.ubuntu.com --recv-key EEA14886
 	gpg --armor --export EEA14886 | apt-key add -

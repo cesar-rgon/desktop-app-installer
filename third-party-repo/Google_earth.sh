@@ -17,7 +17,7 @@ repositorySource="deb-src $repositoryURL stable main"
 targetFilename="google-earth.list"
 
 # Commands to add third-party repository of the application.
-if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
+if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
 	# Command to add repository key if needed
 	wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub 2>&1 | apt-key add -
 	echo "$repository" >> "/etc/apt/sources.list.d/$targetFilename"

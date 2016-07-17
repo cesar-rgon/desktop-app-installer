@@ -240,14 +240,18 @@ function dialogBoxFunction
 # Parameters:
 #	targetFolder: root folder that contains file script
 #	appName: application name
+#   message: message about operation showed in logs
 # Return: 
 #	scriptCommands: complete list of commands to execute
 ##########################################################################
 function scriptCommands
 {
-	local scriptCommands = ""
-	if [ "$1" != "" && "$2" != "" ]; then
-		local targetFolder="$1" appName="$2" i386="_i386" x64="_x64"
+	local targetFolder="$1" appName="$2" message="$3"
+	local messageCommand="echo \"# $message $appName\"; echo \"$message $appName ...\" >> \"$logFile\";"
+	local scriptCommands=""
+
+	if [ "$targetFolder" != "" ] && [ "$appName" != "" ]; then
+		local i386="_i386" x64="_x64"
 	
 		if [ `uname -m` == "x86_64" ]; then	
 			# For 64 bits OS
@@ -274,7 +278,11 @@ function scriptCommands
 			scriptCommands+="bash \"$targetFolder/$appName.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
 		fi
 	fi
-	echo "$scriptCommands"
+	if [ "$scriptCommands" != "" ]; then
+		echo "$messageCommand $scriptCommands"
+	else
+		echo ""
+	fi
 }
 
 ##########################################################################
@@ -290,9 +298,8 @@ function prepareThirdPartyRepository
 {
 	if [ "$1" != "" ]; then
 		local appName="$1"
-		repoCommands+="echo \"# $addingThirdPartyRepo $appName\"; echo \"$addingThirdPartyRepo $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+=$(scriptCommands $thirdPartyRepoFolder $appName)		
+		repoCommands+=$( scriptCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )		
 	fi
 }
 
@@ -310,9 +317,8 @@ function preparePreInstallationCommands
 {
 	if [ "$1" != "" ]; then
 		local appName="$1"
-		preInstallationCommands+="echo \"# $preparingInstallationOf $appName\"; echo \"$preparingInstallationOf $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$preparingInstallationOf $appName ..."
-		preInstallationCommands+=$(scriptCommands $preInstallationFolder $appName)		
+		preInstallationCommands+=$( scriptCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )		
 	fi
 }
 
@@ -375,8 +381,7 @@ function prepareNonRepositoryApplication
 		if [ -z $DISPLAY ]; then
 			nonRepoAppCommands+="clear;"
 		fi
-		nonRepoAppCommands+="echo \"# $installingNonRepoApp $appName\"; echo \"$installingNonRepoApp $appName ...\" >> \"$logFile\";"
-		nonRepoAppCommands+=$(scriptCommands $nonRepositoryAppsFolder $appName)		
+		nonRepoAppCommands+=$( scriptCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )		
 	fi
 }
 
@@ -394,9 +399,8 @@ function preparePostInstallationCommands
 {
 	if [ "$1" != "" ]; then
 		local appName="$1"
-		postInstallationCommands+="echo \"# $settingUpApplication $appName\"; echo \"$settingUpApplication $appName ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingUpApplication $appName ..."
-		postInstallationCommands+=$(scriptCommands $postInstallationFolder $appName)		
+		postInstallationCommands+=$( scriptCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )		
 	fi
 }
 
@@ -476,31 +480,14 @@ function installAndSetupApplications
 {
 	if [ "$1" != "" ]; then
 		declare -a appsToInstall=(${1})
-		local appName packagesToInstall
-
+		local appName packagesToInstall i386="_i386" x64="_x64"
 		for appName in "${appsToInstall[@]}"; do
-			# Check if exists subscript to add third-party repository
-			if [ -f "$thirdPartyRepoFolder/$appFile" || -f "$thirdPartyRepoFolder/$distro/$appFile" ]; then
-				prepareThirdPartyRepository "$appName"
-			fi
-
-			# Check if exists subscript to execute pre-installation commands
-			if [ -f "$preInstallationFolder/$appFile" || -f "$preInstallationFolder/$distro/$appFile" ]; then
-				preparePreInstallationCommands "$appName"
-			fi
-
+			prepareThirdPartyRepository "$appName"
+			preparePreInstallationCommands "$appName"
+			prepareNonRepositoryApplication "$appName"
+			preparePostInstallationCommands "$appName"
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
 			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
-
-			# Check if exists subscript to install a non-repository application
-			if [ -f "$nonRepositoryAppsFolder/$appFile" || -f "$nonRepositoryAppsFolder/$distro/$appFile" ]; then
-				prepareNonRepositoryApplication "$appName"
-			fi
-
-			# Check if exists subscript to execute post-installation commands
-			if [ -f "$postInstallationFolder/$appFile" || -f "$postInstallationFolder/$distro/$appFile" ]; then
-				preparePostInstallationCommands "$appName"
-			fi
 		done
 
 		prepareRepositoryPackages "$packagesToInstall"

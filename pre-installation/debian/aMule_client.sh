@@ -17,5 +17,8 @@ else
 fi
 . $scriptRootFolder/common/commonVariables.sh
 
+if [ ! -f /etc/apt/sources.list.backup ]; then
+	cp /etc/apt/sources.list /etc/apt/sources.list.backup
+fi
 # Debian Jessie has disabled amule* packages by default. We must enable testing branch to be able to install the application
 sed -i 's/jessie main/stretch main/g' /etc/apt/sources.list

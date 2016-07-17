@@ -3,8 +3,8 @@
 # This script prepares the installation of Flash plugin package.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 13/05/2014
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 17/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -17,7 +17,9 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to prepare the installation of an application.
-cp /etc/apt/sources.list /etc/apt/sources.list.backup
+if [ ! -f /etc/apt/sources.list.backup ]; then
+	cp /etc/apt/sources.list /etc/apt/sources.list.backup
+fi
 # Enable contrib and non-free repositories
 sed -i "s/main.*/main contrib non-free/g" /etc/apt/sources.list
 

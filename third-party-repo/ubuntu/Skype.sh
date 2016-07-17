@@ -21,7 +21,7 @@ repository="deb http://archive.canonical.com/ $distroName partner"
 #repositorySource="deb-src http://archive.canonical.com/ $distroName partner"
 
 # Commands to add third-party repository of the application.
-if ! grep -q "$repository" "/etc/apt/sources.list"; then
+if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
 	add-apt-repository -y "$repository" 2>&1
 fi 2>/dev/null
 

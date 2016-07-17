@@ -34,7 +34,7 @@ repositorySource="deb-src $repositoryURL <parameters>"
 targetFilename="destinationFilename"
 
 # Commands to add third-party repository of the application.
-if ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename"; then
+if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
 	# Command to add repository key if needed
 	# ...
 	echo "$repository" >> "/etc/apt/sources.list.d/$targetFilename"

@@ -90,9 +90,10 @@ system        System_monitor              gnome-system-monitor
 system        Wine                        wine
 
 utilities    Catfish                     catfish
-utilities    Compressors                 p7zip-full rar unrar
+utilities    Compressors                 p7zip-full p7zip-rar
 utilities    Gedit                       gedit
 utilities    Luckybackup                 luckybackup
 utilities    Py_par2                     pypar2
 utilities    Shutter                     shutter
-utilities    Virtualbox                  virtualbox
+utilities    Virtualbox                  virtualbox virtualbox-guest-x11
+
