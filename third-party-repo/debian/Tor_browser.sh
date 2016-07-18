@@ -5,7 +5,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 17/07/2016
+# Last modified date (dd/mm/yyyy): 18/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -14,7 +14,7 @@ distroName="$(lsb_release -sc)"
 repositoryURL="http://ppa.launchpad.net/webupd8team/tor-browser/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-targetFilename="*tor-browser*.list"
+targetFilename="webupd8team-tor-browser"
 
 # Pre-requisites
 apt-get -y install debian-keyring 1>/dev/null 2>/dev/null
@@ -24,7 +24,7 @@ if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositor
 	gpg --keyserver keyserver.ubuntu.com --recv-key EEA14886
 	gpg --armor --export EEA14886 | apt-key add -
 	# Commands to add repository URL
-	echo "deb $repositoryURL xenial main" > /ect/apt/sources.list.d/webupd8team-tor-browser.list
-	echo "deb-src $repositoryURL xenial main" >> /ect/apt/sources.list.d/webupd8team-tor-browser.list
-fi 2>/dev/null
+	echo "deb $repositoryURL xenial main" > /etc/apt/sources.list.d/webupd8team-tor-browser.list
+	echo "deb-src $repositoryURL xenial main" >> /etc/apt/sources.list.d/webupd8team-tor-browser.list
+fi
 

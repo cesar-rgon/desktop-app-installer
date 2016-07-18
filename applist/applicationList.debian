@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 17/07/2016                                                                           #
+# Last modified date (dd/mm/yyyy): 18/07/2016                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -31,9 +31,6 @@ games         Xonotic
 graphics      Gimp                        gimp
 graphics      Mcomix                      mcomix
 
-internet      aMule_application
-internet      aMule_client
-internet      aMule_server
 internet      Chrome                      google-chrome-stable
 internet      Chromium                    chromium
 internet      Deluge_application          deluge
@@ -41,10 +38,9 @@ internet      Deluge_server               deluged deluge-webui
 internet      Dropbox                     nautilus-dropbox
 internet      Evolution                   evolution
 internet      Filezilla                   filezilla
-internet      Google_earth                google-earth-stable
+internet      Google_earth                googleearth-package
 internet      jDownloader
 internet      jDownloader2_beta
-internet      Midori
 internet      OpenJRE                     default-jre
 internet      Pidgin                      pidgin pidgin-extprefs
 internet      qBittorrent_application     qbittorrent

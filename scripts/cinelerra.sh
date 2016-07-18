@@ -6,14 +6,14 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 15/07/2016
+# Last modified date (dd/mm/yyyy): 18/07/2016
 # Licence: MIT
 ##########################################################################
 
 scriptRootFolder=`pwd`/..
 . $scriptRootFolder/common/commonFunctions.sh
-appName="Cinellerra"
-logFile="cinellerra.log"
+appName="Cinelerra"
+logFile="cinelerra.log"
 
 prepareScript "$scriptRootFolder" "$logFile"
 installAndSetupApplications $appName

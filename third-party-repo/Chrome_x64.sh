@@ -12,8 +12,8 @@
 # Variables
 distroName="$(lsb_release -sc)"
 repositoryURL="http://dl.google.com/linux/chrome/deb/"
-repository="deb $repositoryURL stable main"
-repositorySource="deb-src $repositoryURL stable main"
+repository="deb [arch=amd64] $repositoryURL stable main"
+repositorySource="deb-src [arch=amd64] $repositoryURL stable main"
 targetFilename="google-chrome.list"
 
 # Commands to add third-party repository of the application.
