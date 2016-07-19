@@ -25,4 +25,4 @@ targetFilename="*jdownloader*.list"
 # Commands to add third-party repository of the application.
 if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
 	add-apt-repository -y ppa:jd-team/jdownloader 2>&1
-fi 2>/dev/null
+fi

@@ -12,8 +12,8 @@
 # Variables
 distroName="$(lsb_release -sc)"
 repositoryURL="http://ppa.launchpad.net/cinelerra-ppa/ppa/ubuntu"
-#repository="deb $repositoryURL $distroName main"
-#repositorySource="deb-src $repositoryURL $distroName main"
+#repository="deb $repositoryURL xenial main"
+#repositorySource="deb-src $repositoryURL xenial main"
 targetFilename="cinelerra*.list"
 
 # Commands to add third-party repository of the application.

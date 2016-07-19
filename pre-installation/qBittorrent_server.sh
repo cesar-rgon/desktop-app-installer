@@ -26,6 +26,22 @@ QBITTORRENT_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 QBITTORRENT_DAEMON_USERNAME="$username"
 QBITTORRENT_DAEMON_WEB_PORT="8081"
 
+# Create the necessary folders
+mkdir -p $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
+chown -R $username:$username $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
+
+# Copy qbittorrent daemon init script
+cp $scriptRootFolder/etc/qbittorrent-nox-daemon /etc/init.d/
+chmod +x /etc/init.d/qbittorrent-nox-daemon
+
+# Set variables in qbittorrent-daemon config files
+sed -i "s/USER=.*/USER=$username/g" /etc/init.d/qbittorrent-nox-daemon
+sed -i "s/DAEMON_ARGS=.*/DAEMON_ARGS=\"--webui-port=$QBITTORRENT_DAEMON_WEB_PORT\"/g" /etc/init.d/qbittorrent-nox-daemon
+
+# Second copy of qbittorrent daemon init script to properly start/stop application service
+cp /etc/init.d/qbittorrent-nox-daemon /usr/bin/qbittorrent-nox-daemon
+chmod +x /usr/bin/qbittorrent-nox-daemon
+
 echo "[Preferences]
 Downloads\SavePath=$QBITTORRENT_DAEMON_DOWNLOAD_FOLDER
 Downloads\TempPathEnabled=true
@@ -36,43 +52,4 @@ WebUI\Port=$QBITTORRENT_DAEMON_WEB_PORT
 [LegalNotice]
 Accepted=true" > $homeFolder/.config/qBittorrent/qBittorrent.conf
 chown $username:$username $homeFolder/.config/qBittorrent/qBittorrent.conf
-
-# Create menu launcher for qbittorrent-daemon's web client.
-echo "[Desktop Entry]
-Name=qBittorrent Web
-Exec=xdg-open http://localhost:$QBITTORRENT_DAEMON_WEB_PORT
-Icon=qbittorrent
-Terminal=false
-Type=Application
-Categories=Network;P2P;
-Comment=qBittorrent Web" > /usr/share/applications/qbittorrent-nox-cli.desktop
-
-# Create menu launcher to start qbittorrent-daemon.
-echo "[Desktop Entry]
-Name=qBittorrent daemon start
-Exec=gksudo /usr/bin/qbittorrent-nox-daemon start
-Icon=qbittorrent
-Terminal=false
-Type=Application
-Categories=Network;P2P;
-Comment=Start qBittorrent server" > /usr/share/applications/qbittorrent-nox-start.desktop
-
-# Create menu launcher to stop qbittorrent-daemon.
-echo "[Desktop Entry]
-Name=qBittorrent daemon stop
-Exec=gksudo /usr/bin/qbittorrent-nox-daemon stop
-Icon=qbittorrent
-Terminal=false
-Type=Application
-Categories=Network;P2P;
-Comment=Stop qBittorrent server" > /usr/share/applications/qbittorrent-nox-stop.desktop
-
-# Extract qbittorrent icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/qbittorrent.tar.gz"
-
-# Start qbittorrent daemon
-/usr/bin/qbittorrent-nox-daemon start
-
-# Create qbittorrent daemon startup links
-update-rc.d -f qbittorrent-nox-daemon defaults
 

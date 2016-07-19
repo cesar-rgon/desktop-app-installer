@@ -17,3 +17,5 @@ fi
 jDownloader2URL="/tmp/jdownloader2.sh http://installer.jdownloader.org/$jDownloader2File"
 wget -O /tmp/$jDownloader2File $jDownloader2URL 2>&1
 bash /tmp/$jDownloader2File
+
+

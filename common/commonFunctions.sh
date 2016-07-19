@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 17/07/2016
+# Last modified date (dd/mm/yyyy): 19/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -244,13 +244,14 @@ function dialogBoxFunction
 # Return: 
 #	scriptCommands: complete list of commands to execute
 ##########################################################################
-function scriptCommands
+function generateCommands
 {
-	local targetFolder="$1" appName="$2" message="$3"
-	local messageCommand="echo \"# $message $appName\"; echo \"$message $appName ...\" >> \"$logFile\";"
-	local scriptCommands=""
-
-	if [ "$targetFolder" != "" ] && [ "$appName" != "" ]; then
+	local targetFolder="$1" appName="$2" message="$3" scriptCommands=""
+	if [ "$appName" != "" ] && [ "$targetFolder" != "" ]; then
+		if [ "$message" != "" ]; then
+			dialogBoxFunction "$message $appName ..."
+			local messageCommand="echo \"# $message $appName\"; echo \"$message $appName ...\" >> \"$logFile\";"
+		fi
 		local i386="_i386" x64="_x64"
 	
 		if [ `uname -m` == "x86_64" ]; then	
@@ -285,42 +286,6 @@ function scriptCommands
 	fi
 }
 
-##########################################################################
-# This funtion sets commands to be executed to add the third-party
-# repository of an application specified by parameter.
-#
-# Parameters: 
-#	appName: application name
-# Return: 
-#	repoCommands: complete list of commands to add third-party-repos
-##########################################################################
-function prepareThirdPartyRepository
-{
-	if [ "$1" != "" ]; then
-		local appName="$1"
-		dialogBoxFunction "$addingThirdPartyRepo $appName ..."
-		repoCommands+=$( scriptCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )		
-	fi
-}
-
-
-##########################################################################
-# This funtion sets commands to be executed before the installation of an
-# application specified by parameter.
-#
-# Parameters: 
-#	appName: application name.
-# Return: 
-#	preInstallationCommands: pre-installation commands.
-##########################################################################
-function preparePreInstallationCommands
-{
-	if [ "$1" != "" ]; then
-		local appName="$1"
-		dialogBoxFunction "$preparingInstallationOf $appName ..."
-		preInstallationCommands+=$( scriptCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )		
-	fi
-}
 
 ##########################################################################
 # This funtion sets commands to be executed to install all needed 
@@ -362,45 +327,6 @@ function prepareRepositoryPackages
 			packageCommands+="apt-get -y install $package --fix-missing 2>>\"$logFile\" $dialogBox;"
 			index=$(($index+1))
 		done
-	fi
-}
-
-##########################################################################
-# This funtion sets commands to be executed to install a non-repository
-# applications specified by parameter.
-#
-# Parameters: 
-#	appName: non-repository application name.
-# Return: 
-#	nonRepoAppCommands: commands to install the application.
-##########################################################################
-function prepareNonRepositoryApplication
-{
-	if [ "$1" != "" ]; then
-		local appName="$1"
-		if [ -z $DISPLAY ]; then
-			nonRepoAppCommands+="clear;"
-		fi
-		nonRepoAppCommands+=$( scriptCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )		
-	fi
-}
-
-
-##########################################################################
-# This funtion sets commands to be executed after the installation of an 
-# application specified by parameter.
-#
-# Parameters: 
-#	appName: application name.
-# Return: 
-#	postInstallationCommands: post-installation commands.
-##########################################################################
-function preparePostInstallationCommands
-{
-	if [ "$1" != "" ]; then
-		local appName="$1"
-		dialogBoxFunction "$settingUpApplication $appName ..."
-		postInstallationCommands+=$( scriptCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )		
 	fi
 }
 
@@ -478,10 +404,12 @@ function installAndSetupApplications
 		declare -a appsToInstall=(${1})
 		local appName packagesToInstall i386="_i386" x64="_x64"
 		for appName in "${appsToInstall[@]}"; do
-			prepareThirdPartyRepository "$appName"
-			preparePreInstallationCommands "$appName"
-			prepareNonRepositoryApplication "$appName"
-			preparePostInstallationCommands "$appName"
+			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )		
+			preInstallationCommands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )
+			if [ -z $DISPLAY ]; then nonRepoAppCommands+="clear;"; fi
+			nonRepoAppCommands+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )		
+			postInstallationCommands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )		
+
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
 			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
 		done
