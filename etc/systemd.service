@@ -1,0 +1,27 @@
+[Unit]
+Description=DESCRIPTION
+Documentation=man:PACKAGE
+DefaultDependencies=yes
+After=network-online.target nss-lookup.target syslog.target
+Before=multi-user.target
+
+[Service]
+Type=forking
+# Username and group used by the aplication daemon
+User=USERNAME
+Group=GROUP
+# Command and parameters to execute de application daemon
+ExecStart=COMMAND_AND_PARAMETERS_TO_START_SERVICE
+# Permission of the downloader files with application daemon
+UMask=117
+# Indicate if the service is restarted after failure
+Restart=on-failure
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=300
+# File descriptor for STDOUT
+StandardOutput=null
+# File descriptor for STDERR
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
