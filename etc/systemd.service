@@ -6,7 +6,7 @@ After=network-online.target nss-lookup.target syslog.target
 Before=multi-user.target
 
 [Service]
-Type=forking
+Type=simple
 # Username and group used by the aplication daemon
 User=USERNAME
 Group=GROUP

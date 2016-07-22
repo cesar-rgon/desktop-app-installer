@@ -1,10 +1,10 @@
 #!/bin/bash
 ##########################################################################
-# This script configures qBittorrent daemon to be ready to use.
+# This script prepare qBittorrent daemon installation.
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 20/07/2016
+# Last modified date (dd/mm/yyyy): 21/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -17,7 +17,7 @@ fi
 . $scriptRootFolder/common/commonVariables.sh
 
 # Variables
-QBITTORRENT_SERVICE_FILE="/etc/systemd/system/qbittorrent-nox.service"
+QBITTORRENT_DAEMON_FILE="/etc/systemd/system/qbittorrent-nox.service"
 
 # Copy systemd service script
-cp $scriptRootFolder/etc/systemd.service $QBITTORRENT_SERVICE_FILE
+yes | cp -f $scriptRootFolder/etc/systemd.service $QBITTORRENT_DAEMON_FILE
