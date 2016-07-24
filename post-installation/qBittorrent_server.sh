@@ -87,7 +87,7 @@ Comment=Stop qBittorrent server" > /usr/share/applications/qbittorrent-nox-stop.
 ### OTHERS ###############################################################
 # Extract application icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/qbittorrent.tar.gz"
-# Set ownership of home config files
+# Set ownership of config files and/or folders
 chown -R $username:$username $homeFolder/.config/qBittorrent/*
 # Set permissions
 chmod -R 770 $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER

@@ -107,7 +107,7 @@ Comment=Stop Deluge server" > /usr/share/applications/deluged-stop.desktop
 ### OTHERS ###############################################################
 # Extract application icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/deluge.tar.gz"
-# Set ownership of home config files
+# Set ownership of config files and/or folders
 chown -R $username:$username $homeFolder/.config/deluge/*
 # Set permissions
 chmod -R 770 $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER

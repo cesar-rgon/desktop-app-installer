@@ -99,7 +99,7 @@ Comment=Stop Transmission server" > /usr/share/applications/transmission-stop.de
 rm /etc/init.d/transmission-daemon 2>/dev/null
 # Add user to debian-transmission group
 usermod -a -G debian-transmission $username
-# Set ownership of config files
+# Set ownership of config files and/or folders
 chown -R $username:debian-transmission $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER /var/lib/transmission-daemon
 # Set permissions
 chmod -R 770 $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
