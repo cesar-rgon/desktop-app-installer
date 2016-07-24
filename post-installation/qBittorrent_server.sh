@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 22/07/2016
+# Last modified date (dd/mm/yyyy): 24/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -28,10 +28,9 @@ QBITTORRENT_DAEMON_WEB_PORT="8081"
 QBITTORRENT_DAEMON_FILE="/etc/systemd/system/qbittorrent-nox.service"
 
 
-### CREATE FOLDERS AND SET PERMISSIONS ###################################
+### CREATE FOLDERS #######################################################
 sudo -u $username mkdir -p $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
-chmod -R 770 $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER
-
+sudo -u $username mkdir -p $homeFolder/.local/share/data/qBittorrent
 
 ### SETUP APPLICATION CONFIG FILES #######################################
 echo "[Preferences]
@@ -49,6 +48,7 @@ chown $username:$username $homeFolder/.config/qBittorrent/qBittorrent.conf
 ### SETUP SYSTEMD SERVICE ################################################
 sed -i "s/=DESCRIPTION.*/=qBittorrent Nox Daemon/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:qbitorrent-nox/g" $QBITTORRENT_DAEMON_FILE
+sed -i "s/=SYSTEMD_TYPE.*/=forking/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=USERNAME.*/=$QBITTORRENT_DAEMON_USERNAME/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=GROUP.*/=$QBITTORRENT_DAEMON_USERNAME/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/qbittorrent-nox -d/g" $QBITTORRENT_DAEMON_FILE
@@ -87,7 +87,14 @@ Comment=Stop qBittorrent server" > /usr/share/applications/qbittorrent-nox-stop.
 ### OTHERS ###############################################################
 # Extract application icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/qbittorrent.tar.gz"
-
+# Set ownership of home config files
+chown -R $username:$username $homeFolder/.config/qBittorrent/*
+# Set permissions
+chmod -R 770 $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER
+find $homeFolder/.config/qBittorrent/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.config/qBittorrent/* -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
+find $homeFolder/.local/share/data/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.local/share/data -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
 
 ### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
 systemctl stop qbittorrent-nox 2>/dev/null

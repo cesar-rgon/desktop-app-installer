@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 21/07/2016
+# Last modified date (dd/mm/yyyy): 24/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -18,6 +18,8 @@ fi
 
 # Variables
 DELUGE_DAEMON_FILE="/etc/systemd/system/deluged.service"
+DELUGE_WEB_DAEMON_FILE="/etc/systemd/system/deluge-web.service"
 
 # Copy systemd service script
 yes | cp -f $scriptRootFolder/etc/systemd.service $DELUGE_DAEMON_FILE
+yes | cp -f $scriptRootFolder/etc/systemd.service $DELUGE_WEB_DAEMON_FILE

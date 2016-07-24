@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 22/07/2016
+# Last modified date (dd/mm/yyyy): 24/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -27,10 +27,8 @@ TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT="9091"
 TRANSMISSION_DAEMON_FILE="/etc/systemd/system/transmission-daemon.service"
 
 
-### CREATE FOLDERS AND SET PERMISSIONS ###################################
-sudo -u $username mkdir -p $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
-chgrp debian-transmission $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
-chmod -R 770 $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
+### CREATE FOLDERS #######################################################
+sudo -u $username mkdir -p $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER $homeFolder/.config/transmission-daemon
 
 
 ### SETUP APPLICATION CONFIG FILES #######################################
@@ -60,6 +58,7 @@ mv /tmp/transmission.json /var/lib/transmission-daemon/info/settings.json
 ### SETUP SYSTEMD SERVICE ################################################
 sed -i "s/=DESCRIPTION.*/=Transmission Daemon/g" $TRANSMISSION_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:transmission-daemon/g" $TRANSMISSION_DAEMON_FILE
+sed -i "s/=SYSTEMD_TYPE.*/=simple/g" $TRANSMISSION_DAEMON_FILE
 sed -i "s/=USERNAME.*/=$username/g" $TRANSMISSION_DAEMON_FILE
 sed -i "s/=GROUP.*/=debian-transmission/g" $TRANSMISSION_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/transmission-daemon -f --log-error --config-dir=\/var\/lib\/transmission-daemon\/info/g" $TRANSMISSION_DAEMON_FILE
@@ -96,12 +95,16 @@ Comment=Stop Transmission server" > /usr/share/applications/transmission-stop.de
 
 
 ### OTHERS ###############################################################
+# Remove upstart script installed automatically by transmission daemon. Not used by systemd service manager
+rm /etc/init.d/transmission-daemon 2>/dev/null
 # Add user to debian-transmission group
 usermod -a -G debian-transmission $username
-# Change permission to user transmission-daemon folder
-sudo -u $username mkdir -p $homeFolder/.config/transmission-daemon
-chmod 770 $homeFolder/.config/transmission-daemon
-chown -R $username:debian-transmission /var/lib/transmission-daemon
+# Set ownership of config files
+chown -R $username:debian-transmission $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER /var/lib/transmission-daemon
+# Set permissions
+chmod -R 770 $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
+find $homeFolder/.config/transmission-daemon/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.config/transmission-daemon/* -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
 
 
 ### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########

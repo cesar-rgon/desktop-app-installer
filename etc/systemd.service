@@ -6,7 +6,7 @@ After=network-online.target nss-lookup.target syslog.target
 Before=multi-user.target
 
 [Service]
-Type=simple
+Type=SYSTEMD_TYPE
 # Username and group used by the aplication daemon
 User=USERNAME
 Group=GROUP
