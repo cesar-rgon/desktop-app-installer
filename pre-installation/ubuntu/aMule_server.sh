@@ -21,3 +21,5 @@ AMULE_DAEMON_FILE="/etc/systemd/system/amuled.service"
 
 # Copy systemd service script
 yes | cp -f $scriptRootFolder/etc/systemd.service $AMULE_DAEMON_FILE
+
+

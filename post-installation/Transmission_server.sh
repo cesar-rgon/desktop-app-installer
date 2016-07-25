@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 24/07/2016
+# Last modified date (dd/mm/yyyy): 25/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -24,6 +24,7 @@ TRANSMISSION_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/Transmission"
 TRANSMISSION_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/Transmission"
 TRANSMISSION_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT="9091"
+TRANSMISSION_DAEMON_TCP_PORT="51413"
 TRANSMISSION_DAEMON_FILE="/etc/systemd/system/transmission-daemon.service"
 
 
@@ -34,7 +35,7 @@ sudo -u $username mkdir -p $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DA
 ### SETUP APPLICATION CONFIG FILES #######################################
 cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info/settings.json.backup
 # Suppress variables to modify from transmission config file
-transmissionVariablesToModify="\"download-dir\"\|\"incomplete-dir\"\|\"rpc-password\"\|\"rpc-username\"\|\"rpc-whitelist\"\|\"umask\""
+transmissionVariablesToModify="\"download-dir\"\|\"incomplete-dir\"\|\"peer-port\"\|\"rpc-password\"\|\"rpc-username\"\|\"rpc-whitelist\"\|\"umask\""
 cat /var/lib/transmission-daemon/info/settings.json | grep -v "$transmissionVariablesToModify" | tr -d '}' > /tmp/transmission.json
 # Add comma character to last line
 lastLine="`awk '/./{line=$0} END{print line}' /tmp/transmission.json`"
@@ -43,6 +44,7 @@ sed -i "s/$lastLine/$lastLine,/g" /tmp/transmission.json
 echo "\"download-dir\": \"$TRANSMISSION_DAEMON_DOWNLOAD_FOLDER\",
 \"incomplete-dir\": \"$TRANSMISSION_DAEMON_TEMP_FOLDER\",
 \"incomplete-dir-enabled\": true,
+\"peer-port\": $TRANSMISSION_DAEMON_TCP_PORT,
 \"rpc-password\": \"$TRANSMISSION_DAEMON_USER_PASSWORD\",
 \"rpc-username\": \"$TRANSMISSION_DAEMON_USERNAME\",
 \"rpc-whitelist\": \"*\",

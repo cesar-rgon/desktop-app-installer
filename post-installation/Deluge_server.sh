@@ -3,7 +3,7 @@
 # This script configures Deluge daemon to be ready to use.
 #
 # Author: César Rodríguez González
-# Last modified date (dd/mm/yyyy): 24/07/2016
+# Last modified date (dd/mm/yyyy): 25/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -21,7 +21,7 @@ DELUGE_DAEMON_PASSWORD="deluge"
 DELUGE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/deluge"
 DELUGE_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/deluge"
 DELUGE_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
-DELUGE_DAEMON_CLIENT_PORT="58846"
+DELUGE_DAEMON_TCP_AND_CLIENT_PORT="58846"
 DELUGE_DAEMON_WEB_PORT="8112"
 DELUGE_DAEMON_FILE="/etc/systemd/system/deluged.service"
 DELUGE_WEB_DAEMON_FILE="/etc/systemd/system/deluge-web.service"
@@ -45,7 +45,7 @@ echo "{
   \"autoadd_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
   \"copy_torrent_file\": true,
   \"torrentfiles_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
-  \"daemon_port\": $DELUGE_DAEMON_CLIENT_PORT,
+  \"daemon_port\": $DELUGE_DAEMON_TCP_AND_CLIENT_PORT,
   \"allow_remote\": true
 }" > "$homeFolder/.config/deluge/core.conf"
 

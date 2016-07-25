@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 24/07/2016
+# Last modified date (dd/mm/yyyy): 25/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -25,6 +25,7 @@ QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
 QBITTORRENT_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/qBittorrent"
 QBITTORRENT_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 QBITTORRENT_DAEMON_WEB_PORT="8081"
+QBITTORRENT_DAEMON_TCP_PORT="8999"
 QBITTORRENT_DAEMON_FILE="/etc/systemd/system/qbittorrent-nox.service"
 
 
@@ -34,6 +35,7 @@ sudo -u $username mkdir -p $homeFolder/.local/share/data/qBittorrent
 
 ### SETUP APPLICATION CONFIG FILES #######################################
 echo "[Preferences]
+Connection\PortRangeMin=$QBITTORRENT_DAEMON_TCP_PORT
 Downloads\SavePath=$QBITTORRENT_DAEMON_DOWNLOAD_FOLDER
 Downloads\TempPathEnabled=true
 Downloads\TempPath=$QBITTORRENT_DAEMON_TEMP_FOLDER

@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 24/07/2016
+# Last modified date (dd/mm/yyyy): 25/07/2016
 # Licence: MIT
 # Note: This script was compatible for both linux OS: Ubuntu and Debian.
 # Debian 8 has removed amule package from stable repository.
@@ -45,14 +45,10 @@ sudo -u $username amuled -f 1>/dev/null
 sudo -u $username cp $homeFolder/.aMule/amule.conf $homeFolder/.aMule/amule.conf.backup
 # Set relevant amule variables in config file
 	# General
-sed -i "s/^MaxDownload=.*/MaxDownload=0/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^MaxUpload=.*/MaxUpload=10/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^Port=.*/Port=$AMULE_DAEMON_TCP_PORT/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^UDPPort=.*/UDPPort=$AMULE_DAEMON_UDP_PORT/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^MaxSourcesPerFile=.*/MaxSourcesPerFile=300/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^MaxConnections=.*/MaxConnections=500/g" $homeFolder/.aMule/amule.conf
 sed -i "s/^IncomingDir=.*/IncomingDir=$(echo "$AMULE_DAEMON_DOWNLOAD_FOLDER" | sed -r 's/\/+/\\\//g')/g" $homeFolder/.aMule/amule.conf
 sed -i "s/^TempDir=.*/TempDir=$(echo "$AMULE_DAEMON_TEMP_FOLDER" | sed -r 's/\/+/\\\//g')/g" $homeFolder/.aMule/amule.conf
+sed -i "s/^Port=.*/Port=$AMULE_DAEMON_TCP_PORT/g" $homeFolder/.aMule/amule.conf
+sed -i "s/^UDPPort=.*/UDPPort=$AMULE_DAEMON_UDP_PORT/g" $homeFolder/.aMule/amule.conf
 	# External connection
 sed -i "s/^AcceptExternalConnections=.*/AcceptExternalConnections=1/g" $homeFolder/.aMule/amule.conf
 sed -i "s/^ECPassword=.*/ECPassword=`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`/g" $homeFolder/.aMule/amule.conf
@@ -110,6 +106,9 @@ rm /etc/init.d/amule-daemon 2>/dev/null
 rm /etc/default/amule-daemon 2>/dev/null
 # Set ownership of config files and/or folders
 chown -R $username:$username $AMULE_DAEMON_DOWNLOAD_FOLDER $AMULE_DAEMON_TEMP_FOLDER $homeFolder/.aMule
+# Download GeoIP Legacy Country Database. Needed by aMule and don't downloaded by amule daemon
+sudo -u $username wget -O $homeFolder/.aMule/GeoIP.dat.gz http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
+sudo -u $username gunzip $homeFolder/.aMule/GeoIP.dat.gz
 # Extract amule icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
 
