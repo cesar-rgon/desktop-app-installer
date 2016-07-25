@@ -5,12 +5,19 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 18/07/2016
+# Last modified date (dd/mm/yyyy): 25/07/2016
 # Licence: MIT
 ##########################################################################
 
+# Get common variables and check if the script is being running by a root or sudoer user
+if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+else
+	scriptRootFolder=".."
+fi
+. $scriptRootFolder/common/commonVariables.sh
+
 # Variables
-distroName="$(lsb_release -sc)"
 repositoryURL="http://ppa.launchpad.net/webupd8team/tor-browser/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
@@ -24,7 +31,7 @@ if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositor
 	gpg --keyserver keyserver.ubuntu.com --recv-key EEA14886
 	gpg --armor --export EEA14886 | apt-key add -
 	# Commands to add repository URL
-	echo "deb $repositoryURL xenial main" > /etc/apt/sources.list.d/webupd8team-tor-browser.list
-	echo "deb-src $repositoryURL xenial main" >> /etc/apt/sources.list.d/webupd8team-tor-browser.list
+	echo "deb $repositoryURL $distroName main" > /etc/apt/sources.list.d/webupd8team-tor-browser.list
+	echo "deb-src $repositoryURL $distroName main" >> /etc/apt/sources.list.d/webupd8team-tor-browser.list
 fi
 

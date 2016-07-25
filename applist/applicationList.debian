@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 18/07/2016                                                                           #
+# Last modified date (dd/mm/yyyy): 25/07/2016                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -26,6 +26,7 @@ developer_tools   OpenJDK                     default-jdk
 
 fonts         Microsoft_Fonts             ttf-mscorefonts-installer
 
+games         Steam			  steam
 games         Xonotic
 
 graphics      Gimp                        gimp

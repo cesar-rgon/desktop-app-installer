@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 24/07/2016                                                                           #
+# Last modified date (dd/mm/yyyy): 25/07/2016                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -47,7 +47,7 @@ games                 Battle_for_Wesnoth             wesnoth
 games                 Frogatto                       frogatto
 games                 Gbrainy                        gbrainy
 games                 Pingus                         pingus
-games                 Steam
+games                 Steam			     steam
 games                 Supertux                       supertux
 games                 Supertuxkart                   supertuxkart
 games                 Xonotic                        xonotic
@@ -115,7 +115,7 @@ science_engineering   Stellarium                     stellarium
 
 sound_video           Audacity                       audacity
 sound_video           Clementine                     clementine
-sound_video	      	  Cinelerra		     			 cinelerra
+sound_video	      Cinelerra		     	     cinelerra-cv
 sound_video           Gstreamer                      gstreamer0.10-plugins-good
 sound_video           Guvcview                       guvcview
 sound_video           Kodi                           kodi

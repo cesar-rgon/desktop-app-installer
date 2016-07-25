@@ -5,12 +5,19 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 17/07/2016
+# Last modified date (dd/mm/yyyy): 25/07/2016
 # Licence: MIT
 ##########################################################################
 
+# Get common variables and check if the script is being running by a root or sudoer user
+if [ "$1" != "" ]; then
+	scriptRootFolder="$1"
+else
+	scriptRootFolder=".."
+fi
+. $scriptRootFolder/common/commonVariables.sh
+
 # Variables
-distroName="$(lsb_release -sc)"
 repositoryURL="http://ppa.launchpad.net/danielrichter2007/grub-customizer/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
