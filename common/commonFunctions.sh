@@ -4,102 +4,9 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 19/07/2016
+# Last modified date (dd/mm/yyyy): 26/07/2016
 # Licence: MIT
 ##########################################################################
-
-##########################################################################
-# This funtion initialize common variables used by other functions
-#
-# Parameters: 
-#	scriptRootFolder: main script root folder
-#	logFilename: log filename where the script will report errors or
-# 		     steps of installation process.
-# Return:
-#	username: that executes the installation script.
-#	scriptRootFolder: main script root folder.
-#	logsFolder: folder that will contain the script's log file.
-#	logFile: log file where the script will report steps and errors.
-#	tempFolder: temporal folder used by installation script.
-#	thirdPartyRepoFolder: where are placed files which contain
-#			      commands to add third-party repositories.
-#	eulaFolder: where are placed files which contain commands to set
-#		    debconf for EULA support.
-#	configFolder: where are placed files which contain commands to
-#		      setup applications.
-#	nonRepositoryAppsFolder: where are placed files which contain
-#				 commands to install non-repo apps.
-# 	installerIconFolder: where are placed icons for the installer.
-#	appListFile: it contains categories, applications and packages
-#		     used by main menu and the installation proccess.
-#	askpass: script that launchs a zenity to ask por admin password.
-#	dialogWidth: width in pixels of dialog box.
-#	dialogHeight: height in pixels of dialog box.
-#	zenityWidth: width in pixels of zenity box.
-#	zenityHeight: height in pixels of zenity box.
-#	repoCommands: commands to add third-party repotitories.
-#	packageCommands: commands to install repository packages.
-#	nonRepoAppCommands: commands to install non-repository apps.
-#	preInstallationCommands: commands to execute before installing an
-#				 application.
-#	postInstallationCommands: commands to execute after installing an
-#				  application.
-#	debconfInterface: Interface used for Debconf (Dialog/Zenity).
-#       distro: Distribution name (ubuntu/debian)
-##########################################################################
-function initCommonVariables
-{
-	linuxAppInstallerTitle="Linux app installer v1.3"
-	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"
-	if [ "$distro" == "linuxmint" ]; then
-		local codename="`lsb_release -c | awk '{print $2}'`"
-		if [ "$codename" == "debian" ]; then
-			distro="lmde"
-		fi
-	fi
-
-	username=`whoami`
-	homeFolder=`sudo -u $username -i eval 'echo $HOME'`
-	if [ "$1" != "" ]; then
-		scriptRootFolder="${1}"
-	fi
-	if [ "$2" != "" ]; then
-		logsFolder="$homeFolder/logs"
-		logFile="$logsFolder/${2}"
-	fi
-	tempFolder="/tmp/linux-app-installer-`date +\"%D-%T\" | tr '/' '.'`"
-	thirdPartyRepoFolder="$scriptRootFolder/third-party-repo"
-	eulaFolder="$scriptRootFolder/eula"
-	preInstallationFolder="$scriptRootFolder/pre-installation"
-	postInstallationFolder="$scriptRootFolder/post-installation"
-	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
-	installerIconFolder="$scriptRootFolder/icons/installer"
-
-	appListFile="$scriptRootFolder/applist/applicationList.$distro"
-	askpass="$tempFolder/askpass.sh"
-	
-	dialogWidth=$((`tput cols` - 4))
-	dialogHeight=$((`tput lines` - 6))
-	zenityWidth=770
-	zenityHeight=400
-
-	repoCommands=""
-	preInstallationCommands=""
-	packageCommands=""
-	nonRepoAppCommands=""
-	postInstallationCommands=""
-
-	# Set debconf interface
-	if [ -z $DISPLAY ]; then
-		debconfInterface="Dialog"
-	else
-		if [ "$KDE_FULL_SESSION" != "true" ]; then
-			debconfInterface="Gnome"
-		else
-			debconfInterface="Kde"
-		fi
-	fi
-}
 
 
 ##########################################################################
@@ -180,7 +87,15 @@ function installNeededPackages
 ##########################################################################
 function prepareScript
 {
-	initCommonVariables "${1}" "${2}"
+	# Store current username, script root folder and log filename in temporal file
+	echo "`whoami`" > /tmp/linux-app-installer-username
+	local scriptRootFolder="${1}"
+	echo "$scriptRootFolder" > /tmp/linux-app-installer-scriptRootFolder
+	echo "${2}" > /tmp/linux-app-installer-logFilename
+
+	# Initialize variables
+	. $scriptRootFolder/common/commonVariables.sh
+
 	selectLanguage
 	
 	# Create temporal folders and files
@@ -257,26 +172,26 @@ function generateCommands
 		if [ `uname -m` == "x86_64" ]; then	
 			# For 64 bits OS
 			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then
-				scriptCommands+="bash \"$targetFolder/$distro/$appName$x64.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+				scriptCommands+="bash \"$targetFolder/$distro/$appName$x64.sh\" 2>>\"$logFile\" $dialogBox;"
 			fi
 			if [ -f "$targetFolder/$appName$x64.sh" ]; then
-				scriptCommands+="bash \"$targetFolder/$appName$x64.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+				scriptCommands+="bash \"$targetFolder/$appName$x64.sh\" 2>>\"$logFile\" $dialogBox;"
 			fi
 		else
 			# For 32 bits OS
 			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then
-				scriptCommands+="bash \"$targetFolder/$distro/$appName$i386.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+				scriptCommands+="bash \"$targetFolder/$distro/$appName$i386.sh\" 2>>\"$logFile\" $dialogBox;"
 			fi
 			if [ -f "$targetFolder/$appName$i386.sh" ]; then
-				scriptCommands+="bash \"$targetFolder/$appName$i386.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+				scriptCommands+="bash \"$targetFolder/$appName$i386.sh\" 2>>\"$logFile\" $dialogBox;"
 			fi
 		fi
 		# For all CPU arquitectures
 		if [ -f "$targetFolder/$distro/$appName.sh" ]; then
-			scriptCommands+="bash \"$targetFolder/$distro/$appName.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+			scriptCommands+="bash \"$targetFolder/$distro/$appName.sh\" 2>>\"$logFile\" $dialogBox;"
 		fi
 		if [ -f "$targetFolder/$appName.sh" ]; then
-			scriptCommands+="bash \"$targetFolder/$appName.sh\" $scriptRootFolder $username $tempFolder 2>>\"$logFile\" $dialogBox;"
+			scriptCommands+="bash \"$targetFolder/$appName.sh\" 2>>\"$logFile\" $dialogBox;"
 		fi
 	fi
 	if [ "$scriptCommands" != "" ]; then

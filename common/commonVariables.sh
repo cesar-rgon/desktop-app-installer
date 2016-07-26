@@ -1,45 +1,84 @@
 ##########################################################################
-# This script contains common variables used by installation scripts or
-# subscripts. Also, it checks if the script is being running like root
-# user.
+# This script contains common variables used by main script, subscripts or
+# specific application installation scripts.
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 25/07/2016
+# Last modified date (dd/mm/yyyy): 26/07/2016
 # Licence: MIT
 ##########################################################################
 
-########################################################################################################################
-# Variables
-########################################################################################################################
-if [ "$2" != "" ]; then
-	# username is passed by second parameter
-	username="$2"
-else
-	username=`whoami`
-fi
-if [ "$3" != "" ]; then
-	tempFolder="$3"
-fi
-homeFolder=`sudo -u $username -i eval 'echo $HOME'`
-homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
+# SCRIPT INFO
+#	Actual script version
+	SCRIPT_VERSION="1.3"
+# 	Script title showed in top of script windows menu
+	linuxAppInstallerTitle="Linux app installer v$SCRIPT_VERSION"
 
-# Check distro name appropiate to add third-party repositories to your OS. Not necessary your distro name. Only valid for Debian, Ubuntu and Ubuntu based linux (example: Linux Mint)
-if [ "$(lsb_release -sc)" == "jessie" ]; then
-	# Debian 8: Jessie
-	distroName="jessie"
-else
-	# Ubuntu 16.04: Xenial (Or Ubuntu 16.04 based linux. For example, Linux Mint 18)
-	distroName="xenial"
-fi
+# YOUR DISTRO AND SYSTEM INFO
+#       Distribution name (ubuntu/debian/linuxmint)
+	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"; if [ "$distro" == "linuxmint" ]; then if [ "debian" == "`lsb_release -c | awk '{print $2}'`" ]; then distro="lmde"; fi; fi
+#       Distribution version name appropiate to add third-party repositories to your OS. Not necessary your distro name.
+	if [ "$(lsb_release -sc)" == "jessie" ]; then distroName="jessie"; else	distroName="xenial"; fi
+#	Linux language
+	language="${LANG:0:2}"
+#	Actual date and time
+	snapshot=`date +\"%D-%T\" | tr '/' '.'`
 
-########################################################################################################################
-# Check if the script is being running like root user (root user has id equal to 0)
-########################################################################################################################
-if [ $(id -u) != 0 ]
-then
-	echo ""
-	echo "This script must be executed by a root or sudoer user"
-	echo ""
-	exit 1
-fi
+# USER INFO
+#	Username that executes the installation script
+	username="`cat /tmp/linux-app-installer-username`"
+#	Root homefolder associated to username
+	homeFolder=`sudo -u $username -i eval 'echo $HOME'`
+#	Download user folder
+	homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
+
+# MAIN SCRIPT FOLDERS
+#	Main script root folder
+	scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
+#	Folder that will contain the script's log file.
+	logsFolder="$homeFolder/logs"
+#	Temporal folder used by installation script.
+	tempFolder="/tmp/linux-app-installer-$snapshot"
+#	Folder where are placed files which contain commands to add third-party repositories.
+	thirdPartyRepoFolder="$scriptRootFolder/third-party-repo"
+#	Folder where are placed files which contain commands to set debconf for EULA support.
+	eulaFolder="$scriptRootFolder/eula"
+#	Folder where are placed files which contain commands to prepare the installation of application packages.
+	preInstallationFolder="$scriptRootFolder/pre-installation"
+#	Folder where are placed files which contain commands to setup application that have been installed.
+	postInstallationFolder="$scriptRootFolder/post-installation"
+#	Foldet where are placed files which contain commands to install non-repo apps.
+	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
+# 	Folder where are placed icons used by main script.
+	installerIconFolder="$scriptRootFolder/icons/installer"
+
+# MAIN SCRIPT FILES
+#	Log file where the script will report errors or steps of installation process.
+	logFile="$logsFolder/$snapshot-`cat /tmp/linux-app-installer-logFilename`"
+#	File that contains categories, applications and packages used by main menu and the installation proccess.
+	appListFile="$scriptRootFolder/applist/applicationList.$distro"
+#	Script that launchs a zenity to ask por admin password.
+	askpass="$tempFolder/askpass.sh"
+
+# MENU WINDOWS INFO
+#	Interface used for Debconf (Dialog - Terminal mode / Zenity - Desktop mode)
+	if [ -z $DISPLAY ]; then debconfInterface="Dialog"; else if [ "$KDE_FULL_SESSION" != "true" ]; then debconfInterface="Gnome"; else debconfInterface="Kde"; fi; fi
+#	Width/Height in pixels of dialog box (on terminal mode)
+	dialogWidth=$((`tput cols` - 4))
+	dialogHeight=$((`tput lines` - 6))
+#	Width/Height in pixels of windows (on desktop mode)
+	zenityWidth=770
+	zenityHeight=400
+
+# SCRIPT COMMANDS GENERATED BY MAIN SCRIPT
+#	Commands to add third-party repotitories.
+	repoCommands=""
+#	Commands to be executed before installing an application.
+	preInstallationCommands=""
+#	Commands to install packages of applications from default repositories.
+	packageCommands=""
+#	Commands to install non-repository applications.
+	nonRepoAppCommands=""
+#	Commands to be executed after the installation of an application.
+	postInstallationCommands=""
+

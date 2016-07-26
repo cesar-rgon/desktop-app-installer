@@ -1,6 +1,7 @@
 #!/bin/bash
 ##########################################################################
-# This script install Google Earth application.
+# This script executes commands to add third-party repository of Google
+# Chrome application.
 #
 # Author: César Rodríguez González
 # Version: 1.3
@@ -11,14 +12,17 @@
 # Check if the script is being running by a root or sudoer user
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
-# Get common variables 
+# Get common variables
 scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 . $scriptRootFolder/common/commonVariables.sh
 
-# Commands to setup an installed application
-mkdir /tmp/google_earth_package
-cd /tmp/google_earth_package
-make-googleearth-package --force --quiet
-gdebi --n /tmp/google_earth_package/googleearth*.deb
+if [ "$language" == "es" ]; then
+	message="Google Chrome no está soportado para sistemas Linux 32 bits. La aplicación no puede ser instalada"
+else
+	message="Google Chrome is deprecated for linux 32 bits. The application can't be installed"
+fi
 
-
+echo "$message" 1>&2
+if [ -n $DISPLAY ]; then
+	notify-send -i "$installerIconFolder/applications-other.svg" "ERROR" "$message"
+fi

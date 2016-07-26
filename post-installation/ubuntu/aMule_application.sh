@@ -3,8 +3,8 @@
 # This script configures aMule application to be ready to use.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 05/05/2014
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 26/07/2016
 # Licence: MIT
 # Note: This script was compatible for both linux OS: Ubuntu and Debian.
 # Debian 8 has removed amule package from stable repository.
@@ -13,23 +13,16 @@
 # linux OS.
 ##########################################################################
 
-# Get common variables and check if the script is being running by a root or sudoer user
-if [ "$1" != "" ]; then
-	scriptRootFolder="$1"
-else
-	scriptRootFolder=".."
-fi
+# Check if the script is being running by a root or sudoer user
+if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
+
+# Get common variables 
+scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 . $scriptRootFolder/common/commonVariables.sh
 
 # Variables
 AMULE_DOWNLOAD_FOLDER="$homeDownloadFolder/aMule"
 AMULE_TEMP_FOLDER="$homeFolder/.Temporal/aMule"
-AMULE_ACCEPT_EXTERNAL_CONNECTIONS=0
-AMULE_EXTERNAL_CONNECTION_PASSWORD=""
-AMULE_EXTERNAL_CONNECTION_PORT="4712"
-AMULE_ENABLE_WEB_SERVER=0
-AMULE_WEB_SERVER_PASSWORD=""
-AMULE_WEB_SERVER_PORT="4711"
 
 # Create the necessary folders
 mkdir -p $AMULE_DOWNLOAD_FOLDER $AMULE_TEMP_FOLDER $homeFolder/.aMule/
@@ -42,12 +35,6 @@ sudo -u $username cp $homeFolder/.aMule/amule.conf $homeFolder/.aMule/amule.conf
 # Set variables in amule config file
 sudo -u $username sed -i "s@^IncomingDir=.*@IncomingDir=$AMULE_DOWNLOAD_FOLDER@g" $homeFolder/.aMule/amule.conf
 sudo -u $username sed -i "s@^TempDir=.*@TempDir=$AMULE_TEMP_FOLDER@g" $homeFolder/.aMule/amule.conf
-sudo -u $username sed -i "s/^AcceptExternalConnections=.*/AcceptExternalConnections=$AMULE_ACCEPT_EXTERNAL_CONNECTIONS/g" $homeFolder/.aMule/amule.conf
-sudo -u $username sed -i "s/^ECPassword=.*/ECPassword=`echo -n $AMULE_EXTERNAL_CONNECTION_PASSWORD | md5sum | cut -d ' ' -f 1`/g" $homeFolder/.aMule/amule.conf
-sudo -u $username sed -i "s/^ECPort=.*/ECPort=$AMULE_EXTERNAL_CONNECTION_PORT/g" $homeFolder/.aMule/amule.conf
-sudo -u $username sed -i "s/^Enabled=.*/Enabled=$AMULE_ENABLE_WEB_SERVER/g" $homeFolder/.aMule/amule.conf
-sudo -u $username sed -i "s/^Password=.*/Password=`echo -n $AMULE_WEB_SERVER_PASSWORD | md5sum | cut -d ' ' -f 1`/g" $homeFolder/.aMule/amule.conf
-sudo -u $username sed -i "s/^Port=.*/Port=$AMULE_WEB_SERVER_PORT/g" $homeFolder/.aMule/amule.conf
 
 # Extract amule icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
