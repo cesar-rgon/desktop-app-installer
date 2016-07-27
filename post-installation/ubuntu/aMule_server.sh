@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 26/07/2016
+# Last modified date (dd/mm/yyyy): 27/07/2016
 # Licence: MIT
 # Note: This script was compatible for both linux OS: Ubuntu and Debian.
 # Debian 8 has removed amule package from stable repository.
@@ -107,7 +107,7 @@ rm /etc/default/amule-daemon 2>/dev/null
 chown -R $username:$username $AMULE_DAEMON_DOWNLOAD_FOLDER $AMULE_DAEMON_TEMP_FOLDER $homeFolder/.aMule
 # Download GeoIP Legacy Country Database. Needed by aMule and don't downloaded by amule daemon
 sudo -u $username wget -O $homeFolder/.aMule/GeoIP.dat.gz http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
-sudo -u $username gunzip $homeFolder/.aMule/GeoIP.dat.gz
+sudo -u $username gunzip -f $homeFolder/.aMule/GeoIP.dat.gz
 # Extract amule icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
 

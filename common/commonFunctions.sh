@@ -94,6 +94,7 @@ function prepareScript
 	echo "${2}" > /tmp/linux-app-installer-logFilename
 
 	# Initialize variables
+	linuxAppInstallerTitle="Linux app installer v$(cat $scriptRootFolder/etc/version)"
 	. $scriptRootFolder/common/commonVariables.sh
 
 	selectLanguage

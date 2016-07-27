@@ -4,15 +4,9 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 26/07/2016
+# Last modified date (dd/mm/yyyy): 27/07/2016
 # Licence: MIT
 ##########################################################################
-
-# SCRIPT INFO
-#	Actual script version
-	SCRIPT_VERSION="1.3"
-# 	Script title showed in top of script windows menu
-	linuxAppInstallerTitle="Linux app installer v$SCRIPT_VERSION"
 
 # YOUR DISTRO AND SYSTEM INFO
 #       Distribution name (ubuntu/debian/linuxmint)
@@ -22,7 +16,7 @@
 #	Linux language
 	language="${LANG:0:2}"
 #	Actual date and time
-	snapshot=`date +\"%D-%T\" | tr '/' '.'`
+	snapshot=$(date +'%D-%T' | tr '/' '.')
 
 # USER INFO
 #	Username that executes the installation script
@@ -32,7 +26,7 @@
 #	Download user folder
 	homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 
-# MAIN SCRIPT FOLDERS
+# SCRIPTS FOLDERS
 #	Main script root folder
 	scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 #	Folder that will contain the script's log file.
@@ -52,13 +46,15 @@
 # 	Folder where are placed icons used by main script.
 	installerIconFolder="$scriptRootFolder/icons/installer"
 
-# MAIN SCRIPT FILES
-#	Log file where the script will report errors or steps of installation process.
-	logFile="$logsFolder/$snapshot-`cat /tmp/linux-app-installer-logFilename`"
+
+# SCRIPTS FILES
 #	File that contains categories, applications and packages used by main menu and the installation proccess.
 	appListFile="$scriptRootFolder/applist/applicationList.$distro"
+#	Log file where the script will report errors or steps of installation process.
+	logFile="$logsFolder/$snapshot-`cat /tmp/linux-app-installer-logFilename`"
 #	Script that launchs a zenity to ask por admin password.
 	askpass="$tempFolder/askpass.sh"
+
 
 # MENU WINDOWS INFO
 #	Interface used for Debconf (Dialog - Terminal mode / Zenity - Desktop mode)

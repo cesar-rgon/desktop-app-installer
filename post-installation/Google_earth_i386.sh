@@ -18,7 +18,7 @@ scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 # Commands to setup an installed application
 mkdir /tmp/google_earth_package
 cd /tmp/google_earth_package
-make-googleearth-package --force --quiet
+make-googleearth-package --force --quiet 2>/dev/null
 gdebi --n /tmp/google_earth_package/googleearth*.deb
 
 
