@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 27/07/2016
+# Last modified date (dd/mm/yyyy): 28/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -16,7 +16,7 @@
 #	Linux language
 	language="${LANG:0:2}"
 #	Actual date and time
-	snapshot=$(date +'%D-%T' | tr '/' '.')
+	if [ "$language" == "es" ]; then snapshot=$(date +'%d-%m-%y.%Hh:%Mm:%Ss'); else snapshot=$(date +'%m-%d-%y.%Hh:%Mm:%Ss'); fi
 
 # USER INFO
 #	Username that executes the installation script
@@ -51,7 +51,7 @@
 #	File that contains categories, applications and packages used by main menu and the installation proccess.
 	appListFile="$scriptRootFolder/applist/applicationList.$distro"
 #	Log file where the script will report errors or steps of installation process.
-	logFile="$logsFolder/$snapshot-`cat /tmp/linux-app-installer-logFilename`"
+	logFile="$logsFolder/`cat /tmp/linux-app-installer-logFilename`-$snapshot"
 #	Script that launchs a zenity to ask por admin password.
 	askpass="$tempFolder/askpass.sh"
 

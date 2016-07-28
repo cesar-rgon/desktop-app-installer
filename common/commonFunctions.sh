@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 26/07/2016
+# Last modified date (dd/mm/yyyy): 27/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -238,9 +238,9 @@ function prepareRepositoryPackages
 			else
 				dialogBoxFunction "$installingPackage $index/$totalPackagesToInstall: $package"
 			fi
-
 			packageCommands+="echo \"# $installingPackage $index/$totalPackagesToInstall: $package\"; echo \"$installingPackage $package\" >> \"$logFile\";"
-			packageCommands+="apt-get -y install $package --fix-missing 2>>\"$logFile\" $dialogBox;"
+			packageCommands+="bash \"$scriptRootFolder/common/installapp.sh\" \"$package\" 2>>\"$logFile\" $dialogBox;"
+
 			index=$(($index+1))
 		done
 	fi
