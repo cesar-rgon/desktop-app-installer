@@ -1,10 +1,6 @@
 Linux app installer
 ===================
-Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 14.04, Debian 7, Linux Mint 17 or LMDE system (desktop or server). There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
-
-![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
-
-![Main menu screenshot through Dailog box for terminal system][screenshot dialog]
+Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 16.04, Debian 8, Linux Mint 18 or LMDE system (desktop or server). There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 ##### Index
 > 1. [Features](#1-features)
@@ -27,31 +23,20 @@ Menu to install applications from default repositories, third-party ones or exte
 > 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
-Valid for:   Ubuntu v14.04, Debian 7, Linux Mint 17 and LMDE (for all desktops o server).
+Valid for:   Ubuntu v16.04, Debian 8, Linux Mint 18 and LMDE (for all desktops or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 15/07/2016 (dd/mm/yyyy)
+Last change: 07/28/2016 (mm/dd/yyyy)
 ```
-##### DONE
-> - [x] Added compatibility with Ubuntu 14.04 (unity/gnome/kde/xfce/lxde/server)
-> - [x] Added compatibility with Debian 7
-> - [x] Added compatibility with Linux Mint 17 (cinnamon/mate)
-> - [x] Added compatibility with LMDE (cinnamon/mate)
-> - [x] Created spanish translation of this document in LEEME.md file 
 
-##### TODO
-> - [ ] Develop Github web page
-
----
 ### 1. Features
-* One main script that shows a menu of aplications wich can be selected for installation.
+* One main script that shows a menu of aplications which can be selected for installation.
 * Alternatively, there is one separate script for each application, so it can be installed by just executing the appropriate script.
-* Install official repository applications.
-* Add third-party repositories and install related applications when needed.
+* Install official and third-party repository applications. In the last case, first add the necessary repositories to the distro.
 * Download, extract and install non-repository applications through custom subscripts that extend the main script functionality. It includes several subscripts by default.
 * Set up applications after they are installed through custom subscripts.
-* Customize your own application list to install and third party repositories to add by just editing some config files (no need to edit main script at all for this purpose).
-* EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
+* Customize your own application list to install and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
+* EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application. Disabled by default.
 * The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
@@ -81,12 +66,17 @@ $ cd linux-app-installer-master
 ### 3. Executing a script
 
 #### 3.1 Main script
-It shows a menu of applications to be installed which are ordered by categories. The user navigates through categories and selects the applications to be installed. After that, installation process begins.
+It shows a menu of applications to be installed which are ordered by categories. The user can navigates through categories and selects the applications to be installed. Furthermore user can edit one specific category to modify the selected applications to be installed. Finally, when all are ready, installation process will begin.
 ```bash
 $ bash installer.sh
 ```
+ACTUALIZAR CAPTURA DE PANTALLA V1.3
+![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
+ACTUALIZAR CAPTURA DE PANTALLA V1.3
+![Main menu screenshot through Dailog box for terminal system][screenshot dialog]
+
 #### 3.2 Application script
-There is one separate script for each application, so it can be installed just by running the appropriate script.
+There is one separate script for each application, so it can be installed just by executing it.
 ```bash
 $ bash ./scripts/applicationName.sh
 ```
@@ -96,15 +86,15 @@ $ bash ./scripts/applicationName.sh
 
 ### 4. Execution's lifecycle
 1. The user must select the applications to install.
-2. The script would add third-party repositories of the selected third-party applications, when required.
-3. The script executes custom subscripts to prepare the installation of some applications.
-4. The script installs all the selected repository applications with EULA support if required.
+2. The script would add third-party repositories of some of the selected applications, if required.
+3. The script executes previous tasks, before the installation process begins, defined in custom sub-scripts that contain needed commands to be executed to leave all ready to start.
+4. The script installs selected applications, with EULA support if needed, taking as source official distro repositories or third-party ones.
 5. The script executes custom subscripts to install the selected non-repository applications.
-6. The script executes custom subscripts to setup selected applications.
-7. The script runs final operations to finish installation process and to clean temporal files.
-8. The script shows an installation log file which contains installation steps and errors if they have occurred.
+6. The script executes custom subscripts to setup some of the selected applications.
+7. The script runs final operations to finish installation process and to clean all temporal files.
+8. The script shows an installation log file which contains installation steps and errors if occurred during installation process.
 
-Main script runs all the previous steps, whereas individual application scripts skip step 1 and run the remaining.
+Main script runs all the previous steps, whereas individual application scripts skip step one and run the remaining.
 
 ---
 [Back to index](#index)
@@ -120,65 +110,56 @@ Tree of folders and some files:
 │   ├── applicationList.linuxmint
 │   ├── applicationList.lmde
 │   └── applicationList.ubuntu
-├── common                  It contains common functions and variables used by installation scripts
+│
+├── common                  It contains common functions, common variables and commands used by installation scripts
 │   ├── commonFunctions.sh
 │   ├── commonVariables.sh
-│   ├── menuFunctions.sh
+│   ├── installapp.sh
+│   └── menuFunctions.sh
+│
+├── etc                     It contains config files used by some subscripts and version number of main installation script
+│   ├── systemd.service
+│   ├── version
 │   └── *
 │
-├── etc                     It contains some config files used by some subscripts
-│   └── *
-│
-├── eula                    It contains files who set parameters to skip questions during installation's process
+├── eula                    It contains files to avoid questions to accept applications terms of use during installation's process
 │   ├── template-eula
 │   └── *
 │
-├── icons                   It contains sets of application icons used by subscripts
+├── icons                   It contains a sets of application icons used by subscripts
 │   ├── *
-│   └── installer           It contains icons used by installation scripts
-│       └── *
-├── installer.sh
+│   └── installer/*         It contains a set of icons used by installation script
 │
-├── languages               It contains language translations used by installation scripts
+├── installer.sh            File to start main installation script
+│
+├── languages               It contains language translation files used by installation scripts
 │   ├── en.properties
-│   └── es.properties
+│   ├── es.properties
+│   └── *
 │
 ├── non-repository-apps     It contains subscripts to install non-repository applications
 │   ├── template-non-repo-app.sh
 │   ├── *                   Subscripts used on any linux system
-│   ├── debian              Subscripts only used on a Debian system
-│   │   └── *
-│   ├── linuxmint           Subscripts only used on a Linux Mint system
-│   │   └── *
-│   ├── lmde                Subscripts only used on a LMDE system
-│   │   └── *
-│   └── ubuntu              Subscripts only used on an Ubuntu system
-│       └── *
+│   ├── debian/*            Subscripts only used on a Debian system
+│   ├── linuxmint/*         Subscripts only used on a Linux Mint system
+│   ├── lmde/*              Subscripts only used on a LMDE system
+│   └── ubuntu/*            Subscripts only used on an Ubuntu system
 │
 ├── post-installation       It contains subscripts to setup applications after installation
 │   ├── template-post-installation.sh
 │   ├── *                   Subscripts used on any linux system
-│   ├── debian              Subscripts only used on a Debian system
-│   │   └── *
-│   ├── linuxmint           Subscripts only used on a Linux Mint system
-│   │   └── *
-│   ├── lmde                Subscripts only used on a LMDE system
-│   │   └── *
-│   └── ubuntu              Subscripts only used on an Ubuntu system
-│       └── *
+│   ├── debian/*            Subscripts only used on a Debian system
+│   ├── linuxmint/*         Subscripts only used on a Linux Mint system
+│   ├── lmde/*              Subscripts only used on a LMDE system
+│   └── ubuntu/*            Subscripts only used on an Ubuntu system
 │
 ├── pre-installation       It contains subscripts to prepare the installation of some applications
 │   ├── template-pre-installation.sh
 │   ├── *                   Subscripts used on any linux system
-│   ├── debian              Subscripts only used on a Debian system
-│   │   └── *
-│   ├── linuxmint           Subscripts only used on a Linux Mint system
-│   │   └── *
-│   ├── lmde                Subscripts only used on a LMDE system
-│   │   └── *
-│   └── ubuntu              Subscripts only used on an Ubuntu system
-│       └── *
-├── README.md
+│   ├── debian/*            Subscripts only used on a Debian system
+│   ├── linuxmint/*         Subscripts only used on a Linux Mint system
+│   ├── lmde/*              Subscripts only used on a LMDE system
+│   └── ubuntu/*            Subscripts only used on an Ubuntu system
 │
 ├── scripts                 It contains one installation script per application
 │   ├── template-script.sh
@@ -187,17 +168,12 @@ Tree of folders and some files:
 └── third-party-repo        It contains subscripts to add third-party repositories for some applications
     ├── template-repository.sh
     ├── *                   Subscripts used on any linux system
-    ├── debian              Subscripts only used on a Debian system
-    │   └── *
-    ├── keys                It contains key files used by third-party repository's subscripts
-    │   └── *
-    ├── linuxmint           Subscripts only used on a Linux Mint system
-    │   └── *
-    ├── lmde                Subscripts only used on a LMDE system
-    │   └── *
-    └── ubuntu              Subscripts only used on an Ubuntu system
-        └── *
+    ├── debian/*            Subscripts only used on a Debian system
+    ├── linuxmint/*         Subscripts only used on a Linux Mint system
+    ├── lmde/*              Subscripts only used on a LMDE system
+    └── ubuntu/*            Subscripts only used on an Ubuntu system
 ```
+------ CHECKED TO HERE :) ------
 
 | Some important files                                           | Description                                                                                  |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
