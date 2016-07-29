@@ -70,10 +70,21 @@ It shows a menu of applications to be installed which are ordered by categories.
 ```bash
 $ bash installer.sh
 ```
-ACTUALIZAR CAPTURA DE PANTALLA V1.3
-![Main menu screenshot through Zenity box for desktop system][screenshot zenity]
-ACTUALIZAR CAPTURA DE PANTALLA V1.3
-![Main menu screenshot through Dailog box for terminal system][screenshot dialog]
+
+##### Menú principal del instalador (modo Escritorio/Terminal)
+> ![Captura pantalla menú principal modo escritorio][screenshot-desktop-mainmenu1]
+> ![Captura pantalla menú principal modo terminal][screenshot-terminal-mainmenu1]
+
+
+##### Categoría Internet del instalador (modo Escrotorio/Terminal)
+> ![Captura de pantalla menú categoría internet modo escritorio][screenshot-desktop-internetapp]
+> ![Captura de pantalla menú categoría internet modo terminal][screenshot-terminal-internetapp]
+
+
+##### Menú principal del instalador tras selección programas (modo Escritorio/Terminal)
+> ![Captura pantalla menú principal con programas seleccionados modo escritorio][screenshot-desktop-mainmenu2]
+> ![Captura pantalla menú principal con programas seleccionados modo terminal][screenshot-terminal-mainmenu2]
+
 
 #### 3.2 Application script
 There is one separate script for each application, so it can be installed just by executing it.
@@ -415,8 +426,12 @@ I hope you find it useful.
 [template-script.sh]:./scripts/template-script.sh
 [template-repository.sh]:./third-party-repo/template-repository.sh
 [keys]:./third-party-repo/keys
-[screenshot dialog]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/screenshot-dialog.jpg
-[screenshot zenity]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/screenshot-zenity.jpg
+[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-01.png
+[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-02.png
+[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-03.png
+[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-terminal-1.3-01.png
+[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-terminal-1.3-02.png
+[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-terminal-1.3-03.png
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
