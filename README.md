@@ -30,7 +30,7 @@ There are a lot of applications included in the default list, but this list can 
 Valid for:   Ubuntu v16.04, Debian 8, Linux Mint 18 and LMDE (for all desktops or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 07/28/2016 (mm/dd/yyyy)
+Last change: 07/30/2016 (mm/dd/yyyy)
 ```
 
 ### 1. Features
