@@ -1,6 +1,10 @@
 Linux app installer
 ===================
-Menu to install applications from default repositories, third-party ones or external sources on any Ubuntu 16.04, Debian 8, Linux Mint 18 or LMDE system (desktop or server). There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+
+| Installation menu for applications from official repositories, third-party ones or external sources on any Ubuntu , Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux bricoleur] |
+| --- | --- |
+
+There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 ##### Index
 > 1. [Features](#1-features)
@@ -71,19 +75,17 @@ It shows a menu of applications to be installed which are ordered by categories.
 $ bash installer.sh
 ```
 
-##### Menú principal del instalador (modo Escritorio/Terminal)
-> ![Captura pantalla menú principal modo escritorio][screenshot-desktop-mainmenu1]
-> ![Captura pantalla menú principal modo terminal][screenshot-terminal-mainmenu1]
+##### Installer main menu (Desktop/Terminal mode)
+> ![Main menu screenshot on desktop mode][screenshot-desktop-mainmenu1]
+> ![Main menu screenshot on terminal mode][screenshot-terminal-mainmenu1]
 
+##### Installer Internet Category (Desktop/Terminal mode)
+> ![Intenet category window screenshot on desktop mode][screenshot-desktop-internetapp]
+> ![Intenet category window screenshot on terminal mode][screenshot-terminal-internetapp]
 
-##### Categoría Internet del instalador (modo Escrotorio/Terminal)
-> ![Captura de pantalla menú categoría internet modo escritorio][screenshot-desktop-internetapp]
-> ![Captura de pantalla menú categoría internet modo terminal][screenshot-terminal-internetapp]
-
-
-##### Menú principal del instalador tras selección programas (modo Escritorio/Terminal)
-> ![Captura pantalla menú principal con programas seleccionados modo escritorio][screenshot-desktop-mainmenu2]
-> ![Captura pantalla menú principal con programas seleccionados modo terminal][screenshot-terminal-mainmenu2]
+##### Installer main menu with selected applications (Desktop/Terminal mode)
+> ![Main menu screenshot with selected applications on desktop mode][screenshot-desktop-mainmenu2]
+> ![Main menu screenshot with selected applications on terminal mode][screenshot-terminal-mainmenu2]
 
 
 #### 3.2 Application script
@@ -184,26 +186,25 @@ Tree of folders and some files:
     ├── lmde/*              Subscripts only used on a LMDE system
     └── ubuntu/*            Subscripts only used on an Ubuntu system
 ```
------- CHECKED TO HERE :) ------
 
-| Some important files                                           | Description                                                                                  |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                            |
-| [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all subscripts                                    |
-| [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                         |
-| [applicationList.debian][applicationList.debian]               | It defines categories, applications and packages used by main script for a Debian system     |
-| [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and packages used by main script for a Linux Mint system |
-| [applicationList.lmde][applicationList.lmde]                   | It defines categories, applications and packages used by main script for a LMDE system       |
-| [applicationList.ubuntu][applicationList.ubuntu]               | It defines categories, applications and packages used by main script for an Ubuntu system    |
-| [installer.sh][installer.sh]                                   | Main script file                                                                             |
-| [en.properties][en.properties]                                 | English translation file                                                                     |
-| [es.properties][es.properties]                                 | Spanish translation file                                                                     |
-| [template-script.sh][template-script.sh]                       | Template file to help to create new script file to install an application                    |
-| [template-repository.sh][template-repository.sh]               | Template file to help to create new subscript to add a third-party repository                |
-| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create new application subscript to run pre-installation commands   |
-| [template-eula][template-eula]                                 | Template file to help to create new subscript to setup EULA support for a package            |
-| [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create new subscript to install a non-repository application        |
-| [template-post-installation.sh][template-post-installation.sh] | Template file to help to create new application subscript to run post-installation commands  |
+| Some important files                                           | Description                                                                                   |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------  |
+| [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                             |
+| [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all scripts                                        |
+| [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                          |
+| [applicationList.debian][applicationList.debian]               | It defines categories, applications and related packages for a Debian system                  |
+| [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and related packages for a Linux Mint system              |
+| [applicationList.lmde][applicationList.lmde]                   | It defines categories, applications and related packages for a LMDE system                    |
+| [applicationList.ubuntu][applicationList.ubuntu]               | It defines categories, applications and related packages for an Ubuntu system                 |
+| [installer.sh][installer.sh]                                   | Main script file                                                                              |
+| [en.properties][en.properties]                                 | English translation file                                                                      |
+| [es.properties][es.properties]                                 | Spanish translation file                                                                      |
+| [template-script.sh][template-script.sh]                       | Template file to help to create a new script file to install an application                   |
+| [template-repository.sh][template-repository.sh]               | Template file to help to create a new subscript to add a third-party repository               |
+| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create a new application subscript to run pre-installation commands  |
+| [template-eula][template-eula]                                 | Template file to help to create a new subscript to setup EULA support for a package           |
+| [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create a new subscript to install a non-repository application       |
+| [template-post-installation.sh][template-post-installation.sh] | Template file to help to create a new application subscript to run post-installation commands |
 
 ---
 
@@ -216,37 +217,36 @@ To add an application to be installed follow next steps:
 
 | 1st column - Category (*)  | 2nd column - Application Name (*) | Other columns (Packages) |
 | -------------------------- | --------------------------------- | ------------------------ |
-| Existing/New_category_name | Application_name                  | repository package(s)    |
+| CategoryName               | ApplicationName                   | repository package(s)    |
 
   Considerations:
   * Blank or comment lines are ignored in this file.
-  * First column - Category: is mandatory.
-  * Category name is repeated once per application contained in it.
+  * First column - Category: is mandatory. It repeats once per line, that means, once per application of this category.
   * If the category name is new in the file, the script will generate a new window for this category.
-  * Each category should contain at least one application.
+  * Each category must contain at least one application.
   * The category name shall contain only letters, digits and/or underscores '_' and it can't start with a digit.
   * Second column - Application name: is mandatory.
   * Just one row per application.
   * The application name shall contain only letters, digits and/or underscores '_' and it can't start with a digit.
   * The application source can be official repositories, third-party repositories even other sources (non-repositories).
-  * The order in which applications are listed in the menu is the same as set in this file.
+  * The order in which applications are listed in the menu script is the same as set in this config file.
   * Third column - Packages: is mandatory only if the application belongs to a repository.
-  * Packages must be separated by whitespaces.
+  * Package names must be separated by whitespaces.
   * Non-repository applications must leave this field empty.
 
-2. Edit [en.properties][en.properties] file and add a description for categories (if it's new) and applications with the next syntax:
+2. Edit [en.properties][en.properties] file and add a description for categories (if it's a new one) and applications with the next syntax:
   CategoryNameDescription=Here goes the category description that is used by the main menu  
-  ApplicationNameDescription=Here goes the application description that is used by the main menu
+  ApplicationNameDescription=Here goes the application name description that is used by the main menu
 
   Considerations:
   * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the category name word.
-  * To be intuitive, CategoryNameDescription should be defined in the 'CATEGORIES' section of the file.
+  * To be intuitive, is recommended that CategoryNameDescription is defined in the 'CATEGORIES' section of the file.
   * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the application name word.
-  * To be intuitive, ApplicationNameDescription should be defined in the 'APPLICATIONS' section of the file.
+  * To be intuitive, is recommended that ApplicationNameDescription is defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
   * You can create a new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
 
-To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and change the corresponding lines.
+To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and change/delete the corresponding lines.
 
 ---
 [Back to index](#index)
@@ -254,17 +254,7 @@ To modify or delete an application or category just edit [applicationList.ubuntu
 #### 5.3 Add new subscript to install an application
 To add a new installation script for an application follow next steps:
 
-1. Create a new file './scripts/application-name.sh' taking, as base, next commands from [template-script.sh][template-script.sh] file
-  ```bash
-  #!/bin/bash
-  scriptRootFolder=`pwd`/..
-  . $scriptRootFolder/common/commonFunctions.sh
-  appName=""  # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../applist/applicationList.<distro> file.
-  logFile=""  # Here goes log file name that will be created in ~/logs/logFile
-
-  prepareScript "$scriptRootFolder" "$logFile"
-  installAndSetupApplications $appName
-  ```
+1. Create a new file './scripts/application-name.sh' taking, as base, next commands defined in [template-script.sh][template-script.sh] file
 
 2. Modify content to asign values to variables: _appName_ and _logFile_  
   Considerations:
@@ -275,71 +265,28 @@ To add a new installation script for an application follow next steps:
 [Back to index](#index)
 
 #### 5.4 Add new subscript to add third-party repository
-To add a new subscript to add a third-party repository for an application follow next steps:
+To add a new subscript that adds a third-party repository for an application follow next steps:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-repository.sh][template-repository.sh] file.
-
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./third-party-repo_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./third-party-repo/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./third-party-repo/debian_ folder.
-  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
-  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./third-party-repo_ folder.
-
-2. Add neccessary commands at the end of the file to add the repository  
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
-  * If commands need to use a key file, it should be placed in [keys][keys] folder.
+1. Create a new file taking, as base, the [template-repository.sh][template-repository.sh] file following next [considerations](#subscript-file-considerations).
+2. Add neccessary commands at the end of the file to add the repository following next [considerations](#subscript-commands-considerations).
 
 ---
 [Back to index](#index)
 
 #### 5.5 Add new subscript to prepare the installation of an application
-To add a new subscript to prepare the installation of an application before the installation proccess begins just follow next steps:
+To add a new subscript that prepares the installation of an application before the installation proccess begins just follow next steps:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file.
-
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./pre-installation_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./pre-installation/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./pre-installation/debian_ folder.
-  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
-  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./pre-installation_ folder.
-
-2. Add neccessary commands at the end of the file to setup the application
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
+1. Create a new file taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file following next [considerations](#subscript-file-considerations).
+2. Add neccessary commands at the end of the file to setup the application following next [considerations](#subscript-commands-considerations).
 
 ---
 [Back to index](#index)
 
 #### 5.6 Add new subscript to install a non-repository application
-To add a new subscript to install a non-repository application just follow next steps:
+To add a new subscript that installs a non-repository application just follow next steps:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-non-repo-app.sh][template-non-repo-app.sh] file.
-
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./non-repository-apps_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./non-repository-apps/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./non-repository-apps/debian_ folder.
-  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
-  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./non-repository-apps_ folder.
-
-2. Add neccessary commands at the end of the file to download and install the non-repository application
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
+1. Create a new file taking, as base, the [template-non-repo-app.sh][template-non-repo-app.sh] file following next [considerations](#subscript-file-considerations).
+2. Add neccessary commands at the end of the file to download and install the non-repository application following next [considerations](#subscript-commands-considerations).
 
 ---
 [Back to index](#index)
@@ -347,22 +294,8 @@ To add a new subscript to install a non-repository application just follow next 
 #### 5.7 Add new subscript to setup an application
 To add a new subscript to setup an application after installation proccess just follow next steps:
 
-1. Create a new file 'applicationName.sh' taking, as base, the [template-post-installation.sh][template-post-installation.sh] file.
-
-  Considerations:
-  * The filename must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-  * If the script is valid for all linux distros, it must be placed in _./post-installation_ folder.
-  * If the script is only valid for Ubuntu distros, it must be placed in _./post-installation/ubuntu_ folder.
-  * If the script is only valid for Debian distros, it must be placed in _./post-installation/debian_ folder.
-  * If the script is only valid for Linux Mint distros, it must be placed in _./third-party-repo/linuxmint_ folder.
-  * If the script is only valid for LMDE distros, it must be placed in _./third-party-repo/lmde_ folder.
-  * The scripts placed within the specific distro folders have more preference over the scripts placed in _./post-installation_ folder.
-
-2. Add neccessary commands at the end of the file to setup the application
-  Considerations:
-  * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by main script as needed.
-  * This script must be non-interactive, this means, no echo to monitor, no read from keyboard, no wait confirmation.
+1. Create a new file taking, as base, the [template-post-installation.sh][template-post-installation.sh] file following next [considerations](#subscript-file-considerations).
+2. Add neccessary commands at the end of the file to setup the application following next [considerations](#subscript-commands-considerations).
 
 ---
 [Back to index](#index)
@@ -371,17 +304,6 @@ To add a new subscript to setup an application after installation proccess just 
 To add a new subscript to setup EULA support for a package just follow next steps:
 
 1. Create a new file './eula/packageName' taking, as base, next commands from [template-eula][template-eula] file.
-  ```bash
-  ##########################################################################
-  # This file contains debconf's parameters to avoid interactive
-  # installation of the package to confirm EULA.
-  #
-  # Format: <package> <module>/<parameter> <command> <value>.
-  # See man debconf or debconf-set-selections for more information.
-  ##########################################################################
-
-  # ...
-  ```
   Considerations:
   * The filename must be identically (case-sensitive) to the related application package defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
 
@@ -391,9 +313,9 @@ To add a new subscript to setup EULA support for a package just follow next step
 [Back to index](#index)
 
 ### 6. Add new translation file
-To add a new translation file for a specific language just follow next steps:
+To add a new language file just follow next steps:
 
-1. Create a new file './languages/xx.properties' with the content of an existing translation file, for example, [en.properties][en.properties]
+1. Create a new file './languages/xx.properties' copying the content of an existing language file, for example, [en.properties][en.properties]
   Considerations:
   * 'xx' must consist of two lowercase characters based on [ISO639-1 code][ISO639] for the specific language.
 
@@ -404,6 +326,21 @@ To add a new translation file for a specific language just follow next steps:
 ---
 [Back to index](#index)
 
+### ANNEX
+
+#####  Subscript file considerations:
+  * The filename must follow next pattern: ApplicationName[_i386/_x64]
+    - ApplicationName: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+    - _i386 / _x64: Optional if neccessary. Script to be executed only if match corresponding O.S. architecture (that means, i386 for 32 bits O.S.; x64 for 64 bits O.S.).
+  * The script must be ubicated in _./third-party-repo_ folder if it's valid for all supported linux distros. We call general subscript.
+  * The script must be ubicated in _./third-party-repo/ubuntu_, _./third-party-repo/debian_, _./third-party-repo/linuxmint_, _./third-party-repo/lmde_ folder if it's valid only for a specific supported linux distro. We call specific subscript.
+  * Is possible to create specific and general subscripts for a same thrid-party repository. Both will be executed.
+    
+#####  Subscript commands considerations:
+  * No need to use 'sudo' in commands because the subscript will be executed as root user.
+  * Use common variables supplied by [commonVariables.sh][commonVariables.sh] file.
+  * This script must be non-interactive, that means, no echo to monitor, no read from keyboard, no wait confirmation.
+  
 ### Author notes
 Any contribution to this project would be appreciated.  
 I hope you find it useful.
@@ -425,7 +362,6 @@ I hope you find it useful.
 [template-non-repo-app.sh]:./non-repository-apps/template-non-repo-app.sh
 [template-script.sh]:./scripts/template-script.sh
 [template-repository.sh]:./third-party-repo/template-repository.sh
-[keys]:./third-party-repo/keys
 [screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-01.png
 [screenshot-desktop-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-02.png
 [screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-03.png
