@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 25/07/2016                                                                           #
+# Last modified date (dd/mm/yyyy): 30/07/2016                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -29,11 +29,11 @@ developer_tools       Git_cola                       git-cola
 developer_tools       Meld                           meld
 developer_tools       MySQL_workbench                mysql-workbench
 developer_tools       Netbeans                       netbeans
-developer_tools       OpenJdk			     default-jdk
+developer_tools       OpenJdk			             default-jdk
 developer_tools       Pgadmin_iii                    pgadmin3
 developer_tools       Qt_creator                     qtcreator
 developer_tools       SQLite_database_browser        sqlitebrowser
-developer_tools       Sublime_text
+developer_tools       Sublime_text                   sublime-text-installer
 
 education             Draftsight
 education             Goldendict                     goldendict
@@ -41,13 +41,13 @@ education             Klavaro                        klavaro
 education             Ktouch                         ktouch
 education             Marble                         marble-qt
 
-fonts                 Microsoft_Fonts		     ttf-mscorefonts-installer
+fonts                 Microsoft_Fonts		         ttf-mscorefonts-installer
 
 games                 Battle_for_Wesnoth             wesnoth
 games                 Frogatto                       frogatto
 games                 Gbrainy                        gbrainy
 games                 Pingus                         pingus
-games                 Steam			     steam
+games                 Steam			                 steam
 games                 Supertux                       supertux
 games                 Supertuxkart                   supertuxkart
 games                 Xonotic                        xonotic
@@ -80,7 +80,7 @@ internet              Kget                           kget
 internet              Liferea                        liferea
 internet              Mumble                         mumble
 internet              Mumble_server                  mumble-server
-internet              OpenJRE              	     default-jre
+internet              OpenJRE              	         default-jre
 internet              Pidgin                         pidgin pidgin-extprefs
 internet              qBittorrent_application        qbittorrent
 internet              qBittorrent_server             qbittorrent-nox
@@ -103,7 +103,6 @@ office                Calligra                       calligra
 office                Gcstar                         gcstar
 office                Gnumeric                       gnumeric
 office                Libreoffice                    libreoffice
-office                Shutter                        shutter
 office                Texmaker                       texmaker
 office                Tomboy                         tomboy
 
@@ -115,13 +114,13 @@ science_engineering   Stellarium                     stellarium
 
 sound_video           Audacity                       audacity
 sound_video           Clementine                     clementine
-sound_video	      Cinelerra		     	     cinelerra-cv
+sound_video	          Cinelerra		     	         cinelerra-cv
 sound_video           Gstreamer                      gstreamer0.10-plugins-good
 sound_video           Guvcview                       guvcview
 sound_video           Kodi                           kodi
 sound_video           Mediainfo                      mediainfo
 sound_video           MkvToolNix                     mkvtoolnix-gui
-sound_video	      OpenShot			     openshot
+sound_video	          OpenShot			             openshot
 sound_video           Puddletag                      puddletag
 sound_video           Smplayer                       smplayer 
 sound_video           SubDownloader                  subdownloader
@@ -152,9 +151,7 @@ utilities             Luckybackup                    luckybackup
 utilities             Midnight_commander             mc
 utilities             Py_par2                        pypar2
 utilities             Pyrenamer                      pyrenamer
-utilities             Shutter                        shutter
 utilities             Speedcrunch                    speedcrunch
 utilities             Vim                            vim
 utilities             Virtualbox                     virtualbox-qt
 utilities             Yakuake                        yakuake
-

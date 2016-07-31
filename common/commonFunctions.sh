@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 27/07/2016
+# Last modified date (dd/mm/yyyy): 31/07/2016
 # Licence: MIT
 ##########################################################################
 
@@ -18,10 +18,8 @@
 ##########################################################################
 function selectLanguage
 {
-	local LANGUAGE_FILE="$scriptRootFolder/languages/"${LANG:0:2}".properties"
-
-	if [ -f "$LANGUAGE_FILE" ]; then
-		. $LANGUAGE_FILE
+	if [ -f "$languageFile" ]; then
+		. $languageFile
 	else
 		. $scriptRootFolder/languages/en.properties
 	fi
@@ -215,8 +213,8 @@ function generateCommands
 function prepareRepositoryPackages
 {
 	if [ "$1" != "" ]; then
-		declare -a packagesToInstall=($1)
-		declare -i totalPackagesToInstall=${#packagesToInstall[@]} index=1
+		declare -ag packagesToInstall=($1)
+		declare -ig totalPackagesToInstall=${#packagesToInstall[@]} index=1
 		local package
 
 		for package in "${packagesToInstall[@]}"; do
@@ -317,7 +315,7 @@ function executeCommands
 function installAndSetupApplications
 {
 	if [ "$1" != "" ]; then
-		declare -a appsToInstall=(${1})
+		declare -ag appsToInstall=(${1})
 		local appName packagesToInstall i386="_i386" x64="_x64"
 		for appName in "${appsToInstall[@]}"; do
 			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )		

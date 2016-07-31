@@ -30,7 +30,7 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 Válido para:   Ubuntu v16.04, Debian 8, Linux Mint 18 y LMDE (para todos los escritorios y servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 30/07/2016 (dd/mm/yyyy)
+Último cambio: 31/07/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -126,8 +126,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 ├── common                  Contiene funciones comúnes, variables comunes y comandos usados por los scripts de instalación
 │   ├── commonFunctions.sh
 │   ├── commonVariables.sh
-│   ├── installapp.sh
-│   └── menuFunctions.sh
+│   └── installapp.sh
 │
 ├── etc                     Contiene ficheros de configuración usados por subscripts y el número de version del script principal
 │   ├── systemd.service
@@ -148,6 +147,10 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── en.properties
 │   ├── es.properties
 │   └── *
+│
+├── menu                    Contiene funciones y variables usados por el menú del script principal
+│   ├── menuFunctions.sh
+│   └── menuVariables.sh
 │
 ├── non-repository-apps     Contiene subscripts para instalar aplicaciones externas a repositorios
 │   ├── template-non-repo-app.sh

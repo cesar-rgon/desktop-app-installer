@@ -13,7 +13,7 @@
 
 scriptRootFolder=`pwd`
 . $scriptRootFolder/common/commonFunctions.sh
-. $scriptRootFolder/common/menuFunctions.sh
+. $scriptRootFolder/menu/menuFunctions.sh
 logFile="linux-app-installer.log"
 
 prepareScript "$scriptRootFolder" "$logFile"

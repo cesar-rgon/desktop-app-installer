@@ -4,12 +4,12 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 28/07/2016
+# Last modified date (dd/mm/yyyy): 31/07/2016
 # Licence: MIT
 ##########################################################################
 
 # YOUR DISTRO AND SYSTEM INFO
-#       Distribution name (ubuntu/debian/linuxmint)
+#   Distribution name (ubuntu/debian/linuxmint)
 	distro="`lsb_release -i | awk '{print $3}' | tr '[:upper:]' '[:lower:]'`"; if [ "$distro" == "linuxmint" ]; then if [ "debian" == "`lsb_release -c | awk '{print $2}'`" ]; then distro="lmde"; fi; fi
 #       Distribution version name appropiate to add third-party repositories to your OS. Not necessary your distro name.
 	if [ "$(lsb_release -sc)" == "jessie" ]; then distroName="jessie"; else	distroName="xenial"; fi
@@ -48,6 +48,8 @@
 
 
 # SCRIPTS FILES
+#	Translation file
+	languageFile="$scriptRootFolder/languages/$language.properties"
 #	File that contains categories, applications and packages used by main menu and the installation proccess.
 	appListFile="$scriptRootFolder/applist/applicationList.$distro"
 #	Log file where the script will report errors or steps of installation process.
