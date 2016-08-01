@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 31/07/2016
+# Last modified date (dd/mm/yyyy): 01/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -107,6 +107,10 @@ function prepareScript
 	rm -f "$logFile"
 
 	installNeededPackages
+
+	echo "Linux App Installer Logs" > "$logFile"
+	echo "========================" >> "$logFile"
+	echo "" >> "$logFile"
 }
 
 ##########################################################################

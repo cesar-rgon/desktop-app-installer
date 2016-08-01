@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 31/07/2016
+# Last modified date (dd/mm/yyyy): 01/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -53,7 +53,7 @@
 #	File that contains categories, applications and packages used by main menu and the installation proccess.
 	appListFile="$scriptRootFolder/applist/applicationList.$distro"
 #	Log file where the script will report errors or steps of installation process.
-	logFile="$logsFolder/`cat /tmp/linux-app-installer-logFilename`-$snapshot"
+	logFile="$logsFolder/$snapshot-`cat /tmp/linux-app-installer-logFilename`"
 #	Script that launchs a zenity to ask por admin password.
 	askpass="$tempFolder/askpass.sh"
 

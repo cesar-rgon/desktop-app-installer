@@ -3,7 +3,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 31/07/2016
+# Last modified date (dd/mm/yyyy): 01/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -11,6 +11,7 @@
 declare -a categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`)
 # Associate map wich gets selected applications from a category name
 declare -A selectedAppsMap
+CANCEL_CODE=999
 
 if [ -z $DISPLAY ]; then
 	# Associatie map wich gets category name from category description
