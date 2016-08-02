@@ -6,6 +6,8 @@ Linux app installer
 
 Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado puede ser modificado por el usuario tan sólo editando un fichero de texto. Además, los usuarios pueden añadir subscripts que extiendan la funcionalidad del menú, por ejemplo, añadir nuevos repositorios, configurar aplicaciones, etc. Por otro lado, existe un script individual por cada aplicación como modo alternativo de realizar el proceso de instalación sin el menú principal.
 
+> _Versión inglesa disponible [aquí][readme.md] ( English version can be found [here][readme.md] )_
+
 ##### Indice
 > 1. [Características](#1-características)
 > 2. [Instalando este proyecto](#2-instalando-este-proyecto)  
@@ -359,6 +361,7 @@ Sería apreciada cualquier contribución a este proyecto.
 Espero que lo encontréis útil.
 
 <!-- Referencias -->
+[readme.md]:./README.md
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.sh]:./common/commonVariables.sh
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
