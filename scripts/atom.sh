@@ -12,8 +12,8 @@
 
 scriptRootFolder=`pwd`/..
 . $scriptRootFolder/common/commonFunctions.sh
-declare -a appsToInstall=( "Schedule" )
-logFile="schedule.log"
+declare -a appsToInstall=( "Atom" )
+logFile="atom.log"
 
 prepareScript "$scriptRootFolder" "$logFile"
 installAndSetupApplications appsToInstall[@]

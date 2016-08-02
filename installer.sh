@@ -7,7 +7,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 28/05/2014
+# Last modified date (dd/mm/yyyy): 02/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -21,11 +21,11 @@ if [ -n $DISPLAY ]; then
 	notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$linuxAppInstallerComment\n$linuxAppInstallerAuthor"
 fi
 
-appsToInstall=$(menu)
-if [ "$appsToInstall" != "" ]; then
+declare -a appsToInstall=( $(menu) )
+if [ ${#appsToInstall[@]} -gt 0 ]; then
 	if [ -n $DISPLAY ]; then
 		notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$installingSelectedApplications"
 	fi
 	# Install all selected applications
-	installAndSetupApplications "$appsToInstall"
+	installAndSetupApplications appsToInstall[@]
 fi

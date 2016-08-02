@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 01/08/2016
+# Last modified date (dd/mm/yyyy): 02/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -13,7 +13,7 @@
 # This function shows a box / window to let the user selects
 # applications to install from a category.
 #
-# Parameters: 
+# Parameters:
 # 	applicationArray: application list of a specified category
 #	categoryName: Category name
 #	categoryDescription: Category description
@@ -29,7 +29,7 @@ function selectAppsToInstallByCategory
 
 	selection=`eval "$( getApplicationsWindow applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCategories")"`
 	# Check if exit category menu
-	if [[ $? -ne 0 ]]; then	
+	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
 		if [ ! -z "$selection" ]; then
@@ -50,7 +50,7 @@ function selectAppsToInstallByCategory
 
 ##########################################################################
 # This function calls other functions to show category box and all others
-# application boxes to let the user selects applications to install. 
+# application boxes to let the user selects applications to install.
 #
 # Parameters: none
 # Return:
@@ -104,15 +104,13 @@ function menu
 	done
 	# Return selected applications
 	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
-		local seledtedApps seledtedAppsFormatted
+		local seledtedAppsFormatted
 
 		for categoryName in "${!selectedAppsMap[@]}"; do
-			seledtedApps=`echo ${selectedAppsMap[$categoryName]}`
-			seledtedAppsFormatted+="`echo ${seledtedApps//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
+			seledtedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
 		done
 		echo "$seledtedAppsFormatted"
-		echo "$seledtedAppsFormatted" > $HOME/selectedapps.log
 	else
-		echo ""	
+		echo ""
 	fi
 }

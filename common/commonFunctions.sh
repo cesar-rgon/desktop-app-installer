@@ -4,14 +4,14 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 01/08/2016
+# Last modified date (dd/mm/yyyy): 02/08/2016
 # Licence: MIT
 ##########################################################################
 
 
 ##########################################################################
 # This funtion imports a translation file according to system's language.
-# If no exists translation file, by default, it takes english translation. 
+# If no exists translation file, by default, it takes english translation.
 #
 # Parameters: none
 # Return: none
@@ -35,7 +35,7 @@ function selectLanguage
 function installNeededPackages
 {
 	if [ -z $DISPLAY ]; then
-		if [ "`dpkg -s dialog 2>&1 | grep "installed"`" == "" ]; then
+		if [ -z "`dpkg -s dialog 2>&1 | grep "installed"`" ]; then
 			echo "$installingPackage dialog"
 			sudo apt-get -y install dialog --fix-missing
 		fi
@@ -45,29 +45,29 @@ function installNeededPackages
 		else
 			sudoHundler="kdesudo"; sudoOption="-c"; sudoPackage="kdesudo"
 		fi
-		if [ "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" == "" ]; then
+		if [ -z "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" ]; then
 			echo "$needToInstallPackage $sudoPackage" > "$logFile"; echo "$needToInstallPackage $sudoPackage"
 			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" 2>>"$logFile";
 			zenity --error --text="$needToInstallPackage $sudoPackage" --window-icon="$installerIconFolder/tux32.png" 2>>"$logFile"
 			exit 1
-		fi			
-		
+		fi
+
 		local neededPackages
-		if [ "`dpkg -s zenity 2>&1 | grep "installed"`" == "" ]; then
+		if [ -z "`dpkg -s zenity 2>&1 | grep "installed"`" ]; then
 			neededPackages+="zenity"
 		fi
-		if [ "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" == "" ]; then
-			if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
+		if [ -z "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" ]; then
+			if [ -n "$neededPackages" ]; then neededPackages+=" "; fi
 			neededPackages+="libnotify-bin"
 		fi
 		if [ "$distro" == "ubuntu" ] && [ "$KDE_FULL_SESSION" == "true" ]; then
 			# KDE needs to install Debconf dependencies.
-			if [ "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" == "" ]; then
-				if [ "$neededPackages" != "" ]; then neededPackages+=" "; fi
+			if [ -z "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" ]; then
+				if [ -n "$neededPackages" ]; then neededPackages+=" "; fi
 				neededPackages+="libqtgui4-perl"
 			fi
 		fi
-		if [ "$neededPackages" != "" ]; then
+		if [ -n "$neededPackages" ]; then
 			`$sudoHundler $sudoOption "apt-get -y install $neededPackages" 1>/dev/null 2>>"$logFile"`
 		fi
 	fi
@@ -77,7 +77,7 @@ function installNeededPackages
 # This funtion calls previous functions and creates needed folders and
 # files used by installation script.
 #
-# Parameters: 
+# Parameters:
 #	scriptRootFolder: main script root folder
 #	logFilename: log filename where the script will report errors or
 # 		     steps of installation process.
@@ -96,7 +96,7 @@ function prepareScript
 	. $scriptRootFolder/common/commonVariables.sh
 
 	selectLanguage
-	
+
 	# Create temporal folders and files
 	mkdir -p "$tempFolder"
 	if [ -n "$DISPLAY" ]; then
@@ -116,33 +116,33 @@ function prepareScript
 ##########################################################################
 # This funtion setup debconf from parameters read from an EULA file
 #
-# Parameters: 
+# Parameters:
 #	eulaFilename: EULA file wich contains parameters to setup debconf
-# Return: 
+# Return:
 #	debconfCommands: commands to setup debconf-set-selections
 ##########################################################################
 function setDebconfFromFile
 {
 	local eulaFilename="$1" line lineWithoutSpaces
 	# Result of the function
-	debconfCommands=""	
+	debconfCommands=""
 
 	# Read eula file ignoring comment and blank lines
 	while read line; do
 		lineWithoutSpaces=`echo $line | tr -d ' '`
-		if [ "$lineWithoutSpaces" != "" ] && [[ "$line" != "#"* ]]; then
+		if [ -n "$lineWithoutSpaces" ] && [[ "$line" != "#"* ]]; then
 			debconfCommands+="echo $line | debconf-set-selections 2>>\"$logFile\";"
 		fi
-	done < "$eulaFolder/$eulaFilename"	
+	done < "$eulaFolder/$eulaFilename"
 }
 
 ##########################################################################
-# This funtion sets dialogBox variable to use a dialog progressbox if 
+# This funtion sets dialogBox variable to use a dialog progressbox if
 # detected enviroment is terminal.
 #
 # Parameters:
-#	title: used by dialog box 
-# Return: 
+#	title: used by dialog box
+# Return:
 #	dialogBox: it contains the command to lauch dialog progressbox
 ##########################################################################
 function dialogBoxFunction
@@ -159,20 +159,20 @@ function dialogBoxFunction
 #	targetFolder: root folder that contains file script
 #	appName: application name
 #   message: message about operation showed in logs
-# Return: 
+# Return:
 #	scriptCommands: complete list of commands to execute
 ##########################################################################
 function generateCommands
 {
 	local targetFolder="$1" appName="$2" message="$3" scriptCommands=""
-	if [ "$appName" != "" ] && [ "$targetFolder" != "" ]; then
-		if [ "$message" != "" ]; then
+	if [ -n "$appName" ] && [ -n "$targetFolder" ]; then
+		if [ -n "$message" ]; then
 			dialogBoxFunction "$message $appName ..."
 			local messageCommand="echo \"# $message $appName\"; echo \"$message $appName ...\" >> \"$logFile\";"
 		fi
 		local i386="_i386" x64="_x64"
-	
-		if [ `uname -m` == "x86_64" ]; then	
+
+		if [ `uname -m` == "x86_64" ]; then
 			# For 64 bits OS
 			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then
 				scriptCommands+="bash \"$targetFolder/$distro/$appName$x64.sh\" 2>>\"$logFile\" $dialogBox;"
@@ -197,7 +197,7 @@ function generateCommands
 			scriptCommands+="bash \"$targetFolder/$appName.sh\" 2>>\"$logFile\" $dialogBox;"
 		fi
 	fi
-	if [ "$scriptCommands" != "" ]; then
+	if [ -n "$scriptCommands" ]; then
 		echo "$messageCommand $scriptCommands"
 	else
 		echo ""
@@ -206,22 +206,22 @@ function generateCommands
 
 
 ##########################################################################
-# This funtion sets commands to be executed to install all needed 
+# This funtion sets commands to be executed to install all needed
 # repository packages.
 #
-# Parameters: 
+# Parameters:
 #	packagesToInstall: list of packages to be installed
-# Return: 
+# Return:
 #	packageCommands: commands to install the packages
 ##########################################################################
 function prepareRepositoryPackages
 {
-	if [ "$1" != "" ]; then
-		declare -ag packagesToInstall=($1)
-		declare -ig totalPackagesToInstall=${#packagesToInstall[@]} index=1
-		local package
+	if [ -n "$1" ]; then
+		declare -ag packagesToInstall=("${!1}")
+		local totalPackagesToInstall=${#packagesToInstall[@]} index=1 package
 
 		for package in "${packagesToInstall[@]}"; do
+			notify-send "debug" "${package}"
 			# If package has EULA
 			if [ -f "$eulaFolder/$package" ]; then
 				if [ -z $DISPLAY ]; then
@@ -234,7 +234,7 @@ function prepareRepositoryPackages
 				# Set default Debconf configuration
 				packageCommands+="echo \"# $setNewDebconfConfiguration $package\"; echo \"$setNewDebconfConfiguration $package...\" >> \"$logFile\";"
 				setDebconfFromFile $package
-				packageCommands+="bash -c \"$debconfCommands\";"	
+				packageCommands+="bash -c \"$debconfCommands\";"
 
 				dialogBox=""
 			else
@@ -255,18 +255,18 @@ function prepareRepositoryPackages
 # applications) and passes to dialog or zenity according to detected
 # enviroment (terminal or desktop).
 #
-# Parameters: none 
+# Parameters: none
 # Return: none
 ##########################################################################
 function executeCommands
 {
-	if [ "$repoCommands" != "" ] || [ "$preInstallationCommands" != "" ] || [ "$packageCommands" != "" ] || [ "$nonRepoAppCommands" != "" ] || [ "$postInstallationCommands" != "" ]; then
-		# Set default Debconf interface to use	
+	if [ -n "$repoCommands" ] || [ -n "$preInstallationCommands" ] || [ -n "$packageCommands" ] || [ -n "$nonRepoAppCommands" ] || [ -n "$postInstallationCommands" ]; then
+		# Set default Debconf interface to use
 		local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
 		dialogBoxFunction "$settingDebconfInterface"
 		commands+="echo debconf debconf/frontend select $debconfInterface | debconf-set-selections 2>>\"$logFile\" $dialogBox;"
 
-		if [ "$repoCommands" != "" ] || [ "$preInstallationCommands" != "" ]; then
+		if [ -n "$repoCommands" ] || [ -n "$preInstallationCommands" ]; then
 			commands+="$repoCommands $preInstallationCommands "
 			# Update repositories
 			commands+="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
@@ -292,11 +292,11 @@ function executeCommands
 			dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
 		else
 			local autoclose
-			if [ "$nonRepoAppCommands" == "" ]; then
+			if [ -z "$nonRepoAppCommands" ]; then
 				autoclose="--auto-close"
 			fi
 
-			( SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands" ) | 
+			( SUDO_ASKPASS="$askpass" sudo -A bash -c "$commands" ) |
 			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate $autoclose --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
 			# Show notification and log
 			notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
@@ -318,22 +318,22 @@ function executeCommands
 ##########################################################################
 function installAndSetupApplications
 {
-	if [ "$1" != "" ]; then
-		declare -ag appsToInstall=(${1})
-		local appName packagesToInstall i386="_i386" x64="_x64"
+	if [ -n "$1" ]; then
+		declare -ag appsToInstall=("${!1}") packagesToInstall
+		local appName i386="_i386" x64="_x64"
 		for appName in "${appsToInstall[@]}"; do
-			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )		
+			notify-send "debug" $appName
+			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
 			preInstallationCommands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )
 			if [ -z $DISPLAY ]; then nonRepoAppCommands+="clear;"; fi
-			nonRepoAppCommands+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )		
-			postInstallationCommands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )		
+			nonRepoAppCommands+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )
+			postInstallationCommands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
-			packagesToInstall+="`cat \"$appListFile\" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf \"%s\",$i (i==NF?ORS:OFS)}'` "
+			packagesToInstall+=(`cat "$appListFile" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf "%s",$i (i==NF?ORS:OFS)}'`)
 		done
 
-		prepareRepositoryPackages "$packagesToInstall"
+		prepareRepositoryPackages packagesToInstall[@]
 		executeCommands
 	fi
 }
-

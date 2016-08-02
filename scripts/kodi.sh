@@ -5,15 +5,15 @@
 # reported installation steps and posible errors.
 #
 # Author: César Rodríguez González
-# Version: 1.0
-# Last modified date (dd/mm/yyyy): 15/07/2016
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 02/08/2016
 # Licence: MIT
 ##########################################################################
 
 scriptRootFolder=`pwd`/..
 . $scriptRootFolder/common/commonFunctions.sh
-appName="Kodi"
+declare -a appsToInstall=( "Kodi" )
 logFile="kodi.log"
 
 prepareScript "$scriptRootFolder" "$logFile"
-installAndSetupApplications $appName
+installAndSetupApplications appsToInstall[@]
