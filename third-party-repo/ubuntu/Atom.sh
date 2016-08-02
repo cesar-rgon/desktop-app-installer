@@ -1,7 +1,7 @@
 #!/bin/bash
 ##########################################################################
-# This script executes commands to add third-party repository of
-# Skype application.
+# This script executes commands to add third-party repository of Atom
+# editor application. Official text editor of Github.
 #
 # Author: César Rodríguez González
 # Version: 1.3
@@ -17,11 +17,12 @@ scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 . $scriptRootFolder/common/commonVariables.sh
 
 # Variables
-repository="deb http://archive.canonical.com/ $distroName partner"
-#repositorySource="deb-src http://archive.canonical.com/ $distroName partner"
+repositoryURL="http://ppa.launchpad.net/webupd8team/atom/ubuntu"
+#repository="deb $repositoryURL $distroName main"
+#repositorySource="deb-src $repositoryURL $distroName main"
+targetFilename="webupd8team-ubuntu-atom-$distroName.list"
 
 # Commands to add third-party repository of the application.
 if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
-	echo "deb http://archive.canonical.com/ubuntu $distroName partner" > /etc/apt/sources.list.d/skype.list
-	echo "deb-src http://archive.canonical.com/ubuntu $distroName partner" >> /etc/apt/sources.list.d/skype.list
+	add-apt-repository -y ppa:webupd8team/atom 2>&1
 fi 2>/dev/null

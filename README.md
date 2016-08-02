@@ -2,7 +2,7 @@ Linux app installer
 ===================
 
 | Installation menu for applications from official repositories, third-party ones or external sources on any Ubuntu , Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux bricoleur] |
-| --- | --- |
+|-
 
 There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
@@ -30,7 +30,7 @@ There are a lot of applications included in the default list, but this list can 
 Valid for:   Ubuntu v16.04, Debian 8, Linux Mint 18 and LMDE (for all desktops or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 07/31/2016 (mm/dd/yyyy)
+Last change: 08/02/2016 (mm/dd/yyyy)
 ```
 
 ### 1. Features
@@ -149,9 +149,11 @@ Tree of folders and some files:
 │   ├── es.properties
 │   └── *
 │
-├── menu                    It contains functions and variables used by main script menu
+├── menu                    It contains functions used by main script menu (Terminal / Desktop)
+│   ├── dialogFuntions.sh
 │   ├── menuFunctions.sh
-│   └── menuVariables.sh
+│   ├── menuVariables.sh
+│   └── zenityFunctions.sh
 │
 ├── non-repository-apps     It contains subscripts to install non-repository applications
 │   ├── template-non-repo-app.sh
@@ -194,7 +196,10 @@ Tree of folders and some files:
 | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------  |
 | [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                             |
 | [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all scripts                                        |
+| [dialogFunctions.sh][dialogFunctions.sh]                       | It contains menu functions for Dialog box (terminal mode). Used only by main script           |
 | [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                          |
+| [menuVariables.sh][menuVariables.sh]                           | It contains menu global variables available only for main script                              |
+| [zenityFunctions.sh][zenityFunctions.sh]                       | It contains menu functions for Zenity windows (desktop mode). Used only by main script        |
 | [applicationList.debian][applicationList.debian]               | It defines categories, applications and related packages for a Debian system                  |
 | [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and related packages for a Linux Mint system              |
 | [applicationList.lmde][applicationList.lmde]                   | It defines categories, applications and related packages for a LMDE system                    |
@@ -338,12 +343,12 @@ To add a new language file just follow next steps:
   * The script must be ubicated in _./third-party-repo_ folder if it's valid for all supported linux distros. We call general subscript.
   * The script must be ubicated in _./third-party-repo/ubuntu_, _./third-party-repo/debian_, _./third-party-repo/linuxmint_, _./third-party-repo/lmde_ folder if it's valid only for a specific supported linux distro. We call specific subscript.
   * Is possible to create specific and general subscripts for a same thrid-party repository. Both will be executed.
-    
+
 #####  Subscript commands considerations:
   * No need to use 'sudo' in commands because the subscript will be executed as root user.
   * Use common variables supplied by [commonVariables.sh][commonVariables.sh] file.
   * This script must be non-interactive, that means, no echo to monitor, no read from keyboard, no wait confirmation.
-  
+
 ### Author notes
 Any contribution to this project would be appreciated.  
 I hope you find it useful.
@@ -351,7 +356,10 @@ I hope you find it useful.
 <!-- References -->
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.sh]:./common/commonVariables.sh
-[menuFunctions.sh]:./common/menuFunctions.sh
+[dialogFunctions.sh]:./menu/dialogFunctions.sh
+[menuFunctions.sh]:./menu/menuFunctions.sh
+[menuVariables.sh]:./menu/menuVariables.sh
+[zenityFunctions.sh]:./menu/zenityFunctions.sh
 [applicationList.debian]:./applist/applicationList.debian
 [applicationList.linuxmint]:./applist/applicationList.linuxmint
 [applicationList.lmde]:./applist/applicationList.lmde

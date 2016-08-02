@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 30/07/2016                                                                           #
+# Last modified date (dd/mm/yyyy): 02/08/2016                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -20,6 +20,7 @@
 # Category            Application-Name               Application-packages                                               #
 #########################################################################################################################
 
+developer_tools       Atom                           atom
 developer_tools       Bluefish                       bluefish
 developer_tools       Eclipse                        eclipse
 developer_tools       Emacs                          emacs
