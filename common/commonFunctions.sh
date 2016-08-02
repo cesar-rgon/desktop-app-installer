@@ -221,7 +221,6 @@ function prepareRepositoryPackages
 		local totalPackagesToInstall=${#packagesToInstall[@]} index=1 package
 
 		for package in "${packagesToInstall[@]}"; do
-			notify-send "debug" "${package}"
 			# If package has EULA
 			if [ -f "$eulaFolder/$package" ]; then
 				if [ -z $DISPLAY ]; then
@@ -322,7 +321,6 @@ function installAndSetupApplications
 		declare -ag appsToInstall=("${!1}") packagesToInstall
 		local appName i386="_i386" x64="_x64"
 		for appName in "${appsToInstall[@]}"; do
-			notify-send "debug" $appName
 			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
 			preInstallationCommands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )
 			if [ -z $DISPLAY ]; then nonRepoAppCommands+="clear;"; fi
