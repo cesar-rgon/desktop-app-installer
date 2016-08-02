@@ -2,9 +2,11 @@ Linux app installer
 ===================
 
 | Installation menu for applications from official repositories, third-party ones or external sources on any Ubuntu , Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux bricoleur] |
-|-
+| --- | --- |
 
 There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+
+> _Spanish version can be found [here][leeme.md] ( Versión española disponible [aquí][leeme.md] )_
 
 ##### Index
 > 1. [Features](#1-features)
@@ -354,6 +356,7 @@ Any contribution to this project would be appreciated.
 I hope you find it useful.
 
 <!-- References -->
+[leeme.md]:./LEEME.md
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.sh]:./common/commonVariables.sh
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
