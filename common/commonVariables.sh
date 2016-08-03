@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 01/08/2016
+# Last modified date (dd/mm/yyyy): 03/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -80,3 +80,5 @@
 #	Commands to be executed after the installation of an application.
 	postInstallationCommands=""
 
+# PACKAGES TO INSTALL
+declare -A packagestoInstallPerApplication

@@ -4,10 +4,13 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 02/08/2016
+# Last modified date (dd/mm/yyyy): 03/08/2016
 # Licence: MIT
 ##########################################################################
 
+# IMPORT GLOBAL VARIABLES
+. $scriptRootFolder/menu/menuVariables.sh
+if [ -z $DISPLAY ]; then . $scriptRootFolder/menu/dialogFunctions.sh; else . $scriptRootFolder/menu/zenityFunctions.sh; fi
 
 ##########################################################################
 # This function shows a box / window to let the user selects
@@ -58,13 +61,6 @@ function selectAppsToInstallByCategory
 ##########################################################################
 function menu
 {
-	. $scriptRootFolder/menu/menuVariables.sh
-	if [ -z $DISPLAY ]; then
-		. $scriptRootFolder/menu/dialogFunctions.sh
-	else
-		. $scriptRootFolder/menu/zenityFunctions.sh
-	fi
-
 	# Array of selected Categories
 	declare -ag selectedCategories
 	local firstTime="true" selcat

@@ -4,26 +4,13 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 02/08/2016
+# Last modified date (dd/mm/yyyy): 03/08/2016
 # Licence: MIT
 ##########################################################################
 
-
-##########################################################################
-# This funtion imports a translation file according to system's language.
-# If no exists translation file, by default, it takes english translation.
-#
-# Parameters: none
-# Return: none
-##########################################################################
-function selectLanguage
-{
-	if [ -f "$languageFile" ]; then
-		. $languageFile
-	else
-		. $scriptRootFolder/languages/en.properties
-	fi
-}
+# IMPORT GLOBAL VARIABLES
+. $scriptRootFolder/common/commonVariables.sh
+if [ -f "$languageFile" ]; then	. $languageFile; else	. $scriptRootFolder/languages/en.properties; fi
 
 ##########################################################################
 # This funtion installs dialog or zenity packages, if not installed yet,
@@ -93,9 +80,6 @@ function prepareScript
 
 	# Initialize variables
 	linuxAppInstallerTitle="Linux app installer v$(cat $scriptRootFolder/etc/version)"
-	. $scriptRootFolder/common/commonVariables.sh
-
-	selectLanguage
 
 	# Create temporal folders and files
 	mkdir -p "$tempFolder"
@@ -108,8 +92,8 @@ function prepareScript
 
 	installNeededPackages
 
-	echo "Linux App Installer Logs" > "$logFile"
-	echo "========================" >> "$logFile"
+	echo -e "Linux App Installer Logs" > "$logFile"
+	echo -e "========================" >> "$logFile"
 	echo "" >> "$logFile"
 }
 
@@ -148,7 +132,9 @@ function setDebconfFromFile
 function dialogBoxFunction
 {
 	if [ -z $DISPLAY ]; then
-		dialogBox="| dialog --title \"$1\" --backtitle \"$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor\" --progressbox $dialogHeight $dialogWidth"
+		local backtitle
+		if [ -z "$2" ]; then backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"; else backtitle="$2"; fi
+		dialogBox="| dialog --title \"$1\" --backtitle \"$backtitle\" --progressbox $dialogHeight $dialogWidth"
 	else
 		dialogBox=""
 	fi
@@ -209,23 +195,21 @@ function generateCommands
 # This funtion sets commands to be executed to install all needed
 # repository packages.
 #
-# Parameters:
-#	packagesToInstall: list of packages to be installed
+# Parameters: none
 # Return:
 #	packageCommands: commands to install the packages
 ##########################################################################
 function prepareRepositoryPackages
 {
-	if [ -n "$1" ]; then
-		declare -ag packagesToInstall=("${!1}")
-		local totalPackagesToInstall=${#packagesToInstall[@]} index=1 package
+	local totalApplicationsToInstall=${#packagestoInstallPerApplication[@]}
+	local totalPackagesToInstall=`echo "${packagestoInstallPerApplication[@]}" | wc -w`
+	local indexA=1 indexP=1 appName package
 
-		for package in "${packagesToInstall[@]}"; do
-			# If package has EULA
-			if [ -f "$eulaFolder/$package" ]; then
-				if [ -z $DISPLAY ]; then
-					packageCommands+="clear;"
-				fi
+	for appName in ${!packagestoInstallPerApplication[@]}; do
+		for package in ${packagestoInstallPerApplication[$appName]}; do
+			# If application or package has EULA
+			if [ -f "$eulaFolder/$appName" ] || [ -f "$eulaFolder/$package" ]; then
+				if [ -z $DISPLAY ]; then packageCommands+="clear;"; fi
 				# Delete previous Debconf configuration
 				packageCommands+="echo \"# $removeOldDebconfConfiguration $package\"; echo \"$removeOldDebconfConfiguration $package...\" >> \"$logFile\";"
 				packageCommands+="echo PURGE | debconf-communicate $package 2>>\"$logFile\";"
@@ -234,17 +218,16 @@ function prepareRepositoryPackages
 				packageCommands+="echo \"# $setNewDebconfConfiguration $package\"; echo \"$setNewDebconfConfiguration $package...\" >> \"$logFile\";"
 				setDebconfFromFile $package
 				packageCommands+="bash -c \"$debconfCommands\";"
-
 				dialogBox=""
 			else
-				dialogBoxFunction "$installingPackage $index/$totalPackagesToInstall: $package"
+				dialogBoxFunction "$installingPackage $indexP/$totalPackagesToInstall: $package" "$installingApplication $indexA/$totalApplicationsToInstall: $appName"
 			fi
-			packageCommands+="echo \"# $installingPackage $index/$totalPackagesToInstall: $package\"; echo \"$installingPackage $package\" >> \"$logFile\";"
+			packageCommands+="echo \"# $installingApplication $indexA/$totalApplicationsToInstall: $appName\n$installingPackage $indexP/$totalPackagesToInstall: $package\"; echo \"$installingPackage $package\" >> \"$logFile\";"
 			packageCommands+="bash \"$scriptRootFolder/common/installapp.sh\" \"$package\" 2>>\"$logFile\" $dialogBox;"
-
-			index=$(($index+1))
+			indexP=$(($indexP+1))
 		done
-	fi
+		indexA=$(($indexA+1))
+	done
 }
 
 ##########################################################################
@@ -317,10 +300,10 @@ function executeCommands
 ##########################################################################
 function installAndSetupApplications
 {
-	if [ -n "$1" ]; then
-		declare -ag appsToInstall=("${!1}") packagesToInstall
-		local appName i386="_i386" x64="_x64"
-		for appName in "${appsToInstall[@]}"; do
+	declare -ag appsToInstall=("${!1}")
+	if [ ${#appsToInstall[@]} -gt 0 ]; then
+		local appName i386="_i386" x64="_x64" apps
+		for appName in ${appsToInstall[@]}; do
 			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
 			preInstallationCommands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )
 			if [ -z $DISPLAY ]; then nonRepoAppCommands+="clear;"; fi
@@ -328,10 +311,10 @@ function installAndSetupApplications
 			postInstallationCommands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 
 			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
-			packagesToInstall+=(`cat "$appListFile" | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf "%s",$i (i==NF?ORS:OFS)}'`)
+			apps=`cat $appListFile | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf "%s",$i (i==NF?ORS:OFS)}'`
+			packagestoInstallPerApplication[$appName]=`echo "$apps"`
 		done
-
-		prepareRepositoryPackages packagesToInstall[@]
+		prepareRepositoryPackages
 		executeCommands
 	fi
 }

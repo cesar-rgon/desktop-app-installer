@@ -1,10 +1,10 @@
 #!/bin/bash
 ##########################################################################
-# This script installs Draftsight application.
+# This script installs Skype application.
 #
-# Author: Isidro Rodríguez González & César Rodríguez González
+# Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 26/07/2016
+# Last modified date (dd/mm/yyyy): 03/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -16,8 +16,11 @@ scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 . $scriptRootFolder/common/commonVariables.sh
 
 # Commands to download, extract and install a non-repository application.
-draftSightFile="draftSight.deb"
-wget -O /var/cache/apt/archives/$draftSightFile http://www.draftsight.com/download-linux-ubuntu 2>&1
-dpkg -i /var/cache/apt/archives/$draftSightFile
+skypeURL="http://www.skype.com/go/getskype-linux-deb"
+wget -O /var/cache/apt/archives/skype.deb $skypeURL 2>&1
+gdebi --n /var/cache/apt/archives/skype.deb
 apt-get -y install -f
 
+# Delete skype repository. Problems detected of duplicate repositories
+rm -f /etc/apt/sources.list.d/skype*.list
+apt-get update

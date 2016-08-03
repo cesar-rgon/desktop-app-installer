@@ -11,5 +11,4 @@
 # Licence: MIT
 ##########################################################################
 
-# Disabled by default. Must uncomment to enable
-# ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true
+ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true

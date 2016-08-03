@@ -5,7 +5,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 02/08/2016
+# Last modified date (dd/mm/yyyy): 03/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -20,15 +20,14 @@ scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 package="$1"
 
 # Commands
-apt-get -y install $package --fix-missing >/dev/null
+apt-get -y install $package --fix-missing
 if [ $? -ne 0 ]; then
-	echo "$packageInstallFailed $package ..." 1>&2
+	echo -e "$packageInstallFailed $package ..." 1>&2
 	# Error installing package. Applying contingence measure
-	rm -f "/var/lib/dpkg/info/$package.pre*" >/dev/null
-	rm -f "/var/lib/dpkg/info/$package.post*" >/dev/null
-	apt-get install -f >/dev/null
+	rm -f "/var/lib/dpkg/info/$package.pre*" 2>/dev/null
+	rm -f "/var/lib/dpkg/info/$package.post*" 2>/dev/null
+	apt-get -y install -f >/dev/null
 	if [ $? -ne 0 ]; then
-		echo "$packageInstallFailed $package" 1>&2
 		echo -e "$packageReparationFailed" 1>&2
 	fi
 fi

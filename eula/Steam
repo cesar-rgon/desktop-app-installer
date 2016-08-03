@@ -4,11 +4,7 @@
 #
 # Format: <package> <module>/<parameter> <command> <value>.
 # See man debconf or debconf-set-selections for more information.
-#
-# Author: César Rodríguez González
-# Version: 1.11
-# Last modified date (dd/mm/yyyy): 18/05/2014
-# Licence: MIT
 ##########################################################################
 
-ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true
+# Disabled by default. Must uncomment to enable
+# unknown
