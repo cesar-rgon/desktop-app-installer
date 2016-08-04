@@ -20,6 +20,3 @@ wget -O /var/cache/apt/archives/skype.deb $skypeURL 2>&1
 gdebi --n /var/cache/apt/archives/skype.deb
 apt-get -y install -f
 
-# Delete skype repository. Problems detected of duplicate repositories
-rm -f /etc/apt/sources.list.d/skype*.list
-apt-get update
