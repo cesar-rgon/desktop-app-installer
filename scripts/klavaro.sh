@@ -6,14 +6,17 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 02/08/2016
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
 
-scriptRootFolder=`pwd`/..
-. $scriptRootFolder/common/commonFunctions.sh
+. ../common/commonVariables.sh "`pwd`/.."
+. ../common/commonFunctions.sh
 declare -a appsToInstall=( "Klavaro" )
-logFile="klavaro.log"
 
-prepareScript "$scriptRootFolder" "$logFile"
+prepareScript "$0"
+if [ -n $DISPLAY ]; then
+  notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$installingSelectedApplications"
+fi
+# Install all selected applications
 installAndSetupApplications appsToInstall[@]

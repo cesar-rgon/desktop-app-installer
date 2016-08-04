@@ -5,15 +5,8 @@
 #########################################################################################
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
-
-#########################################################################################
-# Common variables supplied by main script.   						#
-# See file scriptRootFolder/common/commonVariables.sh 					#
-# for a complete list of variables  							#
-#########################################################################################
-scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
-. $scriptRootFolder/common/commonVariables.sh
-
+# Add common variables
+. ../common/commonVariables.sh "`pwd`/.."
 
 #########################################################################################
 # CONSIDERATIONS									#
@@ -27,4 +20,3 @@ scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
 #########################################################################################
 
 # Commands to prepare the installation of an application ...
-

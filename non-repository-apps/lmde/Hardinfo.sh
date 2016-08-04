@@ -3,18 +3,18 @@
 # This script installs Skype application.
 #
 # Author: César Rodríguez González
-# Version: 1.2
-# Last modified date (dd/mm/yyyy): 23/05/2014
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
 
-# Get common variables and check if the script is being running by a root or sudoer user
-if [ "$1" != "" ]; then
-	scriptRootFolder="$1"
-else
-	scriptRootFolder=".."
-fi
-. $scriptRootFolder/common/commonVariables.sh
+#########################################################################################
+# Check if the script is being running by a root or sudoer user				#
+#########################################################################################
+if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
+
+# Add common variables
+. ../../common/commonVariables.sh "`pwd`/../.."
 
 if [ "`uname -m`" == "x86_64" ]; then
 	hardinfoFile="hardinfo_0.5.1-1.2_amd64.deb"

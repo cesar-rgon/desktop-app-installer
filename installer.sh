@@ -7,21 +7,19 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 02/08/2016
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
 
-scriptRootFolder=`pwd`
-. $scriptRootFolder/common/commonFunctions.sh
-. $scriptRootFolder/menu/menuFunctions.sh
-logFile="linux-app-installer.log"
+. ./common/commonVariables.sh "`pwd`"
+. ./common/commonFunctions.sh
+. ./menu/menuFunctions.sh
+declare -a appsToInstall=( $(menu) )
 
-prepareScript "$scriptRootFolder" "$logFile"
+prepareScript "$0"
 if [ -n $DISPLAY ]; then
 	notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$linuxAppInstallerComment\n$linuxAppInstallerAuthor"
 fi
-
-declare -a appsToInstall=( $(menu) )
 if [ ${#appsToInstall[@]} -gt 0 ]; then
 	if [ -n $DISPLAY ]; then
 		notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$installingSelectedApplications"

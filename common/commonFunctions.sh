@@ -4,13 +4,9 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 03/08/2016
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
-
-# IMPORT GLOBAL VARIABLES
-. $scriptRootFolder/common/commonVariables.sh
-if [ -f "$languageFile" ]; then	. $languageFile; else	. $scriptRootFolder/languages/en.properties; fi
 
 ##########################################################################
 # This funtion installs dialog or zenity packages, if not installed yet,
@@ -70,16 +66,31 @@ function installNeededPackages
 # 		     steps of installation process.
 # Return: same result variables than initCommonVariables function
 ##########################################################################
+function getLogFilename
+{
+	local scriptPath="$1"
+
+	declare -ag splittedPath
+	IFS='/' read -ra splittedPath <<< "$scriptPath"
+	local numberItemsPath=${#splittedPath[@]}
+	local scriptName=${splittedPath[$(($numberItemsPath-1))]}
+	echo "$logsFolder/${scriptName/.sh/}-$snapshot.log"
+}
+
+##########################################################################
+# This funtion calls previous functions and creates needed folders and
+# files used by installation script.
+#
+# Parameters:
+#	scriptRootFolder: main script root folder
+#	logFilename: log filename where the script will report errors or
+# 		     steps of installation process.
+# Return: same result variables than initCommonVariables function
+##########################################################################
 function prepareScript
 {
-	# Store current username, script root folder and log filename in temporal file
-	echo "`whoami`" > /tmp/linux-app-installer-username
-	local scriptRootFolder="${1}"
-	echo "$scriptRootFolder" > /tmp/linux-app-installer-scriptRootFolder
-	echo "${2}" > /tmp/linux-app-installer-logFilename
-
-	# Initialize variables
 	linuxAppInstallerTitle="Linux app installer v$(cat $scriptRootFolder/etc/version)"
+	logFile=$( getLogFilename "$1" )
 
 	# Create temporal folders and files
 	mkdir -p "$tempFolder"

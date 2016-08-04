@@ -4,7 +4,7 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 03/08/2016
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
 
@@ -19,18 +19,16 @@
 	if [ "$language" == "es" ]; then snapshot=$(date +'%d-%m-%y.%Hh:%Mm:%Ss'); else snapshot=$(date +'%m-%d-%y.%Hh:%Mm:%Ss'); fi
 
 # USER INFO
-#	Username that executes the installation script
-	username="`cat /tmp/linux-app-installer-username`"
+# Username that executes the installation script
+  username="`whoami`"
 #	Root homefolder associated to username
-	homeFolder=`sudo -u $username -i eval 'echo $HOME'`
+	homeFolder="$HOME"
 #	Download user folder
 	homeDownloadFolder="$homeFolder/`cat $homeFolder/.config/user-dirs.dirs | grep "XDG_DOWNLOAD_DIR" | awk -F "=" '{print $2}' | tr -d '"' | awk -F "/" '{print $2}'`"
 
 # SCRIPTS FOLDERS
-#	Main script root folder
-	scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
-#	Folder that will contain the script's log file.
-	logsFolder="$homeFolder/logs"
+# Main script root folder
+  if [ -n "$1" ]; then scriptRootFolder="$1"; fi
 #	Temporal folder used by installation script.
 	tempFolder="/tmp/linux-app-installer-$snapshot"
 #	Folder where are placed files which contain commands to add third-party repositories.
@@ -45,18 +43,21 @@
 	nonRepositoryAppsFolder="$scriptRootFolder/non-repository-apps"
 # 	Folder where are placed icons used by main script.
 	installerIconFolder="$scriptRootFolder/icons/installer"
-
+#   Folder that will contain the script's log file.
+    logsFolder="$homeFolder/logs"
 
 # SCRIPTS FILES
 #	Translation file
 	languageFile="$scriptRootFolder/languages/$language.properties"
 #	File that contains categories, applications and packages used by main menu and the installation proccess.
 	appListFile="$scriptRootFolder/applist/applicationList.$distro"
-#	Log file where the script will report errors or steps of installation process.
-	logFile="$logsFolder/$snapshot-`cat /tmp/linux-app-installer-logFilename`"
 #	Script that launchs a zenity to ask por admin password.
 	askpass="$tempFolder/askpass.sh"
+#	Log filename is the same as name (without extension) of script
+	logFile=""
 
+# LANGUAGE VARIABLES
+if [ -f "$languageFile" ]; then	. "$languageFile"; else . $scriptRootFolder/languages/en.properties; fi
 
 # MENU WINDOWS INFO
 #	Interface used for Debconf (Dialog - Terminal mode / Zenity - Desktop mode)

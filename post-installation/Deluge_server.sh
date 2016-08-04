@@ -3,16 +3,16 @@
 # This script configures Deluge daemon to be ready to use.
 #
 # Author: César Rodríguez González
-# Last modified date (dd/mm/yyyy): 26/07/2016
+# Version: 1.3
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
 
 # Check if the script is being running by a root or sudoer user
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
-# Get common variables 
-scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
-. $scriptRootFolder/common/commonVariables.sh
+# Add common variables
+. ../common/commonVariables.sh "`pwd`/.."
 
 ### VARIABLES ############################################################
 DELUGE_DAEMON_USERNAME="$username"
@@ -34,13 +34,13 @@ sudo -u $username mkdir -p $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FO
 echo "$DELUGE_DAEMON_USERNAME:$DELUGE_DAEMON_PASSWORD:10" >> $homeFolder/.config/deluge/auth
 
 echo "{
-  \"file\": 1, 
+  \"file\": 1,
   \"format\": 1
 }{
   \"download_location\": \"$DELUGE_DAEMON_TEMP_FOLDER\",
   \"move_completed\": true,
   \"move_completed_path\": \"$DELUGE_DAEMON_DOWNLOAD_FOLDER\",
-  \"autoadd_enable\": true, 
+  \"autoadd_enable\": true,
   \"autoadd_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
   \"copy_torrent_file\": true,
   \"torrentfiles_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
@@ -49,7 +49,7 @@ echo "{
 }" > "$homeFolder/.config/deluge/core.conf"
 
 echo "{
-  \"file\": 1, 
+  \"file\": 1,
   \"format\": 1
 }{
   \"port\": $DELUGE_DAEMON_WEB_PORT
@@ -122,4 +122,3 @@ systemctl enable /etc/systemd/system/deluge-web.service
 systemctl daemon-reload
 systemctl start deluged
 systemctl start deluge-web
-

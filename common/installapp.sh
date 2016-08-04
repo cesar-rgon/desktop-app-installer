@@ -5,16 +5,12 @@
 #
 # Author: César Rodríguez González
 # Version: 1.3
-# Last modified date (dd/mm/yyyy): 03/08/2016
+# Last modified date (dd/mm/yyyy): 04/08/2016
 # Licence: MIT
 ##########################################################################
 
 # Check if the script is being running by a root or sudoer user
 if [ "$(id -u)" != "0" ]; then echo "" 1>&2; echo "This script must be executed by a root or sudoer user" 1>&2; echo "" 1>&2; exit 1; fi
-
-# Get common variables
-scriptRootFolder="`cat /tmp/linux-app-installer-scriptRootFolder`"
-. $scriptRootFolder/common/commonVariables.sh
 
 # Parameters
 package="$1"
