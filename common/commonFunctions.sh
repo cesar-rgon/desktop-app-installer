@@ -85,91 +85,73 @@ function prepareScript
 }
 
 ##
-# This function generates commands to execute subscripts during installation
-# process
+# This function gets all existing subscripts that matches following requisites:
+# 1. Filename must be: appName.sh / appName_x64.sh / appName_i386.sh
+# 2. Filename must match O.S. arquitecture (*_i386 32bits / *_x64 64bits / other all)
+# 3. Must be placed in targetFolder or the subfolder that matchs your linux distro
 # @since 	v1.3
-# @param Map<String,String> parameters 	Generic parameters used by this function [global]
-# 	Keys of accepted parameters are:
-# 		fileScripts		Set of subscript files from where extract commands [mandatory]
-# 		appName				Application name refered if that's the case [optional]
-# 		message				Message to be showed in box/window [optional]
-# @return String 												list of bash shell commands separated by ;
+# @param 	String targetFolder	Root scripts folder
+# @param 	String appName			Name of an application
+# @result String 							List of path/filename of found subscripts
+##
+function getAppSubscripts
+{
+	if [ -z "$1" ] || [ -z "$2" ]; then
+		echo ""			# All parameters are mandatories
+	else
+		local targetFolder="$1" appName="$2"
+		local i386="_i386" x64="_x64" subscriptList
+		# Search subscript that matches all O.S. architecture
+		if [ -f "$targetFolder/$appName.sh" ]; then subscriptList+="$targetFolder/$appName.sh "; fi
+		if [ -f "$targetFolder/$distro/$appName.sh" ]; then subscriptList+="$targetFolder/$distro/$appName.sh "; fi
+		if [ `uname -m` == "x86_64" ]; then
+			# Search subscript that matches 64 bits O.S. architecture
+			if [ -f "$targetFolder/$appName$x64.sh" ]; then subscriptList+="$targetFolder/$appName$x64.sh "; fi
+			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then subscriptList+="$targetFolder/$distro/$appName$x64.sh "; fi
+		else
+			# Search subscript that matches 32 bits O.S. architecture
+			if [ -f "$targetFolder/$appName$i386.sh" ]; then subscriptList+="$targetFolder/$appName$i386.sh "; fi
+			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then subscriptList+="$targetFolder/$distro/$appName$i386.sh "; fi
+		fi
+		echo subscriptList
+	fi
+}
+
+##
+# This function generates bash commands to execute a specified subscript during
+# installation process. The subscript can be referenced by an application name
+# or directly by script-name.sh
+# @since 	v1.3
+# @param String targetFolder	Destination folder where is placed the script
+# @param String name				 	Name of application or subscript to be executed
+#		- if name=identifier is considered as an application name
+#		- if name=identifier.sh is considered as a subscript filename
+# @param String message				Message to be showed in box/window
+# @return String 							list of bash shell commands separated by ;
 ##
 function generateCommands
 {
-	declare -ag fileScripts=(${parameters[fileScript]})
-	local appName="${parameters[appName]}" message="${parameters[message]}"
-	local commands messageCommand
-
-	# Iterate through all subscript files
-	for fileScript in "${fileScripts[@]}"; do
-		if [ -f "$fileScript" ]; then
-			local commands messageCommand
-			commands+="bash \"$fileScript\" \"$scriptRootFolder\" \"$appName\" 2>>\"$logFile\";"
-			# Specific application message to show in box/window and log
-			if [ -n "$message" ] && [ -n "$appName" ]; then
+	if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+		echo ""			# All parameters are mandatories
+	else
+		# Get parameters and initialize variables
+		local targetFolder="$1" message="$3" commands messageCommand
+		if [[ "$2" == *.sh ]]; then			# Name is a script filename
+			if [ -f "$targetFolder/$2" ]; then
+				commands+="bash \"$targetFolder/$2\" \"$scriptRootFolder\" 2>>\"$logFile\";"
+				messageCommand+="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
+			fi
+		else														# Name is an application name
+			local appName="$2"
+			declare -ag scriptList=( $( getAppSubscripts "$targetFolder" "$appName" ) )
+			# Iterate through all subscript files
+			for script in "${scriptList[@]}"; do
+				commands+="bash \"$script\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 				messageCommand+="echo \"# $message $appName\"; echo \"$message $appName\" >> \"$logFile\";"
-			fi
+			done
 		fi
-	done
-	# Generic message to show in box/window and log
-	if [ -n "$message" ]; then
-		messageCommand+="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
+		if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
 	fi
-	if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
-}
-
-# TODO:
-# OPCION 1: SEGUIR CON MÉTODO GENÉRICO. SE DEBE IMPLEMENTAR MÉTODO QUE PREPARE PARÁMETROS.
-# EL MÉTODO DE GENERAR COMANDOS POR APLICACION SE ACABARÍA POR ELIMINAR
-# OPCION 2: DEJAR VARIOS GENERATECOMMANDS. ESTE ME GUSTA MENOS
-
-##
-# This function generates commands to execute application subscripts during
-# installation process
-# @since 	v1.3
-# @param  String targetFolder destination folder where subscript is placed [mandatory]
-# @param  String appName 			application name refered by subscript [mandatory]
-# @param  String message      optional message to be showed in box/window [optional]
-# @return String 							list of bash shell commands separated by ;
-##
-function generateCommandsApp
-{
-	local targetFolder="$1" appName="$2" message="$3"
-	local commands messageCommand
-
-	if [ -n "$appName" ] && [ -n "$targetFolder" ]; then
-		local i386="_i386" x64="_x64"
-
-		if [ `uname -m` == "x86_64" ]; then
-			# For 64 bits OS
-			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then
-				commands+="bash \"$targetFolder/$distro/$appName$x64.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
-			fi
-			if [ -f "$targetFolder/$appName$x64.sh" ]; then
-				commands+="bash \"$targetFolder/$appName$x64.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
-			fi
-		else
-			# For 32 bits OS
-			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then
-				commands+="bash \"$targetFolder/$distro/$appName$i386.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
-			fi
-			if [ -f "$targetFolder/$appName$i386.sh" ]; then
-				commands+="bash \"$targetFolder/$appName$i386.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
-			fi
-		fi
-		# For all CPU arquitectures
-		if [ -f "$targetFolder/$distro/$appName.sh" ]; then
-			commands+="bash \"$targetFolder/$distro/$appName.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
-		fi
-		if [ -f "$targetFolder/$appName.sh" ]; then
-			commands+="bash \"$targetFolder/$appName.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
-		fi
-		if [ -n "$message" ]; then
-			messageCommand="echo \"# $message $appName\"; echo \"$message $appName ...\" >> \"$logFile\";"
-		fi
-	fi
-	if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
 }
 
 ##
@@ -189,10 +171,8 @@ function generateCommandsApp
 function executeCommands
 {
 	local commands
-
 	if [ -z $DISPLAY ]; then
 		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
-
 		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
@@ -228,28 +208,24 @@ function installAndSetupApplications
 {
 	declare -ag appsToInstall=("${!1}")
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local appName appIndex=1
+		local appName appIndex=1 totalAppsToInstall=${#appsToInstall[@]} message
 
 		for appName in ${appsToInstall[@]}; do
-			commandsPerInstallationStep[thirdPartyRepo]+=$( generateCommandsApp "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
-			commandsPerInstallationStep[preInstallation]+=$( generateCommandsApp "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-			commandsPerInstallationStep[installRepoPackages]+=$( generateCommandsInstallRepoPackages "$appName" "$appIndex" "${#appsToInstall[@]}")
-			local fileScript="${parameters[fileScript]}" appName="${parameters[appName]}" message="${parameters[message]}"
-
-			#		commands+="echo -e \"# $installingApplication $appIndex/$totalAppsToInstall: $appName\n$installingPackage $packageIndex/$totalPackagesToInstall: $package\";"
-			#		commands+="echo -e \"$installingApplication $appIndex/$totalAppsToInstall: $appName. $installingPackage $packageIndex/$totalPackagesToInstall: $package\" >> \"$logFile\";"
-			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommandsApp "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )
-			commandsPerInstallationStep[postInstallation]+=$( generateCommandsApp "$postInstallationFolder" "$appName" "$settingUpApplication" )
+			commandsPerInstallationStep[thirdPartyRepo]+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
+			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
+			commandsPerInstallationStep[installRepoPackages]+=$( generateCommands "$scriptRoolFolder/common" "instalapp.sh" "$installingApplication $appIndex/$totalAppsToInstall: $appName" )
+			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )
+			commandsPerInstallationStep[postInstallation]+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 			appIndex=$(($appIndex+1))
 		done
 
 		if [ -n "${commandsPerInstallationStep[installRepoPackages]}" ] || [ -n "${commandsPerInstallationStep[installNonRepoApps]}" ]; then
-			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$scriptRoolFolder/common/setupDebconf.sh" "$settingDebconfInterface" )
+			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$scriptRoolFolder/common" "setupDebconf.sh" "$settingDebconfInterface" )
 			if [ -n "${commandsPerInstallationStep[thirdPartyRepo]}" ] || [ -n  "${commandsPerInstallationStep[preInstallation]}" ]; then
-				commandsPerInstallationStep[updateRepo]=$( generateCommands "$scriptRoolFolder/common/updateRepositories.sh" "$updatingRepositories" )
+				commandsPerInstallationStep[updateRepo]=$( generateCommands "$scriptRoolFolder/common" "updateRepositories.sh" "$updatingRepositories" )
 			fi
-			commandsPerInstallationStep[finalOperations]=$( generateCommands "$scriptRoolFolder/common/finalOperations.sh" "$cleaningTempFiles" )
-			executeCommands commandsPerInstallationStep[@]
+			commandsPerInstallationStep[finalOperations]=$( generateCommands "$scriptRoolFolder/common" "finalOperations.sh" "$cleaningTempFiles" )
+			executeCommands
 		fi
 	fi
 }
