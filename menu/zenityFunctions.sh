@@ -2,22 +2,19 @@
 ##########################################################################
 # This script contains menu functions used only by main script on
 # Desktop Mode. The application to manage windows is Zenity.
-#
-# Author: César Rodríguez González
-# Version: 1.3
-# Last modified date (dd/mm/yyyy): 01/08/2016
-# Licence: MIT
+# @author 	César Rodríguez González
+# @since 		1.3, 2016-08-01
+# @version 	1.3, 2016-08-05
+# @license 	MIT
 ##########################################################################
 
 
-##########################################################################
-# This function get the height of a Zenity window.
-#
-# Parameters: 
-#	rowsNumber: Number of rows (elements) of the list
-# Return:
-#	height: height of Zenity window
-##########################################################################
+###
+# This function get the height of a Zenity window
+# @since 	v1.3
+# @param 	int 	rowsNumber 	Number of rows (categories or applications)
+# @return int 							Height for current Zenity window
+##
 function getHeight
 {
 	local rowsNumber=$1
@@ -34,18 +31,16 @@ function getHeight
 }
 
 
-##########################################################################
+##
 # This function gets option parameters of each row of Zenity window.
 # One row per category
-#
-# Parameters: none
-# Return:
-#	options: parameters of the row 
-##########################################################################
+# @since 	v1.3
+# @return String 					Parameters of category selectable in box
+##
 function getCategoryOptions
 {
 	local categoryName categoryDescription options=""
-	for categoryName in "${categoryArray[@]}"; do 
+	for categoryName in "${categoryArray[@]}"; do
 		eval categoryDescription=\$$categoryName"Description"
 		options+="false \"$categoryName\" \"$categoryDescription\" \"${selectedAppsMap[$categoryName]}\" "
 	done
@@ -53,16 +48,13 @@ function getCategoryOptions
 }
 
 
-##########################################################################
+##
 # This function gets a category list for Zenity window.
 # First row: all categories. Rest of rows: one per category.
-#
-# Parameters: 
-# 	firstTime: true if is the first time to access this method.
-#   		   That means, show categories without any selection.
-# Return:
-#	window: Zenity window that shows the category list.
-##########################################################################
+# @since 	v1.3
+# @param 	boolean	firstTime 	if is the first access to categories window
+# @return String 							commands to create categories Zenity window
+##
 function getCategoriesWindow
 {
 	local firstTime="$1" totalCategoriesNumber=$((${#categoryArray[@]}+1))
@@ -84,22 +76,22 @@ function getCategoriesWindow
 }
 
 
-##########################################################################
+##
 # This function shows a Zenity window to let the user selects
 # categories to browse.
-#
-# Parameters: 
-#	firstTime: "true" if it's the first time you access this window
-# Return:
-#	selected categories to browse them (| delimiter character)
-##########################################################################
+# First row: all categories. Rest of rows: one per category.
+# @since 	v1.3
+# @param 	boolean	firstTime 	if is the first access to categories box
+# @return String 							list of selected categories with character
+# 	separator '|'
+##
 function selectCategoriesToBrowse
 {
 	local firstTime="$1" selection
 
 	# Get selected categories from Dialog box / Zenity window
 	selection=`eval $( getCategoriesWindow "$firstTime" )`
-	if [[ $? -ne 0 ]]; then	
+	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
 		if [ ! -z "$selection" ]; then
@@ -114,21 +106,19 @@ function selectCategoriesToBrowse
 			fi
 		else
 			echo ""
-		fi		
+		fi
 	fi
 }
 
 
-##########################################################################
+##
 # This function gets option parameters of each row of Zenity window.
 # One row per application of a specified category
-#
-# Parameters:
-#	categoryName: Category name
-# 	applicationArray: application list of a specified category
-# Return:
-#	options: parameters of the row 
-##########################################################################
+# @since 	v1.3
+# @param 	String		categoryName 			Name of the actual category
+# @param 	String[]	applicationArray 	List of category applications
+# @return String 											Parameters of application selectable in box
+##
 function getApplicationOptions
 {
 	local categoryName="$1" appName appDescription appObservation options="" appNameForMenu  enabled
@@ -142,31 +132,29 @@ function getApplicationOptions
 		eval appObservation=\$$appName"Observation"
 
 		local isSelected="`echo $selectedApps | grep -w "$appNameForMenu"`"
-		if [ -z "$isSelected" ]; then enabled="false"; else enabled="true"; fi			
-		options+="$enabled \"$appNameForMenu\" \"$appDescription\" \"$appObservation\" "					
+		if [ -z "$isSelected" ]; then enabled="false"; else enabled="true"; fi
+		options+="$enabled \"$appNameForMenu\" \"$appDescription\" \"$appObservation\" "
 	done
 	echo "$options"
 }
 
 
-##########################################################################
-# This function gets a category list window for Zenity.
-# First row: all categories. Rest of rows: one per category.
-#
-# Parameters: 
-# 	applicationArray: application list of a specified category
-#	categoryName: Category name
-#	categoryDescription: Category description
-#	categoryNumber: Number of category in same order as showed in window
-#	totalSelectedCategories: Number of total selected categories
-# Return:
-#	window: Zenity window that shows the application list.
-##########################################################################
+##
+# This function gets a application list window of a specified category
+# First row: all applications. Rest of rows: one per application.
+# @since 	v1.3
+# @param 	String[]	applicationArray 		list of applications
+# @param 	String		categoryName 				name of category
+# @param 	String		categoryDescription description of category
+# @param 	int				categoryNumber 	    index of category order
+# @param 	int				totalSelectedCat		number of selected categories
+# @return String 												commands to create app. window
+##
 function getApplicationsWindow
 {
 	declare -ag applicationArray=("${!1}")
 	local categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCategories="$5"
-	local appsNumber=$((${#applicationArray[@]}+1)) 
+	local appsNumber=$((${#applicationArray[@]}+1))
 	local height=$( getHeight $appsNumber) appRows
 	local checklistText="$categoryLabel $categoryNumber/$totalSelectedCategories: $categoryDescription"
  	local formattedText="<span font='$fontFamilyText $fontSizeApps'>$checklistText</span>"

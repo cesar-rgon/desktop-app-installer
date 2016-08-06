@@ -6,7 +6,8 @@
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
 # Add common variables
-. ../../common/commonVariables.sh "`pwd`/../.."
+if [ -n "$1" ]; then scriptRoolFolder="$1"; else scriptRoolFolder="`pwd`/../.."; fi
+. $scriptRoolFolder/common/commonVariables.sh
 
 #########################################################################################
 # CONSIDERATIONS									#

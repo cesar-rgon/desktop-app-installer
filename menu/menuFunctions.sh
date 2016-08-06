@@ -1,36 +1,35 @@
 #!/bin/bash
 ##########################################################################
 # This script contains menu functions used only by main script.
-#
-# Author: César Rodríguez González
-# Version: 1.3
-# Last modified date (dd/mm/yyyy): 03/08/2016
-# Licence: MIT
+# @author 	César Rodríguez González
+# @since 		1.3, 2016-07-31
+# @version 	1.3, 2016-08-05
+# @license 	MIT
 ##########################################################################
+
 
 # IMPORT GLOBAL VARIABLES
-. $scriptRootFolder/menu/menuVariables.sh
+. $scriptRootFolder/menu/menuVariables.properties
 if [ -z $DISPLAY ]; then . $scriptRootFolder/menu/dialogFunctions.sh; else . $scriptRootFolder/menu/zenityFunctions.sh; fi
 
-##########################################################################
+
+##
 # This function shows a box / window to let the user selects
 # applications to install from a category.
-#
-# Parameters:
-# 	applicationArray: application list of a specified category
-#	categoryName: Category name
-#	categoryDescription: Category description
-#	categoryNumber: Number of category in same order as showed in window
-#	totalSelectedCategories: Number of total selected categories
-# Return:
-#	Selected apps from a specific category
-##########################################################################
+# @since 	v1.3
+# @param 	String[] 	applicationArray 		list of applications
+# @param 	String		categoryName 				name of category
+# @param 	String		categoryDescription description of category
+# @param 	int				categoryNumber 	    index of category order
+# @param 	int				totalSelectedCat		number of selected categories
+# @return String 												Selected app.list with '.' separator
+##
 function selectAppsToInstallByCategory
 {
 	declare -ag applicationArray=("${!1}")
-	local categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCategories="$5"
+	local categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCat="$5"
 
-	selection=`eval "$( getApplicationsWindow applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCategories")"`
+	selection=`eval "$( getApplicationsWindow applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCat")"`
 	# Check if exit category menu
 	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
@@ -51,14 +50,12 @@ function selectAppsToInstallByCategory
 }
 
 
-##########################################################################
+##
 # This function calls other functions to show category box and all others
 # application boxes to let the user selects applications to install.
-#
-# Parameters: none
-# Return:
-#	seledtedApps: selected applications to be installed
-##########################################################################
+# @since 	v1.3
+# @return String 										Selected app.list with '.' separator
+##
 function menu
 {
 	# Array of selected Categories
@@ -74,7 +71,7 @@ function menu
 
 		IFS='|' read -ra selectedCategories <<< "$selcat"
 		if [ ${#selectedCategories[@]} -gt 0 ]; then
-			local totalSelectedCategories=${#selectedCategories[@]} categoryName
+			local totalSelectedCat=${#selectedCategories[@]} categoryName
 
 			for categoryName in "${selectedCategories[@]}"; do
 				# Backup of selected applications of the category
@@ -86,7 +83,7 @@ function menu
 
 				# Delete blank and comment lines,then filter by category name and take application list (second column)
 				declare -ag applicationArray=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
-				selectedAppsMap[$categoryName]=$( selectAppsToInstallByCategory applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCategories" )
+				selectedAppsMap[$categoryName]=$( selectAppsToInstallByCategory applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCat" )
 
 				if [ "${selectedAppsMap[$categoryName]}" == "$CANCEL_CODE" ]; then
 					# Restore old selected applications of the category

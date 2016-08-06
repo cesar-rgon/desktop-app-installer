@@ -32,7 +32,7 @@ There are a lot of applications included in the default list, but this list can 
 Valid for:   Ubuntu v16.04, Debian 8, Linux Mint 18 and LMDE (for all desktops or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 08/02/2016 (mm/dd/yyyy)
+Last change: 2016/08/05 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -128,7 +128,7 @@ Tree of folders and some files:
 │
 ├── common                  It contains common functions, common variables and commands used by installation scripts
 │   ├── commonFunctions.sh
-│   ├── commonVariables.sh
+│   ├── commonVariables.properties
 │   └── installapp.sh
 │
 ├── etc                     It contains config files used by some subscripts and version number of main installation script
@@ -154,7 +154,7 @@ Tree of folders and some files:
 ├── menu                    It contains functions used by main script menu (Terminal / Desktop)
 │   ├── dialogFuntions.sh
 │   ├── menuFunctions.sh
-│   ├── menuVariables.sh
+│   ├── menuVariables.properties
 │   └── zenityFunctions.sh
 │
 ├── non-repository-apps     It contains subscripts to install non-repository applications
@@ -197,10 +197,10 @@ Tree of folders and some files:
 | Some important files                                           | Description                                                                                   |
 | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------  |
 | [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                             |
-| [commonVariables.sh][commonVariables.sh]                       | It contains common variables available for all scripts                                        |
+| [commonVariables.properties][commonVariables.properties]       | It contains common variables available for all scripts                                        |
 | [dialogFunctions.sh][dialogFunctions.sh]                       | It contains menu functions for Dialog box (terminal mode). Used only by main script           |
 | [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                          |
-| [menuVariables.sh][menuVariables.sh]                           | It contains menu global variables available only for main script                              |
+| [menuVariables.properties][menuVariables.properties]           | It contains menu global variables available only for main script                              |
 | [zenityFunctions.sh][zenityFunctions.sh]                       | It contains menu functions for Zenity windows (desktop mode). Used only by main script        |
 | [applicationList.debian][applicationList.debian]               | It defines categories, applications and related packages for a Debian system                  |
 | [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and related packages for a Linux Mint system              |
@@ -339,16 +339,17 @@ To add a new language file just follow next steps:
 ### ANNEX
 
 #####  Subscript file considerations:
-  * The filename must follow next pattern: ApplicationName[_i386/_x64]
+  * The filename must follow next pattern: ApplicationName[_i386/_x64].sh
     - ApplicationName: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
     - _i386 / _x64: Optional if neccessary. Script to be executed only if match corresponding O.S. architecture (that means, i386 for 32 bits O.S.; x64 for 64 bits O.S.).
+    - The extension must be always '.sh'
   * The script must be ubicated in _./third-party-repo_ folder if it's valid for all supported linux distros. We call general subscript.
   * The script must be ubicated in _./third-party-repo/ubuntu_, _./third-party-repo/debian_, _./third-party-repo/linuxmint_, _./third-party-repo/lmde_ folder if it's valid only for a specific supported linux distro. We call specific subscript.
   * Is possible to create specific and general subscripts for a same thrid-party repository. Both will be executed.
 
 #####  Subscript commands considerations:
   * No need to use 'sudo' in commands because the subscript will be executed as root user.
-  * Use common variables supplied by [commonVariables.sh][commonVariables.sh] file.
+  * Use common variables supplied by [commonVariables.properties][commonVariables.properties] file.
   * This script must be non-interactive, that means, no echo to monitor, no read from keyboard, no wait confirmation.
 
 ### Author notes
@@ -358,10 +359,10 @@ I hope you find it useful.
 <!-- References -->
 [leeme.md]:./LEEME.md
 [commonFunctions.sh]:./common/commonFunctions.sh
-[commonVariables.sh]:./common/commonVariables.sh
+[commonVariables.properties]:./common/commonVariables.properties
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
 [menuFunctions.sh]:./menu/menuFunctions.sh
-[menuVariables.sh]:./menu/menuVariables.sh
+[menuVariables.properties]:./menu/menuVariables.properties
 [zenityFunctions.sh]:./menu/zenityFunctions.sh
 [applicationList.debian]:./applist/applicationList.debian
 [applicationList.linuxmint]:./applist/applicationList.linuxmint

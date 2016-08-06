@@ -2,18 +2,17 @@
 ##########################################################################
 # This script executes commands to add third-party repository of Atom
 # editor application. Official text editor of Github.
-#
-# Author: César Rodríguez González
-# Version: 1.3
-# Last modified date (dd/mm/yyyy): 04/08/2016
-# Licence: MIT
+# @author César Rodríguez González
+# @version 1.3, 2016-08-05
+# @license MIT
 ##########################################################################
 
 # Check if the script is being running by a root or sudoer user
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
 # Add common variables
-. ../../common/commonVariables.sh "`pwd`/../.."
+if [ -n "$1" ]; then scriptRoolFolder="$1"; else scriptRoolFolder="`pwd`/../.."; fi
+. $scriptRoolFolder/common/commonVariables.sh
 
 # Variables
 repositoryURL="http://ppa.launchpad.net/webupd8team/atom/ubuntu"

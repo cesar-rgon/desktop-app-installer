@@ -3,14 +3,12 @@
 # This script starts the installation and configuration process of the
 # specified application and finally it shows a log file which contains
 # reported installation steps and posible errors.
-#
-# Author: César Rodríguez González
-# Version: 1.3
-# Last modified date (dd/mm/yyyy): 04/08/2016
-# Licence: MIT
+# @author César Rodríguez González
+# @version 1.3, 2016-08-05
+# @license MIT
 ##########################################################################
 
-. ../common/commonVariables.sh "`pwd`/.."
+. ../common/commonVariables.properties "`pwd`/.."
 . ../common/commonFunctions.sh
 declare -a appsToInstall=( "Thunderbird" )
 

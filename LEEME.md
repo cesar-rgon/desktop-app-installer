@@ -32,7 +32,7 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 Válido para:   Ubuntu v16.04, Debian 8, Linux Mint 18 y LMDE (para todos los escritorios y servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 02/08/2016 (dd/mm/yyyy)
+Último cambio: 05/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -127,7 +127,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │
 ├── common                  Contiene funciones comúnes, variables comunes y comandos usados por los scripts de instalación
 │   ├── commonFunctions.sh
-│   ├── commonVariables.sh
+│   ├── commonVariables.properties
 │   └── installapp.sh
 │
 ├── etc                     Contiene ficheros de configuración usados por subscripts y el número de version del script principal
@@ -153,7 +153,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 ├── menu                    Contiene funciones usados por el menú del script principal (Terminal / Escritorio)
 │   ├── dialogFuntions.sh
 │   ├── menuFunctions.sh
-│   ├── menuVariables.sh
+│   ├── menuVariables.properties
 │   └── zenityFunctions.sh
 │
 ├── non-repository-apps     Contiene subscripts para instalar aplicaciones externas a repositorios
@@ -196,10 +196,10 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 | Algunos ficheros importantes                                   | Descripción                                                                                          |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | [commonFunctions.sh][commonFunctions.sh]                       | Contiene funciones comunes usados por todos los scripts de instalación                               |
-| [commonVariables.sh][commonVariables.sh]                       | Contiene variables comunes disponibles para todos los scripts                                        |
+| [commonVariables.properties][commonVariables.properties]       | Contiene variables comunes disponibles para todos los scripts                                        |
 | [dialogFunctions.sh][dialogFunctions.sh]                       | Contiene funciones del menú para cajas Dialog (modo terminal). Usado sólo por script principal       |
 | [menuFunctions.sh][menuFunctions.sh]                           | Contiene funciones del menú. Usado sólamente por el script principal                                 |
-| [menuVariables.sh][menuVariables.sh]                           | Contiene variables globales del menú disponibles sólo para el script principal                       |
+| [menuVariables.properties][menuVariables.properties]           | Contiene variables globales del menú disponibles sólo para el script principal                       |
 | [zenityFunctions.sh][zenityFunctions.sh]                       | Contiene funciones del menú para ventanas Zenity (modo escritorio). Usado sólo por script principal  |
 | [applicationList.debian][applicationList.debian]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Debian               |
 | [applicationList.linuxmint][applicationList.linuxmint]         | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Linux Mint           |
@@ -342,14 +342,15 @@ Para añadir un nuevo fichero de idioma, siga los siguientes pasos:
 ##### Consideraciones del fichero subscript
   * El nombre de fichero debe seguir el siguiente patrón: NombreAplicacion[_i386/_x64]
     - NombreAplicacion: debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde]
-	- _i386 / _x64: Opcional si fuera necesario. Script que sólo debe ser ejecutado en la arquitectura correspondiente del S.O. (i386 para 32 bits; x64: para 64 bits).
+	  - _i386 / _x64: Opcional si fuera necesario. Script que sólo debe ser ejecutado en la arquitectura correspondiente del S.O. (i386 para 32 bits; x64: para 64 bits).
+    - La extensión debe ser siempre '.sh'
   * El subscript debe estar ubicado en la carpeta _./third-party-repo_ si es válido para todas las distros linux soportadas. Lo denominamos subscript general.
   * El subscript debe estar ubicado en la carpeta _./third-party-repo/ubuntu_, _./third-party-repo/debian_, _./third-party-repo/linuxmint_, _./third-party-repo/lmde_ si es válido sólo para una distro linux soportada. Lo denominamos subscript específico.
   * Es posible crear subscript específico y general para un mismo repositorio de tercero. Ambos serán ejecutados.  
 
 ##### Consideraciones de comandos en fichero subscript
   * No es necesario usar 'sudo' ya que el subscript será ejecutado como usuario administrador.
-  * Se pueden usar las variables comunes definidas en el fichero [commonVariables.sh][commonVariables.sh].
+  * Se pueden usar las variables comunes definidas en el fichero [commonVariables.properties][commonVariables.properties].
   * Este script no debe ser interactivo, es decir, no enviar mensajes al monitor, ni leer de teclado, ni esperar confirmación alguna.  
 
 ---
@@ -363,10 +364,10 @@ Espero que lo encontréis útil.
 <!-- Referencias -->
 [readme.md]:./README.md
 [commonFunctions.sh]:./common/commonFunctions.sh
-[commonVariables.sh]:./common/commonVariables.sh
+[commonVariables.properties]:./common/commonVariables.properties
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
 [menuFunctions.sh]:./menu/menuFunctions.sh
-[menuVariables.sh]:./menu/menuVariables.sh
+[menuVariables.properties]:./menu/menuVariables.properties
 [zenityFunctions.sh]:./menu/zenityFunctions.sh
 [applicationList.debian]:./applist/applicationList.debian
 [applicationList.linuxmint]:./applist/applicationList.linuxmint

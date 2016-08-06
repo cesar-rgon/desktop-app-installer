@@ -4,14 +4,13 @@
 # install. After that, it starts the installation and configuration
 # process and finally it shows a log file which contains reported
 # installation steps and posible errors.
-#
-# Author: César Rodríguez González
-# Version: 1.3
-# Last modified date (dd/mm/yyyy): 04/08/2016
-# Licence: MIT
+# @author 	César Rodríguez González
+# @since 		1.0, 2014-04-29
+# @version 	1.3, 2016-08-05
+# @license 	MIT
 ##########################################################################
 
-. ./common/commonVariables.sh "`pwd`"
+. ./common/commonVariables.properties "`pwd`"
 . ./common/commonFunctions.sh
 . ./menu/menuFunctions.sh
 declare -a appsToInstall=( $(menu) )
