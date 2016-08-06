@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-08-05
+# @version 	1.3, 2016-08-06
 # @license 	MIT
 ##########################################################################
 
@@ -85,35 +85,55 @@ function prepareScript
 }
 
 ##
-# This funtion setup debconf from parameters read from an EULA file.
-# Debconf is used to determinate if the window is displayed on terminal or desktop mode
-# @since 	v1.0
-# @param  String eulaFilename EULA file wich contains parameters to setup debconf
-# @return String 							commands to setup debconf-set-selections
-##
-function setDebconfFromFile
-{
-	local eulaFilename="$1"
-	local line lineWithoutSpaces debconfCommands
-	# Read eula file ignoring comment and blank lines
-	while read line; do
-		lineWithoutSpaces=`echo $line | tr -d ' '`
-		if [ -n "$lineWithoutSpaces" ] && [[ "$line" != "#"* ]]; then
-			debconfCommands+="echo $line | debconf-set-selections 2>>\"$logFile\";"
-		fi
-	done < "$eulaFolder/$eulaFilename"
-	echo $debconfCommands
-}
-
-##
-# This function generates commands to execute subscripts during installation process
+# This function generates commands to execute subscripts during installation
+# process
 # @since 	v1.3
-# @param  String targetFolder destination folder where subscript is placed
-# @param  String appName 			application name refered by subscript
-# @param  String message 			optional message to be showed in box/window
-# @return String 							list of bash shell commands separated by ;
+# @param Map<String,String> parameters 	Generic parameters used by this function [global]
+# 	Keys of accepted parameters are:
+# 		fileScripts		Set of subscript files from where extract commands [mandatory]
+# 		appName				Application name refered if that's the case [optional]
+# 		message				Message to be showed in box/window [optional]
+# @return String 												list of bash shell commands separated by ;
 ##
 function generateCommands
+{
+	declare -ag fileScripts=(${parameters[fileScript]})
+	local appName="${parameters[appName]}" message="${parameters[message]}"
+	local commands messageCommand
+
+	# Iterate through all subscript files
+	for fileScript in "${fileScripts[@]}"; do
+		if [ -f "$fileScript" ]; then
+			local commands messageCommand
+			commands+="bash \"$fileScript\" \"$scriptRootFolder\" \"$appName\" 2>>\"$logFile\";"
+			# Specific application message to show in box/window and log
+			if [ -n "$message" ] && [ -n "$appName" ]; then
+				messageCommand+="echo \"# $message $appName\"; echo \"$message $appName\" >> \"$logFile\";"
+			fi
+		fi
+	done
+	# Generic message to show in box/window and log
+	if [ -n "$message" ]; then
+		messageCommand+="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
+	fi
+	if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
+}
+
+# TODO:
+# OPCION 1: SEGUIR CON MÉTODO GENÉRICO. SE DEBE IMPLEMENTAR MÉTODO QUE PREPARE PARÁMETROS.
+# EL MÉTODO DE GENERAR COMANDOS POR APLICACION SE ACABARÍA POR ELIMINAR
+# OPCION 2: DEJAR VARIOS GENERATECOMMANDS. ESTE ME GUSTA MENOS
+
+##
+# This function generates commands to execute application subscripts during
+# installation process
+# @since 	v1.3
+# @param  String targetFolder destination folder where subscript is placed [mandatory]
+# @param  String appName 			application name refered by subscript [mandatory]
+# @param  String message      optional message to be showed in box/window [optional]
+# @return String 							list of bash shell commands separated by ;
+##
+function generateCommandsApp
 {
 	local targetFolder="$1" appName="$2" message="$3"
 	local commands messageCommand
@@ -124,158 +144,78 @@ function generateCommands
 		if [ `uname -m` == "x86_64" ]; then
 			# For 64 bits OS
 			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then
-				commands+="bash \"$targetFolder/$distro/$appName$x64.sh\" \"$scriptRootFolder\" 2>>\"$logFile\""
+				commands+="bash \"$targetFolder/$distro/$appName$x64.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 			fi
 			if [ -f "$targetFolder/$appName$x64.sh" ]; then
-				commands+="bash \"$targetFolder/$appName$x64.sh\" \"$scriptRootFolder\" 2>>\"$logFile\""
+				commands+="bash \"$targetFolder/$appName$x64.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 			fi
 		else
 			# For 32 bits OS
 			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then
-				commands+="bash \"$targetFolder/$distro/$appName$i386.sh\" \"$scriptRootFolder\" 2>>\"$logFile\""
+				commands+="bash \"$targetFolder/$distro/$appName$i386.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 			fi
 			if [ -f "$targetFolder/$appName$i386.sh" ]; then
-				commands+="bash \"$targetFolder/$appName$i386.sh\" \"$scriptRootFolder\" 2>>\"$logFile\""
+				commands+="bash \"$targetFolder/$appName$i386.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 			fi
 		fi
 		# For all CPU arquitectures
 		if [ -f "$targetFolder/$distro/$appName.sh" ]; then
-			commands+="bash \"$targetFolder/$distro/$appName.sh\" \"$scriptRootFolder\" 2>>\"$logFile\""
+			commands+="bash \"$targetFolder/$distro/$appName.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 		fi
 		if [ -f "$targetFolder/$appName.sh" ]; then
-			commands+="bash \"$targetFolder/$appName.sh\" \"$scriptRootFolder\" 2>>\"$logFile\""
+			commands+="bash \"$targetFolder/$appName.sh\" \"$scriptRootFolder\" 2>>\"$logFile\";"
 		fi
 		if [ -n "$message" ]; then
-			if [ -z $DISPLAY ]; then
-				local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
-				commands+="| dialog --title \"$message $appName ...\" --backtitle \"$backtitle\" --progressbox $dialogHeight $dialogWidth"
-			fi
 			messageCommand="echo \"# $message $appName\"; echo \"$message $appName ...\" >> \"$logFile\";"
 		fi
-		commands+=";"
 	fi
-	if [ -n "$commands" ]; then	echo "$messageCommand $commands"; else echo ""; fi
-}
-
-##
-# This funtion generates commands to install packages of applications from
-# default or third-party repositories
-# @since 	v1.3
-# @return String 				List of bash shell commands separated by ;
-##
-function generateCommandsInstallRepoPackages
-{
-	local totalApplicationsToInstall=${#packagestoInstallPerApplication[@]}
-	local totalPackagesToInstall=`echo "${packagestoInstallPerApplication[@]}" | wc -w`
-	local indexA=1 indexP=1 appName package commands
-
-	for appName in ${!packagestoInstallPerApplication[@]}; do
-		for package in ${packagestoInstallPerApplication[$appName]}; do
-			# If application or package has EULA
-			if [ -f "$eulaFolder/$appName" ] || [ -f "$eulaFolder/$package" ]; then
-				if [ -z $DISPLAY ]; then commands+="clear;"; fi
-				# Delete previous Debconf configuration
-				commands+="echo \"# $removeOldDebconfConfiguration $package\"; echo \"$removeOldDebconfConfiguration $package...\" >> \"$logFile\";"
-				commands+="echo PURGE | debconf-communicate $package 2>>\"$logFile\";"
-				# Set default Debconf configuration
-				commands+="echo \"# $setNewDebconfConfiguration $package\"; echo \"$setNewDebconfConfiguration $package...\" >> \"$logFile\";"
-				commands+="bash -c \"$( setDebconfFromFile $package )\";"
-			fi
-			commands+="echo -e \"# $installingApplication $indexA/$totalApplicationsToInstall: $appName\n$installingPackage $indexP/$totalPackagesToInstall: $package\"; echo \"$installingPackage $package\" >> \"$logFile\";"
-			commands+="bash \"$scriptRootFolder/common/installapp.sh\" \"$package\" 2>>\"$logFile\""
-			if [ -z $DISPLAY ]; then
-				local title="$installingPackage $indexP/$totalPackagesToInstall: $package"
-				local backtitle="$installingApplication $indexA/$totalApplicationsToInstall: $appName"
-				commands+="| dialog --title \"$title\" --backtitle \"$backtitle\" --progressbox $dialogHeight $dialogWidth"
-			fi
-			commands+=";"
-			indexP=$(($indexP+1))
-		done
-		indexA=$(($indexA+1))
-	done
-	echo "$commands"
-}
-
-##
-# This funtion generates commands to setup Debconf interface for accept terms
-# of application use (EULA)
-# @since 	v1.3
-# @return String 				List of bash shell commands separated by ;
-##
-function generateCommandsDebconf
-{
-	# Set default Debconf interface to use
-	local commands="echo \"# $settingDebconfInterface\"; echo \"$settingDebconfInterface ...\" >> \"$logFile\";"
-	commands+="echo debconf debconf/frontend select $debconfInterface | debconf-set-selections 2>>\"$logFile\""
-	if [ -z $DISPLAY ]; then
-		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
-		commands+="| dialog --title \"$settingDebconfInterface\" --backtitle \"$backtitle\" --progressbox $dialogHeight $dialogWidth"
-	fi
-	commands+=";"
-	echo "$commands"
-}
-
-##
-# This funtion generates commands to update repositories
-# @since 	v1.3
-# @return String 				List of bash shell commands separated by ;
-##
-function generateCommandsUpdateRepositories
-{
-	local commands="echo \"# $updatingRepositories\"; echo \"$updatingRepositories ...\" >> \"$logFile\";"
-	commands+="apt-get update --fix-missing 2>>\"$logFile\""
-	if [ -z $DISPLAY ]; then
-		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
-		commands+="| dialog --title \"$updatingRepositories\" --backtitle \"$backtitle\" --progressbox $dialogHeight $dialogWidth"
-	fi
-	commands+=";"
-	echo "$commands"
-}
-
-##
-# This funtion generates commands to execute final operations: clean, etc.
-# @since 	v1.3
-# @return String 				List of bash shell commands separated by ;
-##
-function generateCommandsFinalOperations
-{
-	# Delete temp files and packages
-	local commands="echo \"# $cleaningTempFiles\"; echo \"$cleaningTempFiles ...\" >> \"$logFile\";"
-	local cleanTempFilesCommands="apt-get -y autoremove 2>>\"$logFile\"; apt-get clean 2>>\"$logFile\"; rm -rf \"$tempFolder\";"
-	commands+="bash -c \"$cleanTempFilesCommands\""
-	if [ -z $DISPLAY ]; then
-		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
-		commands+="| dialog --title \"$cleaningTempFiles ...\" --backtitle \"$backtitle\" --progressbox $dialogHeight $dialogWidth"
-	fi
-	commands+=";"
-
-	commands+="echo \"# $installationFinished\"; echo \"$installationFinished\" >> \"$logFile\";"
-	# Change ownership of log file
-	commands+="chown $username:$username \"$logFile\" 2>>\"$logFile\""
-	echo "$commands"
+	if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
 }
 
 ##
 # This funtion executes commands to install a set of applications
 # @since v1.0
-# @param String commands 	List of bash shell commands separated by ;
+# @param Map<String,String> commandsPerInstallationStep 	Shell commands per installation steps [global]
+# 	Keys of installation steps are:
+# 		commandsDebconf				First step. Commands to setup interface to show terms of application
+# 		thirdPartyRepo				Second step. Commands to add all third-party repositories needed
+# 		preInstallation				Third step. Commands to prepare installation of some applications
+# 		updateRepo						Fouth step. Commands to update repositories
+# 		installRepoPackages		Fifth step. Commands to install applications from repositories
+# 		installNonRepoApps		Sixth step. Commands to install non-repository applications
+# 		postInstallation			Seventh step. Commands to setup some applications to be ready to use
+# 		finalOperations				Eighth step. Final operations: clean packages, remove temp.files, etc
 ##
 function executeCommands
 {
-	local commands="$1"
-	if [ -n "commands" ]; then
-		if [ -z $DISPLAY ]; then
-			clear; sudo bash -c "$commands"
-			dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
-		else
-			# Ask for admin password to execute script like sudoer user
-			( SUDO_ASKPASS="bash -c \"$scriptRootFolder/common/askpass.sh\"" sudo -A bash -c "$commands" ) |
-			zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
-			# Show notification and log
-			notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
-			zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
-		fi
+	local commands
+
+	if [ -z $DISPLAY ]; then
+		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
+
+		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[updateRepo]}" | dialog --title "$updatingRepositories" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}" | dialog --title "$installingPackages" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}" | dialog --title "$installingNonRepoApps" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[postInstallation]}" | dialog --title "$settingUpApplications" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[finalOperations]}" | dialog --title "$cleaningTempFiles" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
+	else
+		local commands="${commandsPerInstallationStep[commandsDebconf]} ${commandsPerInstallationStep[thirdPartyRepo]}"
+		commands+="${commandsPerInstallationStep[preInstallation]} ${commandsPerInstallationStep[updateRepo]}"
+		commands+="${commandsPerInstallationStep[installRepoPackages]} ${commandsPerInstallationStep[installNonRepoApps]}"
+		commands+="${commandsPerInstallationStep[postInstallation]} ${commandsPerInstallationStep[finalOperations]}"
+		commands+="echo \"# $installationFinished\";"
+		# Ask for admin password to execute script like sudoer user
+		( SUDO_ASKPASS="$scriptRootFolder/common/askpass.sh" sudo -A bash -c "$commands" ) |
+		zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
+		# Show notification and log
+		notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
+		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 	fi
+	echo "$installationFinished" >> "$logFile";
 }
 
 ##
@@ -288,27 +228,28 @@ function installAndSetupApplications
 {
 	declare -ag appsToInstall=("${!1}")
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local repoCommands preInstallationCommands nonRepoAppCommands postInstallationCommands appName apps
+		local appName appIndex=1
 
 		for appName in ${appsToInstall[@]}; do
-			repoCommands+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
-			preInstallationCommands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationOf" )
-			if [ -z $DISPLAY ]; then nonRepoAppCommands+="clear;"; fi
-			nonRepoAppCommands+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )
-			postInstallationCommands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+			commandsPerInstallationStep[thirdPartyRepo]+=$( generateCommandsApp "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
+			commandsPerInstallationStep[preInstallation]+=$( generateCommandsApp "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
+			commandsPerInstallationStep[installRepoPackages]+=$( generateCommandsInstallRepoPackages "$appName" "$appIndex" "${#appsToInstall[@]}")
+			local fileScript="${parameters[fileScript]}" appName="${parameters[appName]}" message="${parameters[message]}"
 
-			# Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
-			apps=`cat $appListFile | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf "%s",$i (i==NF?ORS:OFS)}'`
-			packagestoInstallPerApplication[$appName]=`echo "$apps"`
+			#		commands+="echo -e \"# $installingApplication $appIndex/$totalAppsToInstall: $appName\n$installingPackage $packageIndex/$totalPackagesToInstall: $package\";"
+			#		commands+="echo -e \"$installingApplication $appIndex/$totalAppsToInstall: $appName. $installingPackage $packageIndex/$totalPackagesToInstall: $package\" >> \"$logFile\";"
+			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommandsApp "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )
+			commandsPerInstallationStep[postInstallation]+=$( generateCommandsApp "$postInstallationFolder" "$appName" "$settingUpApplication" )
+			appIndex=$(($appIndex+1))
 		done
 
-		local commands=$( generateCommandsDebconf )
-		commands+="$repoCommands $preInstallationCommands"
-		commands+=$( generateCommandsUpdateRepositories )
-		commands+=$( generateCommandsInstallRepoPackages )
-		commands+="$nonRepoAppCommands $postInstallationCommands"
-		commands+=$( generateCommandsFinalOperations )
-
-		executeCommands "$commands"
+		if [ -n "${commandsPerInstallationStep[installRepoPackages]}" ] || [ -n "${commandsPerInstallationStep[installNonRepoApps]}" ]; then
+			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$scriptRoolFolder/common/setupDebconf.sh" "$settingDebconfInterface" )
+			if [ -n "${commandsPerInstallationStep[thirdPartyRepo]}" ] || [ -n  "${commandsPerInstallationStep[preInstallation]}" ]; then
+				commandsPerInstallationStep[updateRepo]=$( generateCommands "$scriptRoolFolder/common/updateRepositories.sh" "$updatingRepositories" )
+			fi
+			commandsPerInstallationStep[finalOperations]=$( generateCommands "$scriptRoolFolder/common/finalOperations.sh" "$cleaningTempFiles" )
+			executeCommands commandsPerInstallationStep[@]
+		fi
 	fi
 }
