@@ -4,7 +4,7 @@
 # an application package. If so, apply contingence measure.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-28
-# @version 	1.3, 2016-08-06
+# @version 	1.3, 2016-08-07
 # @license 	MIT
 ##########################################################################
 
@@ -12,12 +12,10 @@
 if [ "$(id -u)" != "0" ]; then echo "" 1>&2; echo "This script must be executed by a root or sudoer user" 1>&2; echo "" 1>&2; exit 1; fi
 
 # Add common variables
-if [ -n "$1" ]; then scriptRoolFolder="$1"; else scriptRoolFolder="`pwd`/.."; fi
-. $scriptRoolFolder/common/commonVariables.sh
-
+if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/.."; fi
+. $scriptRootFolder/common/commonVariables.properties
 # Parameters
-package="$2"
-
+appName="$2"
 # Get application packages: Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
 packageList=`cat $appListFile | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf "%s",$i (i==NF?ORS:OFS)}'`
 

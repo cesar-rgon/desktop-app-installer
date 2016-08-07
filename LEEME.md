@@ -29,10 +29,10 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 > 6. [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción)
 
 ```
-Válido para:   Ubuntu v16.04, Debian 8, Linux Mint 18 y LMDE (para todos los escritorios y servidor).
+Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 05/08/2016 (dd/mm/yyyy)
+Último cambio: 07/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características

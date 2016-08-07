@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-08-06
+# @version 	1.3, 2016-08-07
 # @license 	MIT
 ##########################################################################
 
@@ -16,7 +16,7 @@ function installNeededPackages
 {
 	if [ -z $DISPLAY ]; then
 		if [ -z "`dpkg -s dialog 2>&1 | grep "installed"`" ]; then
-			echo "$installingPackage dialog"
+			echo "$installingApplication Dialog"
 			sudo apt-get -y install dialog --fix-missing
 		fi
 	else
@@ -28,7 +28,7 @@ function installNeededPackages
 		fi
 		if [ -z "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" ]; then
 			echo "$needToInstallPackage $sudoPackage" > "$logFile"; echo "$needToInstallPackage $sudoPackage"
-			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" 2>>"$logFile";
+			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" -t 10000 2>>"$logFile";
 			zenity --error --text="$needToInstallPackage $sudoPackage" --window-icon="$installerIconFolder/tux32.png" 2>>"$logFile"
 			exit 1
 		fi
@@ -53,8 +53,7 @@ function installNeededPackages
 }
 
 ##
-# This funtion calls previous functions and creates needed folders and
-# files used by installation script
+# This funtion sets application log file
 # @since 	v1.3
 # @param  String scriptPath Folder path to access main script root folder
 # @return String 						path and log filename
@@ -66,16 +65,19 @@ function getLogFilename
 	IFS='/' read -ra splittedPath <<< "$scriptPath"
 	local numberItemsPath=${#splittedPath[@]}
 	local scriptName=${splittedPath[$(($numberItemsPath-1))]}
-	echo "$logsFolder/${scriptName/.sh/}-$snapshot.log"
+	echo "${scriptName/.sh/}-$snapshot.log"
 }
 
 ##
 # This funtion prepares main installer script to be executed
+# Creates needed folders and files used by installation script
 # @since v1.0
 ##
 function prepareScript
 {
-	logFile=$( getLogFilename "$1" )
+	if [ -n $DISPLAY ] && [ "$2" != "--no-notification" ]; then notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$testedOn\n$testedOnDistros" -t 10000; fi
+	logFilename=$( getLogFilename "$1" )
+	logFile="$logsFolder/$logFilename"
 	# Create temporal folders and files
 	mkdir -p "$tempFolder" "$logsFolder"
 	rm -f "$logFile"
@@ -113,7 +115,7 @@ function getAppSubscripts
 			if [ -f "$targetFolder/$appName$i386.sh" ]; then subscriptList+="$targetFolder/$appName$i386.sh "; fi
 			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then subscriptList+="$targetFolder/$distro/$appName$i386.sh "; fi
 		fi
-		echo subscriptList
+		echo "$subscriptList"
 	fi
 }
 
@@ -122,11 +124,12 @@ function getAppSubscripts
 # installation process. The subscript can be referenced by an application name
 # or directly by script-name.sh
 # @since 	v1.3
-# @param String targetFolder	Destination folder where is placed the script
-# @param String name				 	Name of application or subscript to be executed
+# @param String targetFolder	Destination folder where is placed the script [mandatory]
+# @param String name				 	Name of application or subscript to be executed [mandatory]
 #		- if name=identifier is considered as an application name
 #		- if name=identifier.sh is considered as a subscript filename
-# @param String message				Message to be showed in box/window
+# @param String message				Message to be showed in box/window [mandatory]
+# @param String argument			Argument passed to name script [optional]
 # @return String 							list of bash shell commands separated by ;
 ##
 function generateCommands
@@ -138,7 +141,8 @@ function generateCommands
 		local targetFolder="$1" message="$3" commands messageCommand
 		if [[ "$2" == *.sh ]]; then			# Name is a script filename
 			if [ -f "$targetFolder/$2" ]; then
-				commands+="bash \"$targetFolder/$2\" \"$scriptRootFolder\" 2>>\"$logFile\";"
+				local argument="$4"
+				commands+="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$argument\" 2>>\"$logFile\";"
 				messageCommand+="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
 			fi
 		else														# Name is an application name
@@ -170,15 +174,15 @@ function generateCommands
 ##
 function executeCommands
 {
-	local commands
+	local totalAppsToInstall="$1"
 	if [ -z $DISPLAY ]; then
 		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
 		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[updateRepo]}" | dialog --title "$updatingRepositories" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}" | dialog --title "$installingPackages" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}" | dialog --title "$installingNonRepoApps" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}" | dialog --title "$installingApplications $totalAppsToInstall" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}" | dialog --title "$installingNonRepoApps $totalAppsToInstall" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[postInstallation]}" | dialog --title "$settingUpApplications" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[finalOperations]}" | dialog --title "$cleaningTempFiles" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
 		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
@@ -188,14 +192,18 @@ function executeCommands
 		commands+="${commandsPerInstallationStep[installRepoPackages]} ${commandsPerInstallationStep[installNonRepoApps]}"
 		commands+="${commandsPerInstallationStep[postInstallation]} ${commandsPerInstallationStep[finalOperations]}"
 		commands+="echo \"# $installationFinished\";"
+		# debug
+		echo "$commands" > /home/cesar/comandos
 		# Ask for admin password to execute script like sudoer user
 		( SUDO_ASKPASS="$scriptRootFolder/common/askpass.sh" sudo -A bash -c "$commands" ) |
 		zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
+		echo -e "$installationFinished\n========================" >> "$logFile"
+		chown $username:$username "$logFile"
 		# Show notification and log
-		notify-send -i "$installerIconFolder/logviewer.svg" "$linuxAppInstallerTitle" "$logFileLocation\n$logFile"
+		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
+		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
 		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 	fi
-	echo "$installationFinished" >> "$logFile";
 }
 
 ##
@@ -210,22 +218,23 @@ function installAndSetupApplications
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
 		local appName appIndex=1 totalAppsToInstall=${#appsToInstall[@]} message
 
+		if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
 		for appName in ${appsToInstall[@]}; do
 			commandsPerInstallationStep[thirdPartyRepo]+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
 			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-			commandsPerInstallationStep[installRepoPackages]+=$( generateCommands "$scriptRoolFolder/common" "instalapp.sh" "$installingApplication $appIndex/$totalAppsToInstall: $appName" )
+			commandsPerInstallationStep[installRepoPackages]+=$( generateCommands "$scriptRootFolder/common" "installapp.sh" "$installingApplication $appIndex/$totalAppsToInstall: $appName" "$appName" )
 			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp" )
 			commandsPerInstallationStep[postInstallation]+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 			appIndex=$(($appIndex+1))
 		done
-
 		if [ -n "${commandsPerInstallationStep[installRepoPackages]}" ] || [ -n "${commandsPerInstallationStep[installNonRepoApps]}" ]; then
-			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$scriptRoolFolder/common" "setupDebconf.sh" "$settingDebconfInterface" )
+			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$scriptRootFolder/common" "setupDebconf.sh" "$settingDebconfInterface" )
 			if [ -n "${commandsPerInstallationStep[thirdPartyRepo]}" ] || [ -n  "${commandsPerInstallationStep[preInstallation]}" ]; then
-				commandsPerInstallationStep[updateRepo]=$( generateCommands "$scriptRoolFolder/common" "updateRepositories.sh" "$updatingRepositories" )
+				commandsPerInstallationStep[updateRepo]=$( generateCommands "$scriptRootFolder/common" "updateRepositories.sh" "$updatingRepositories" )
 			fi
-			commandsPerInstallationStep[finalOperations]=$( generateCommands "$scriptRoolFolder/common" "finalOperations.sh" "$cleaningTempFiles" )
-			executeCommands
+			commandsPerInstallationStep[finalOperations]=$( generateCommands "$scriptRootFolder/common" "finalOperations.sh" "$cleaningTempFiles" )
+			executeCommands totalAppsToInstall
 		fi
 	fi
+	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi
 }

@@ -4,7 +4,7 @@
 # specified application and finally it shows a log file which contains
 # reported installation steps and posible errors.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-05
+# @version 1.3, 2016-08-07
 # @license MIT
 ##########################################################################
 
@@ -13,8 +13,5 @@
 declare -a appsToInstall=( "Remmina" )
 
 prepareScript "$0"
-if [ -n $DISPLAY ]; then
-  notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$installingSelectedApplications"
-fi
 # Install all selected applications
 installAndSetupApplications appsToInstall[@]

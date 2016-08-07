@@ -3,7 +3,7 @@
 # This script contains menu functions used only by main script.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-31
-# @version 	1.3, 2016-08-05
+# @version 	1.3, 2016-08-07
 # @license 	MIT
 ##########################################################################
 
@@ -62,6 +62,7 @@ function menu
 	declare -ag selectedCategories
 	local firstTime="true" selcat
 
+	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$testedOn\n$testedOnDistros" -t 10000; fi
 	# Repeat select categories and applications windows until not selected categories
 	while [ "$selcat" != "" ] || [ "$firstTime" == "true" ]; do
 		local categoryNumber=1

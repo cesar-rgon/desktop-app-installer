@@ -29,10 +29,10 @@ There are a lot of applications included in the default list, but this list can 
 > 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
-Valid for:   Ubuntu v16.04, Debian 8, Linux Mint 18 and LMDE (for all desktops or server).
+Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/05 (yyyy/mm/dd)
+Last change: 2016/08/07 (yyyy/mm/dd)
 ```
 
 ### 1. Features

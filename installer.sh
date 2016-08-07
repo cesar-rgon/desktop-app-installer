@@ -6,23 +6,15 @@
 # installation steps and posible errors.
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-04-29
-# @version 	1.3, 2016-08-05
+# @version 	1.3, 2016-08-07
 # @license 	MIT
 ##########################################################################
 
 . ./common/commonVariables.properties "`pwd`"
 . ./common/commonFunctions.sh
 . ./menu/menuFunctions.sh
-declare -a appsToInstall=( $(menu) )
 
-prepareScript "$0"
-if [ -n $DISPLAY ]; then
-	notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$linuxAppInstallerComment\n$linuxAppInstallerAuthor"
-fi
-if [ ${#appsToInstall[@]} -gt 0 ]; then
-	if [ -n $DISPLAY ]; then
-		notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$installingSelectedApplications"
-	fi
-	# Install all selected applications
-	installAndSetupApplications appsToInstall[@]
-fi
+prepareScript "$0" --no-notification
+declare -a appsToInstall=( $(menu) )
+# Install all selected applications
+installAndSetupApplications appsToInstall[@]

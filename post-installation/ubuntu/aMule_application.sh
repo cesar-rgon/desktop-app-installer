@@ -7,7 +7,7 @@
 # script will back to parent directory, it means, available for both
 # linux OS.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-05
+# @version 1.3, 2016-08-07
 # @license MIT
 ##########################################################################
 
@@ -15,8 +15,8 @@
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
 # Add common variables
-if [ -n "$1" ]; then scriptRoolFolder="$1"; else scriptRoolFolder="`pwd`/../.."; fi
-. $scriptRoolFolder/common/commonVariables.sh
+if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/../.."; fi
+. $scriptRootFolder/common/commonVariables.properties
 
 # Extract amule icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
