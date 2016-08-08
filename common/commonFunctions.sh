@@ -2,8 +2,8 @@
 ##########################################################################
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
-# @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-08-07
+# @since 	1.0, 2014-05-10
+# @version 	1.3, 2016-08-08
 # @license 	MIT
 ##########################################################################
 
@@ -27,10 +27,8 @@ function installNeededPackages
 			sudoHundler="kdesudo"; sudoOption="-c"; sudoPackage="kdesudo"
 		fi
 		if [ -z "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" ]; then
-			echo "$needToInstallPackage $sudoPackage" > "$logFile"; echo "$needToInstallPackage $sudoPackage"
-			notify-send -i "$installerIconFolder/applications-other.svg" "$linuxAppInstallerTitle" "$needToInstallPackage $sudoPackage" -t 10000 2>>"$logFile";
-			zenity --error --text="$needToInstallPackage $sudoPackage" --window-icon="$installerIconFolder/tux32.png" 2>>"$logFile"
-			exit 1
+			echo "$installingApplication $sudoPackage"
+			sudo apt-get -y install $sudoPackage --fix-missing
 		fi
 		if [ -z "`dpkg -s zenity 2>&1 | grep "installed"`" ]; then
 			neededPackages+="zenity"
@@ -174,17 +172,21 @@ function generateCommands
 ##
 function executeCommands
 {
-	local totalAppsToInstall="$1"
+	local totalAppsToInstall=$1
 	if [ -z $DISPLAY ]; then
-		local backtitle="$linuxAppInstallerTitle. $linuxAppInstallerComment. $linuxAppInstallerAuthor"
-		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[updateRepo]}" | dialog --title "$updatingRepositories" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}" | dialog --title "$installingApplications $totalAppsToInstall" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}" | dialog --title "$installingNonRepoApps $totalAppsToInstall" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[postInstallation]}" | dialog --title "$settingUpApplications" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[finalOperations]}" | dialog --title "$cleaningTempFiles" --backtitle "$backtitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[updateRepo]}" | dialog --title "$updatingRepositories" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}"
+		clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}"
+		# TODO: Dialog box can not lauch EULA box. So applications are installed from text plain console
+		# Solution: new key in map "eula" with a set of applications with eula files
+		#clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}" | dialog --title "$installingApplications $totalAppsToInstall" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		#clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}" | dialog --title "$installingNonRepoApps $totalAppsToInstall" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[postInstallation]}" | dialog --title "$settingUpApplications" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		clear; sudo bash -c "${commandsPerInstallationStep[finalOperations]}" | dialog --title "$cleaningTempFiles" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		echo -e "$installationFinished\n========================" >> "$logFile"
 		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
 	else
 		local commands="${commandsPerInstallationStep[commandsDebconf]} ${commandsPerInstallationStep[thirdPartyRepo]}"
@@ -198,12 +200,12 @@ function executeCommands
 		( SUDO_ASKPASS="$scriptRootFolder/common/askpass.sh" sudo -A bash -c "$commands" ) |
 		zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
 		echo -e "$installationFinished\n========================" >> "$logFile"
-		chown $username:$username "$logFile"
 		# Show notification and log
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
 		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
 		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 	fi
+	chown $username:$username "$logFile"
 }
 
 ##
@@ -233,7 +235,7 @@ function installAndSetupApplications
 				commandsPerInstallationStep[updateRepo]=$( generateCommands "$scriptRootFolder/common" "updateRepositories.sh" "$updatingRepositories" )
 			fi
 			commandsPerInstallationStep[finalOperations]=$( generateCommands "$scriptRootFolder/common" "finalOperations.sh" "$cleaningTempFiles" )
-			executeCommands totalAppsToInstall
+			executeCommands $totalAppsToInstall
 		fi
 	fi
 	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi

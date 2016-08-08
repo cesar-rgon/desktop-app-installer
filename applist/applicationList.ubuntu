@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 03/08/2016                                                                           #
+# Last modified date (dd/mm/yyyy): 2016/08/08                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -30,7 +30,7 @@ developer_tools       Git_cola                       git-cola
 developer_tools       Meld                           meld
 developer_tools       MySQL_workbench                mysql-workbench
 developer_tools       Netbeans                       netbeans
-developer_tools       OpenJdk			             default-jdk
+developer_tools       OpenJdk			     default-jdk
 developer_tools       Pgadmin_iii                    pgadmin3
 developer_tools       Qt_creator                     qtcreator
 developer_tools       SQLite_database_browser        sqlitebrowser
@@ -89,7 +89,6 @@ internet              Skype
 internet              Teamviewer_full
 internet              Teamviewer_quick_support
 internet              Thunderbird                    thunderbird
-internet              Tor_browser                    tor-browser
 internet              Transmission_application_Qt    transmission-qt
 internet              Transmission_application_Gtk   transmission-gtk
 internet              Transmission_client            transgui

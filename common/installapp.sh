@@ -4,7 +4,7 @@
 # an application package. If so, apply contingence measure.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-28
-# @version 	1.3, 2016-08-07
+# @version 	1.3, 2016-08-08
 # @license 	MIT
 ##########################################################################
 
@@ -24,16 +24,20 @@ if [ -n "$packageList" ]; then
 
 	for package in "$packageList"; do
 		# If application or package has EULA
-		if [ -f "$eulaFolder/$appName" ] || [ -f "$eulaFolder/$package" ]; then
+		local eulaFile
+		if [ -f "$eulaFolder/$appName" ]; then eulaFile="$eulaFolder/$appName"
+		else if [ -f "$eulaFolder/$package" ]; then eulaFile="$eulaFolder/$package"; fi; fi
+
+		if [ -n "$eulaFile" ]; then
 			# Delete previous Debconf configuration
 			echo PURGE | debconf-communicate $package
 			# Setup debconf from parameters read from an EULA file. Debconf is used to determinate if the window is displayed on terminal or desktop mode
 			while read line; do
 				lineWithoutSpaces=`echo $line | tr -d ' '`
 				if [ -n "$lineWithoutSpaces" ] && [[ "$line" != "#"* ]]; then
-					debconfCommands+="echo $line | debconf-set-selections 2>>\"$logFile\";"
+					debconfCommands+="echo $line | debconf-set-selections;"
 				fi
-			done < "$eulaFolder/$package"
+			done < "$eulaFile"
 			bash -c "$debconfCommands"
 		fi
 	  # Install package
@@ -41,8 +45,8 @@ if [ -n "$packageList" ]; then
 		if [ $? -ne 0 ]; then
 			echo -e "$packageInstallFailed $package ..." 1>&2
 			# Error installing package. Applying contingence measure
-			rm -f "/var/lib/dpkg/info/$package.pre*" 2>/dev/null
-			rm -f "/var/lib/dpkg/info/$package.post*" 2>/dev/null
+			rm /var/lib/dpkg/info/$package.pre* 2>/dev/null
+			rm /var/lib/dpkg/info/$package.post* 2>/dev/null
 			apt-get -y install -f >/dev/null
 			if [ $? -ne 0 ]; then
 				echo -e "$packageReparationFailed" 1>&2
