@@ -1,7 +1,7 @@
-Linux app installer
-===================
+Desktop & app installer script
+==============================
 
-| Menú de instalación de aplicaciones de repositorios oficiales, de terceros o fuentes externas para linux Ubuntu, Debian, Linux Mint o LMDE (escritorio o servidor).| ![Logo][tux bricoleur] |
+| Menú de instalación de escritorios y aplicaciones de repositorios oficiales, terceros o fuentes externas para Ubuntu, Debian, Linux Mint o LMDE (escritorio o servidor).| ![Logo][tux bricoleur] |
 | --- | --- |
 
 Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado puede ser modificado por el usuario tan sólo editando un fichero de texto. Además, los usuarios pueden añadir subscripts que extiendan la funcionalidad del menú, por ejemplo, añadir nuevos repositorios, configurar aplicaciones, etc. Por otro lado, existe un script individual por cada aplicación como modo alternativo de realizar el proceso de instalación sin el menú principal.
@@ -32,7 +32,7 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 07/08/2016 (dd/mm/yyyy)
+Último cambio: 09/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -42,7 +42,7 @@ Versión:       1.3
 * Descarga, extrae e instala aplicaciones sin repositorios mediante subscripts propios que extienden la funcionalidad del script principal. Se incluyen varios por defecto.
 * Configura aplicaciones después de ser instaladas mediante subscripts específicos. Se incluyen varios por defecto.
 * Personaliza tu propia lista de aplicaciones a instalar y repositorios de terceros a agregar editando algunos ficheros de configuración (no hay necesidad de editar el script principal para este propósito).
-* Soporte EULA. Instala aplicaciones automáticamente sin necesidad de interacción del usuario para aceptar acuerdos legales de la aplicación. Desactivado por defecto.
+* Soporte EULA. Instala aplicaciones automáticamente sin necesidad de interacción del usuario para aceptar acuerdos legales de la aplicación.
 * El script se ejecuta con una interfaz adaptada al entorno detectado: Dialog para terminal. Zenity para escritorio o emulador de terminal.
 * Fichero de log que muestra los pasos de instalación y posibles errores si ocurrieran.
 * Soporte multilenguaje. Es sencillo añadir un nuevo idioma. Por el momento están incluidos Inglés y Español. El script detecta el idioma del sistema y usa la traducción apropiada.
@@ -211,7 +211,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 | [template-script.sh][template-script.sh]                       | Plantilla para ayudar a crear un nuevo script para instalar una aplicación                           |
 | [template-repository.sh][template-repository.sh]               | Plantilla para ayudar a crear un nuevo subscript para añadir un repositorio de tercero               |
 | [template-pre-installation.sh][template-pre-installation.sh]   | Plantilla para ayudar a crear un nuevo subscript con comandos de pre-instalación de una aplicación   |
-| [template-eula][template-eula]                                 | Plantilla para ayudar a crear un nuevo subscript para configurar soporte EULA para un paquete        |
+| [template-eula][template-eula]                                 | Plantilla para ayudar a crear un nuevo subscript para configurar soporte EULA para una aplicación        |
 | [template-non-repo-app.sh][template-non-repo-app.sh]           | Plantilla para ayudar a crear un nuevo subscript para instalar una aplicación externa a repositorios |
 | [template-post-installation.sh][template-post-installation.sh] | Plantilla para ayudar a crear un nuevo subscript con comandos de post-instalación de una aplicación  |
 
@@ -311,11 +311,11 @@ Para añadir un nuevo subscript que configure una aplicación después del proce
 [Regresar al índice](#indice)
 
 #### 5.8 Añadir nuevo subscript para configurar el soporte EULA
-Para añadir un nuevo subscript que configure el soporte EULA para un paquete, siga los siguientes pasos:
+Para añadir un nuevo subscript que configure el soporte EULA para una aplicación, siga los siguientes pasos:
 
-1. Crear un nuevo fichero './eula/nombrePaquete' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
+1. Crear un nuevo fichero './eula/nombreAplicacion' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
   Consideraciones:
-  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) al paquete asociado a la aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
 
 2. Añadir parámetros al final del fichero con la sintaxis indicada en la plantilla para evitar las preguntas EULA durante el proceso de instalación.
 

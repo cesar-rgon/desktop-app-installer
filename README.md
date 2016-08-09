@@ -1,7 +1,7 @@
-Linux app installer
-===================
+Desktop & app installer script
+==============================
 
-| Installation menu for applications from official repositories, third-party ones or external sources on any Ubuntu , Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux bricoleur] |
+| Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux bricoleur] |
 | --- | --- |
 
 There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
@@ -32,7 +32,7 @@ There are a lot of applications included in the default list, but this list can 
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/07 (yyyy/mm/dd)
+Last change: 2016/08/09 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -42,7 +42,7 @@ Last change: 2016/08/07 (yyyy/mm/dd)
 * Download, extract and install non-repository applications through custom subscripts that extend the main script functionality. It includes several subscripts by default.
 * Set up applications after they are installed through custom subscripts.
 * Customize your own application list to install and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
-* EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application. Disabled by default.
+* EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
 * The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
@@ -212,7 +212,7 @@ Tree of folders and some files:
 | [template-script.sh][template-script.sh]                       | Template file to help to create a new script file to install an application                   |
 | [template-repository.sh][template-repository.sh]               | Template file to help to create a new subscript to add a third-party repository               |
 | [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create a new application subscript to run pre-installation commands  |
-| [template-eula][template-eula]                                 | Template file to help to create a new subscript to setup EULA support for a package           |
+| [template-eula][template-eula]                                 | Template file to help to create a new subscript to setup EULA support for an application           |
 | [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create a new subscript to install a non-repository application       |
 | [template-post-installation.sh][template-post-installation.sh] | Template file to help to create a new application subscript to run post-installation commands |
 
@@ -311,11 +311,11 @@ To add a new subscript to setup an application after installation proccess just 
 [Back to index](#index)
 
 #### 5.8 Add new subscript to setup EULA support
-To add a new subscript to setup EULA support for a package just follow next steps:
+To add a new subscript to setup EULA support for an application just follow next steps:
 
-1. Create a new file './eula/packageName' taking, as base, next commands from [template-eula][template-eula] file.
+1. Create a new file './eula/applicationName' taking, as base, next commands from [template-eula][template-eula] file.
   Considerations:
-  * The filename must be identically (case-sensitive) to the related application package defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+  * The filename must be identically (case-sensitive) to the related application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
 
 2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
 
