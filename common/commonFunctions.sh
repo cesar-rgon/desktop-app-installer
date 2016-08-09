@@ -73,7 +73,12 @@ function getLogFilename
 ##
 function prepareScript
 {
-	if [ -n $DISPLAY ] && [ "$2" != "--no-notification" ]; then notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$testedOn\n$testedOnDistros" -t 10000; fi
+	if [ -n $DISPLAY ] && [ "$3" != "--no-notification" ]; then notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$testedOn\n$testedOnDistros" -t 10000; fi
+
+	echo "$2" > "$tempFolder/linux-app-installer-info"
+	echo "`whoami`" >> "$tempFolder/linux-app-installer-info"
+	echo "$HOME" >> "$tempFolder/linux-app-installer-info"
+
 	logFilename=$( getLogFilename "$1" )
 	logFile="$logsFolder/$logFilename"
 	# Create temporal folders and files

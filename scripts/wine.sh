@@ -4,14 +4,18 @@
 # specified application and finally it shows a log file which contains
 # reported installation steps and posible errors.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-07
+# @version 1.3, 2016-08-09
 # @license MIT
 ##########################################################################
 
-. ../common/commonVariables.properties "`pwd`/.."
+# Basic Variables
+scriptRootFolder="`pwd/..`"; username="`whoami`"; homeFolder="$HOME"
+
+# Import common variables and functions
+. ./common/commonVariables.properties
 . ../common/commonFunctions.sh
 declare -a appsToInstall=( "Wine" )
 
+# Lauch menu and install selected applications
 prepareScript "$0"
-# Install all selected applications
 installAndSetupApplications appsToInstall[@]
