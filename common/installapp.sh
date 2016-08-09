@@ -4,7 +4,7 @@
 # an application package. If so, apply contingence measure.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-28
-# @version 	1.3, 2016-08-08
+# @version 	1.3, 2016-08-09
 # @license 	MIT
 ##########################################################################
 
@@ -23,12 +23,8 @@ if [ -n "$packageList" ]; then
 	totalPackagesToInstall=`echo "$packageList" | wc -w`
 
 	for package in "$packageList"; do
-		# If application or package has EULA
-		local eulaFile
-		if [ -f "$eulaFolder/$appName" ]; then eulaFile="$eulaFolder/$appName"
-		else if [ -f "$eulaFolder/$package" ]; then eulaFile="$eulaFolder/$package"; fi; fi
-
-		if [ -n "$eulaFile" ]; then
+		# If application has EULA
+		if [ -f "$eulaFolder/$appName" ]; then
 			# Delete previous Debconf configuration
 			echo PURGE | debconf-communicate $package
 			# Setup debconf from parameters read from an EULA file. Debconf is used to determinate if the window is displayed on terminal or desktop mode
@@ -37,7 +33,7 @@ if [ -n "$packageList" ]; then
 				if [ -n "$lineWithoutSpaces" ] && [[ "$line" != "#"* ]]; then
 					debconfCommands+="echo $line | debconf-set-selections;"
 				fi
-			done < "$eulaFile"
+			done < "$eulaFolder/$appName"
 			bash -c "$debconfCommands"
 		fi
 	  # Install package
