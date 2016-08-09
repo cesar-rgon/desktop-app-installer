@@ -75,10 +75,6 @@ function prepareScript
 {
 	if [ -n $DISPLAY ] && [ "$3" != "--no-notification" ]; then notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$testedOn\n$testedOnDistros" -t 10000; fi
 
-	echo "$2" > "$tempFolder/linux-app-installer-info"
-	echo "`whoami`" >> "$tempFolder/linux-app-installer-info"
-	echo "$HOME" >> "$tempFolder/linux-app-installer-info"
-
 	logFilename=$( getLogFilename "$1" )
 	logFile="$logsFolder/$logFilename"
 	# Create temporal folders and files
@@ -138,21 +134,22 @@ function getAppSubscripts
 function generateCommands
 {
 	if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
-		echo ""			# All parameters are mandatories
+		echo ""			# First three parameters are mandatories
 	else
 		# Get parameters and initialize variables
-		local targetFolder="$1" message="$3" commands messageCommand
+		local targetFolder="$1" message="$3" commands messageCommand msg cmd
 		if [[ "$2" == *.sh ]]; then			# Name is a script filename
 			if [ -f "$targetFolder/$2" ]; then
-				local argument="$4" msg="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
-				local cmd="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$argument\" 2>>\"$logFile\";"
+				local argument="$4"
+				msg="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
+				cmd="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$argument\" 2>>\"$logFile\";"
 			fi
 		else														# Name is an application name
-			local appName="$2" msg cmd
+			local appName="$2"
 			declare -ag scriptList=( $( getAppSubscripts "$targetFolder" "$appName" ) )
 			# Iterate through all subscript files
 			for script in "${scriptList[@]}"; do
-				cmd+="bash \"$script\" \"$scriptRootFolder\" 2>>\"$logFile\";"
+				cmd+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
 				msg+="echo \"# $message $appName\"; echo \"$message $appName\" >> \"$logFile\";"
 			done
 		fi
@@ -183,11 +180,14 @@ function generateCommands
 ##
 function executeCommands
 {
+	# sudo remember always password
+	echo "Defaults timestamp_timeout=-1" > /etc/sudoers.d/app-installer-sudo
 	if [ -z $DISPLAY ]; then
-		local totalRepoAppsToInstall = `echo "${#commandsPerInstallationStep[installRepoPackages]}" | wc -w`
-		local totalNonRepoAppsToInstall = `echo "${#commandsPerInstallationStep[installNonRepoApps]}" | wc -w`
-		local totalEulaAppsToInstall = `echo "${#commandsPerInstallationStep[eulaApp]}" | wc -w`
+		local totalRepoAppsToInstall=`echo "${#commandsPerInstallationStep[installRepoPackages]}" | wc -w`
+		local totalNonRepoAppsToInstall=`echo "${#commandsPerInstallationStep[installNonRepoApps]}" | wc -w`
+		local totalEulaAppsToInstall=`echo "${#commandsPerInstallationStep[eulaApp]}" | wc -w`
 
+		clear; sudo su
 		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
 		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
@@ -218,6 +218,7 @@ function executeCommands
 		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 	fi
 	chown $username:$username "$logFile"
+	rm -f /etc/sudoers.d/app-installer-sudo
 }
 
 ##
