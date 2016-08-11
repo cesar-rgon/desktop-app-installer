@@ -3,7 +3,7 @@
 # This script contains menu functions used only by main script.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-31
-# @version 	1.3, 2016-08-08
+# @version 	1.3, 2016-08-11
 # @license 	MIT
 ##########################################################################
 
@@ -26,16 +26,14 @@ if [ -z $DISPLAY ]; then . $scriptRootFolder/menu/dialogFunctions.sh; else . $sc
 ##
 function selectAppsToInstallByCategory
 {
-	declare -ag applicationArray=("${!1}")
-	local categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCat="$5"
-
+	local applicationArray=(${!1}) categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCat="$5"
 	selection=`eval "$( getApplicationsWindow applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCat")"`
 	# Check if exit category menu
 	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
 		if [ ! -z "$selection" ]; then
-			declare -ag selectionArray
+			local selectionArray
 			IFS='|' read -ra selectionArray <<< "$selection"
 			if [ "${selectionArray[0]}" == "[$all]" ]; then
 				local allApps="${applicationArray[@]}"
@@ -59,14 +57,15 @@ function selectAppsToInstallByCategory
 function menu
 {
 	# Array of selected Categories
-	declare -ag selectedCategories
-	local firstTime="true" selcat
+	local firstTime="true" selcat selectedCategories
 
 	credits
 	# Repeat select categories and applications windows until not selected categories
 	while [ "$selcat" != "" ] || [ "$firstTime" == "true" ]; do
-		local categoryNumber=1
-		selcat="$( selectCategoriesToBrowse $firstTime )"
+		# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
+		local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`) categoryNumber=1
+
+		selcat="$( selectCategoriesToBrowse categoryArray[@] $firstTime )"
 		if [ "$selcat" == "$CANCEL_CODE" ]; then exit 0; fi
 		if [ -z "$selcat" ]; then break; fi
 
@@ -83,7 +82,7 @@ function menu
 				eval categoryDescription=\$$categoryName"Description"
 
 				# Delete blank and comment lines,then filter by category name and take application list (second column)
-				declare -ag applicationArray=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
+				local applicationArray=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
 				selectedAppsMap[$categoryName]=$( selectAppsToInstallByCategory applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCat" )
 
 				if [ "${selectedAppsMap[$categoryName]}" == "$CANCEL_CODE" ]; then

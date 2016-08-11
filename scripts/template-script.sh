@@ -8,7 +8,7 @@ scriptRootFolder="`pwd/..`"; username="`whoami`"; homeFolder="$HOME"
 . ./common/commonVariables.properties
 . ../common/commonFunctions.sh
 # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applicationList.ubuntu or ../etc/applicationList.debian file.
-declare -a appsToInstall=( "applicationName" )
+local appsToInstall=( "applicationName" )
 
 # Lauch menu and install selected applications
 prepareScript "$0"

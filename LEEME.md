@@ -1,5 +1,5 @@
-Desktop & app installer script
-==============================
+$ Desktop && app installer script
+=================================
 
 | Menú de instalación de escritorios y aplicaciones de repositorios oficiales, terceros o fuentes externas para Ubuntu, Debian, Linux Mint o LMDE (escritorio o servidor).| ![Logo][tux bricoleur] |
 | --- | --- |
@@ -32,7 +32,7 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 09/08/2016 (dd/mm/yyyy)
+Último cambio: 10/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características

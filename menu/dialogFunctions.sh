@@ -4,7 +4,7 @@
 # Terminal Mode. The application to manage windows is Dialog.
 # @author 	César Rodríguez González
 # @since 	1.3, 2016-08-01
-# @version 	1.3, 2016-08-08
+# @version 	1.3, 2016-08-11
 # @license 	MIT
 ##########################################################################
 
@@ -46,10 +46,12 @@ function getHeight
 # This function gets option parameters of each row of Dialog box.
 # One row per category
 # @since 	v1.3
-# @return String 					Parameters of category selectable in box
+# @param	String[] categoryArray	List of categories
+# @return String 									Parameters of category selectable in box
 ##
 function getCategoryOptions
 {
+	local categoryArray=(${!1})
 	local categoryName categoryDescription options=""
 	for categoryName in "${categoryArray[@]}"; do
 		eval categoryDescription=\$$categoryName"Description"
@@ -63,12 +65,14 @@ function getCategoryOptions
 # This function gets a category list for Dialog box.
 # First row: all categories. Rest of rows: one per category.
 # @since 	v1.3
+# @param	String[] categoryArray	List of categories
 # @param 	boolean	firstTime 	if is the first access to categories box
 # @return String 							commands to create categories Dialog box
 ##
 function getCategoriesWindow
 {
-	local firstTime="$1" totalCategoriesNumber=$((${#categoryArray[@]}+1))
+	local categoryArray=(${!1}) firstTime="$2"
+	local totalCategoriesNumber=$((${#categoryArray[@]}+1))
 	local rows window checked text="$selectCategories" height=$( getHeight $totalCategoriesNumber)
 
 	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
@@ -78,7 +82,7 @@ function getCategoriesWindow
 	# Set first row: ALL categories
 	rows="\"[$all]\" \"\" $checked "
 	# Set rest of rows. One per category
-	rows+="$( getCategoryOptions )"
+	rows+=$( getCategoryOptions categoryArray[@] )
 	# Create dialog box (terminal mode)
 	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$text\" $height $width $totalCategoriesNumber $rows"
 	echo "$window"
@@ -90,21 +94,22 @@ function getCategoriesWindow
 # categories to browse.
 # First row: all categories. Rest of rows: one per category.
 # @since 	v1.3
+# @param	String[] categoryArray	List of categories
 # @param 	boolean	firstTime 	if is the first access to categories box
 # @return String 							list of selected categories with character
 # 	separator '|'
 ##
 function selectCategoriesToBrowse
 {
-	local firstTime="$1" selection
+	local categoryArray=(${!1}) firstTime="$2" selection
 
 	# Get selected categories from Dialog box / Zenity window
-	selection=`eval $( getCategoriesWindow "$firstTime" )`
+	selection=`eval $( getCategoriesWindow categoryArray[@] "$firstTime" )`
 	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
 		if [ ! -z "$selection" ]; then
-			declare -ag selectionArray
+			local selectionArray
 			IFS='|' read -ra selectionArray <<< "$selection"
 
 			if [ "${selectionArray[0]}" == "[$all]" ]; then
@@ -130,15 +135,14 @@ function selectCategoriesToBrowse
 # This function gets option parameters of each row of Dialog box.
 # One row per application of a specified category
 # @since 	v1.3
-# @param 	String		categoryName 			Name of the actual category
 # @param 	String[]	applicationArray 	List of category applications
+# @param 	String		categoryName 			Name of the actual category
 # @return String 											Parameters of application selectable in box
 ##
 function getApplicationOptions
 {
-	local categoryName="$1" appName appDescription appObservation options="" appNameForMenu  enabled
-	declare -ag applicationArray=("${!2}") selectedAppsArray
-	local selectedApps=${selectedAppsMap[$categoryName]}
+	local applicationArray=("${!1}") categoryName="$2"
+	local selectedApps=${selectedAppsMap[$categoryName]} appName appDescription appObservation options appNameForMenu  enabled
 
 	for appName in "${applicationArray[@]}"; do
 		# application name without '_' character as showed in window
@@ -166,17 +170,16 @@ function getApplicationOptions
 ##
 function getApplicationsWindow
 {
-	declare -ag applicationArray=("${!1}")
-	local categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCat="$5"
-	local appsNumber=$((${#applicationArray[@]}+1))
-	local height=$( getHeight $appsNumber) appRows
-	local checklistText="$categoryLabel $categoryNumber/$totalSelectedCat: $categoryDescription"
+	local applicationArray=(${!1}) categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCat="$5"
+	local totalApplicationNumber=$((${#applicationArray[@]}+1))
+	local height=$( getHeight $totalApplicationNumber)
+	local checklistText="$categoryLabel $categoryNumber/$totalSelectedCat: $categoryDescription" appRows
 
  	# Set first row: ALL applications
  	appRows="\"[$all]\" \"\" off "
  	# Set rest of rows. One per aplication
- 	appRows+=$( getApplicationOptions "$categoryName" applicationArray[@] )
+ 	appRows+=$( getApplicationOptions applicationArray[@] "$categoryName" )
  	# Create dialog box (terminal mode)
- 	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$checklistText\" $height $width $appsNumber $appRows"
+ 	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$checklistText\" $height $width $totalApplicationNumber $appRows"
  	echo "$window"
 }

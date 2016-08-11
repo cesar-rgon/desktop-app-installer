@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-08-08
+# @version 	1.3, 2016-08-11
 # @license 	MIT
 ##########################################################################
 
@@ -43,10 +43,12 @@ function getHeight
 # This function gets option parameters of each row of Zenity window.
 # One row per category
 # @since 	v1.3
+# @param	String[] categoryArray	List of categories
 # @return String 					Parameters of category selectable in box
 ##
 function getCategoryOptions
 {
+	local categoryArray=(${!1})
 	local categoryName categoryDescription options=""
 	for categoryName in "${categoryArray[@]}"; do
 		eval categoryDescription=\$$categoryName"Description"
@@ -60,12 +62,14 @@ function getCategoryOptions
 # This function gets a category list for Zenity window.
 # First row: all categories. Rest of rows: one per category.
 # @since 	v1.3
+# @param	String[] categoryArray	List of categories
 # @param 	boolean	firstTime 	if is the first access to categories window
 # @return String 							commands to create categories Zenity window
 ##
 function getCategoriesWindow
 {
-	local firstTime="$1" totalCategoriesNumber=$((${#categoryArray[@]}+1))
+	local categoryArray=(${!1}) firstTime="$2"
+	local totalCategoriesNumber=$((${#categoryArray[@]}+1))
 	local rows window text="$selectCategories" height=$( getHeight $totalCategoriesNumber)
 	local hideColumns="--hide-column=2" zenityWidth=0
 	local formattedText="<span font='$fontFamilyText $fontSizeCategory'>$text</span>"
@@ -77,7 +81,7 @@ function getCategoriesWindow
 	# Set first row: ALL categories
 	rows="$firstTime \"[$all]\" \"[$all]\" \"\" "
 	# Set rest of rows. One per category
-	rows+="$( getCategoryOptions )"
+	rows+=$( getCategoryOptions categoryArray[@] )
 	# Create zenity window (desktop mode)
 	window="zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$zenityWidth --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows $hideColumns --window-icon=\"$installerIconFolder/tux32.png\""
 	echo "$window"
@@ -89,21 +93,22 @@ function getCategoriesWindow
 # categories to browse.
 # First row: all categories. Rest of rows: one per category.
 # @since 	v1.3
+# @param	String[] categoryArray	List of categories
 # @param 	boolean	firstTime 	if is the first access to categories box
 # @return String 							list of selected categories with character
 # 	separator '|'
 ##
 function selectCategoriesToBrowse
 {
-	local firstTime="$1" selection
+	local categoryArray=(${!1}) firstTime="$2" selection
 
 	# Get selected categories from Dialog box / Zenity window
-	selection=`eval $( getCategoriesWindow "$firstTime" )`
+	selection=`eval $( getCategoriesWindow categoryArray[@] "$firstTime" )`
 	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
 		if [ ! -z "$selection" ]; then
-			declare -ag selectionArray
+			local selectionArray
 			IFS='|' read -ra selectionArray <<< "$selection"
 
 			if [ "${selectionArray[0]}" == "[$all]" ]; then
@@ -123,15 +128,14 @@ function selectCategoriesToBrowse
 # This function gets option parameters of each row of Zenity window.
 # One row per application of a specified category
 # @since 	v1.3
-# @param 	String		categoryName 			Name of the actual category
 # @param 	String[]	applicationArray 	List of category applications
+# @param 	String		categoryName 			Name of the actual category
 # @return String 											Parameters of application selectable in box
 ##
 function getApplicationOptions
 {
-	local categoryName="$1" appName appDescription appObservation options="" appNameForMenu  enabled
-	declare -ag applicationArray=("${!2}") selectedAppsArray
-	local selectedApps=${selectedAppsMap[$categoryName]}
+	local applicationArray=(${!1}) categoryName="$2"
+	local selectedApps=${selectedAppsMap[$categoryName]} appName appDescription appObservation options="" appNameForMenu  enabled
 
 	for appName in "${applicationArray[@]}"; do
 		# application name without '_' character as showed in window
@@ -160,17 +164,16 @@ function getApplicationOptions
 ##
 function getApplicationsWindow
 {
-	declare -ag applicationArray=("${!1}")
-	local categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCategories="$5"
-	local appsNumber=$((${#applicationArray[@]}+1))
-	local height=$( getHeight $appsNumber) appRows
+	local applicationArray=(${!1}) categoryName="$2" categoryDescription="$3" categoryNumber="$4" totalSelectedCategories="$5"
+	local totalApplicationNumber=$((${#applicationArray[@]}+1))
+	local height=$( getHeight $totalApplicationNumber ) appRows
 	local checklistText="$categoryLabel $categoryNumber/$totalSelectedCategories: $categoryDescription"
  	local formattedText="<span font='$fontFamilyText $fontSizeApps'>$checklistText</span>"
 
 	# Set first row: ALL applications
 	appRows+="false \"[$all]\" \"\" \"\" "
 	# Set rest of rows. One per aplication
-	appRows+=$( getApplicationOptions "$categoryName" applicationArray[@] )
+	appRows+=$( getApplicationOptions applicationArray[@] "$categoryName" )
 	# Create zenity window (desktop mode)
 	window="zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $appRows --window-icon=\"$installerIconFolder/tux32.png\""
  	echo "$window"

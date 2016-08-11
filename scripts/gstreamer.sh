@@ -4,7 +4,7 @@
 # specified application and finally it shows a log file which contains
 # reported installation steps and posible errors.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-11
 # @license MIT
 ##########################################################################
 
@@ -14,7 +14,7 @@ scriptRootFolder="`pwd/..`"; username="`whoami`"; homeFolder="$HOME"
 # Import common variables and functions
 . ./common/commonVariables.properties
 . ../common/commonFunctions.sh
-declare -a appsToInstall=( "Gstreamer" )
+local appsToInstall=( "Gstreamer" )
 
 # Lauch menu and install selected applications
 prepareScript "$0"

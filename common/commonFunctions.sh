@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 	1.0, 2014-05-10
-# @version 	1.3, 2016-08-09
+# @version 	1.3, 2016-08-11
 # @license 	MIT
 ##########################################################################
 
@@ -16,7 +16,7 @@ function installNeededPackages
 {
 	if [ -z $DISPLAY ]; then
 		if [ -z "`dpkg -s dialog 2>&1 | grep "installed"`" ]; then
-			echo "$installingApplication Dialog"
+			echo "$installingRepoApplication Dialog"
 			sudo apt-get -y install dialog --fix-missing
 		fi
 	else
@@ -27,7 +27,7 @@ function installNeededPackages
 			sudoHundler="kdesudo"; sudoOption="-c"; sudoPackage="kdesudo"
 		fi
 		if [ -z "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" ]; then
-			echo "$installingApplication $sudoPackage"
+			echo "$installingRepoApplication $sudoPackage"
 			sudo apt-get -y install $sudoPackage --fix-missing
 		fi
 		if [ -z "`dpkg -s zenity 2>&1 | grep "installed"`" ]; then
@@ -59,7 +59,7 @@ function installNeededPackages
 function getLogFilename
 {
 	local scriptPath="$1"
-	declare -ag splittedPath
+	local splittedPath
 	IFS='/' read -ra splittedPath <<< "$scriptPath"
 	local numberItemsPath=${#splittedPath[@]}
 	local scriptName=${splittedPath[$(($numberItemsPath-1))]}
@@ -137,35 +137,31 @@ function generateCommands
 		echo ""			# First three parameters are mandatories
 	else
 		# Get parameters and initialize variables
-		local targetFolder="$1" message="$3" commands messageCommand msg cmd
+		local targetFolder="$1" message="$3" commands messageCommand argument appName
 		if [[ "$2" == *.sh ]]; then			# Name is a script filename
 			if [ -f "$targetFolder/$2" ]; then
-				local argument="$4"
-				msg="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
-				cmd="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$argument\" 2>>\"$logFile\";"
+				argument="$4"
+				messageCommand="echo \"# $message\"; echo \"$message\" >> \"$logFile\";"
+				commands="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$argument\" 2>>\"$logFile\";"
 			fi
 		else														# Name is an application name
-			local appName="$2"
-			declare -ag scriptList=( $( getAppSubscripts "$targetFolder" "$appName" ) )
+			appName="$2"
+			local scriptList=( $( getAppSubscripts "$targetFolder" "$appName" ) )
 			# Iterate through all subscript files
 			for script in "${scriptList[@]}"; do
-				cmd+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
-				msg+="echo \"# $message $appName\"; echo \"$message $appName\" >> \"$logFile\";"
+				commands+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
+				messageCommand+="echo \"# $message $appName\"; echo \"$message $appName\" >> \"$logFile\";"
 			done
-		fi
-		if [ -f "$eulaFolder/$argument" ] || [ -f "$eulaFolder/$appName" ]; then
-			commandsPerInstallationStep[eulaApp]+="$msg $cmd"
-		else
-			messageCommand+="$msg"
-			commands+="$cmd"
 		fi
 		if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
 	fi
 }
 
 ##
-# This funtion executes commands to install a set of applications
-# @since v1.0
+# This function execute all commands associated to one installation step
+# @since v1.3
+# @param String							stepName	Name of the Step. Key of commandsPerInstallationStep map [mandatory]
+# @param String							message		Message to display on box / window [mandatory]
 # @param Map<String,String> commandsPerInstallationStep 	Shell commands per installation steps [global]
 # 	Keys of installation steps are:
 # 		commandsDebconf				First step. Commands to setup interface to show terms of application
@@ -178,46 +174,58 @@ function generateCommands
 # 		postInstallation			Next step. Commands to setup some applications to be ready to use
 # 		finalOperations				Final step. Final operations: clean packages, remove temp.files, etc
 ##
-function executeCommands
+function executeStep
 {
-	# sudo remember always password
-	echo "Defaults timestamp_timeout=-1" > /etc/sudoers.d/app-installer-sudo
+	local stepName="$1" message="$2"
 	if [ -z $DISPLAY ]; then
-		local totalRepoAppsToInstall=`echo "${#commandsPerInstallationStep[installRepoPackages]}" | wc -w`
-		local totalNonRepoAppsToInstall=`echo "${#commandsPerInstallationStep[installNonRepoApps]}" | wc -w`
-		local totalEulaAppsToInstall=`echo "${#commandsPerInstallationStep[eulaApp]}" | wc -w`
+		if [ "$stepName" != "eulaApp" ]; then
+			clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+		else
+			clear; echo "\n### $message ###\n\n"; sudo bash -c "${commandsPerInstallationStep[eulaApp]}"
+		fi
+	else
+		local autoclose=""
+		if [ "$stepName" != "installNonRepoApps" ]; then autoclose="--auto-close"; fi
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "${commandsPerInstallationStep[$stepName]}" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
+	fi
+}
 
-		clear; sudo su
-		clear; sudo bash -c "${commandsPerInstallationStep[commandsDebconf]}" | dialog --title "$settingDebconfInterface" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[thirdPartyRepo]}" | dialog --title "$addingThirdPartyRepos" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[preInstallation]}" | dialog --title "$preparingInstallationApps" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[updateRepo]}" | dialog --title "$updatingRepositories" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[installRepoPackages]}" | dialog --title "$installingApplications $totalRepoAppsToInstall" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[installNonRepoApps]}" | dialog --title "$installingNonRepoApps $totalNonRepoAppsToInstall" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; echo "\n### $installingEulaApps $totalEulaAppsToInstall ###\n\n"; sudo bash -c "${commandsPerInstallationStep[eulaApp]}"
-		clear; sudo bash -c "${commandsPerInstallationStep[postInstallation]}" | dialog --title "$settingUpApplications" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		clear; sudo bash -c "${commandsPerInstallationStep[finalOperations]}" | dialog --title "$cleaningTempFiles" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
-		echo -e "$installationFinished\n========================" >> "$logFile"
+##
+# This function show logs after installation process
+##
+function showLogs
+{
+	if [ -z $DISPLAY ]; then
 		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
 	else
-		local commands="${commandsPerInstallationStep[commandsDebconf]} ${commandsPerInstallationStep[thirdPartyRepo]}"
-		commands+="${commandsPerInstallationStep[preInstallation]} ${commandsPerInstallationStep[updateRepo]}"
-		commands+="${commandsPerInstallationStep[installRepoPackages]} ${commandsPerInstallationStep[installNonRepoApps]}"
-		commands+="${commandsPerInstallationStep[eulaApp]}"
-		commands+="${commandsPerInstallationStep[postInstallation]} ${commandsPerInstallationStep[finalOperations]}"
-		commands+="echo \"# $installationFinished\";"
-		# debug
-		echo "$commands" > /home/cesar/comandos
-		# Ask for admin password to execute script like sudoer user
-		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) |
-		zenity --progress --title="$linuxAppInstallerTitle" --no-cancel --pulsate --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
-		echo -e "$installationFinished\n========================" >> "$logFile"
-		# Show notification and log
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
 		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
 		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 	fi
 	chown $username:$username "$logFile"
+}
+
+##
+# This funtion executes commands to install a set of applications
+# @since v1.0
+##
+function executeCommands
+{
+	local totalRepoAppsToInstall=$1 totalNonRepoAppsToInstall=$2 totalEulaAppsToInstall=$3
+
+	# sudo remember always password
+	echo "Defaults timestamp_timeout=-1" > /etc/sudoers.d/app-installer-sudo
+	executeStep "commandsDebconf" "$settingDebconfInterface"
+	executeStep "thirdPartyRepo" "$addingThirdPartyRepos"
+	executeStep "preInstallation" "$preparingInstallationApps"
+	executeStep "updateRepo" "$updatingRepositories"
+	executeStep "installRepoPackages" "$installingRepoApplications $totalRepoAppsToInstall"
+	executeStep "installNonRepoApps" "$installingNonRepoApplications $totalNonRepoAppsToInstall"
+	executeStep "eulaApp" "$installingEulaApplications $totalEulaAppsToInstall"
+	executeStep "postInstallation" "$settingUpApplications"
+	executeStep "finalOperations" "$cleaningTempFiles"
+	echo "# $installationFinished"; echo -e "$installationFinished\n========================" >> "$logFile"
+	showLogs
 	rm -f /etc/sudoers.d/app-installer-sudo
 }
 
@@ -229,26 +237,39 @@ function executeCommands
 ##
 function installAndSetupApplications
 {
-	declare -ag appsToInstall=("${!1}")
+	local appsToInstall=("${!1}")
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local appName appIndex=1 totalAppsToInstall=${#appsToInstall[@]} message
+		local totalAppsNumber=${#appsToInstall[@]} indexRepoApps=0 indexNonRepoApps=0 indexEulaApps=0 appName commands
 
 		if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
 		for appName in ${appsToInstall[@]}; do
 			commandsPerInstallationStep[thirdPartyRepo]+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
 			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-			commandsPerInstallationStep[installRepoPackages]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingApplication $appIndex/$totalAppsToInstall: $appName" "$appName" )
-			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApp $appIndex/$totalAppsToInstall: $appName" )
+			if [ -f "$eulaFolder/$appName" ]; then
+				indexEulaApps=$(($indexEulaApps+1))
+				commandsPerInstallationStep[eulaApp]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingEulaApplication $indexEulaApps: $appName" "$appName" )
+			else
+				indexRepoApps=$(($indexRepoApps+1))
+				commandsPerInstallationStep[installRepoPackages]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $indexRepoApps: $appName" "$appName" )
+			fi
+			if [ -f "$eulaFolder/$appName" ]; then
+				indexEulaApps=$(($indexEulaApps+1))
+				commandsPerInstallationStep[eulaApp]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingEulaApplication $indexEulaApps: $appName" )
+			else
+				indexNonRepoApps=$(($indexNonRepoApps+1))
+				commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $indexNonRepoApps: $appName" )
+			fi
 			commandsPerInstallationStep[postInstallation]+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 			appIndex=$(($appIndex+1))
 		done
-		if [ -n "${commandsPerInstallationStep[installRepoPackages]}" ] || [ -n "${commandsPerInstallationStep[installNonRepoApps]}" ]; then
+
+		if [ $indexRepoApps -gt 0 ] || [ $indexNonRepoApps -gt 0 ] || [ $indexEulaApps -gt 0 ]; then
 			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
 			if [ -n "${commandsPerInstallationStep[thirdPartyRepo]}" ] || [ -n  "${commandsPerInstallationStep[preInstallation]}" ]; then
 				commandsPerInstallationStep[updateRepo]=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 			fi
 			commandsPerInstallationStep[finalOperations]=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
-			executeCommands
+			executeCommands $indexRepoApps $indexNonRepoApps $indexEulaApps
 		fi
 	fi
 	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi
