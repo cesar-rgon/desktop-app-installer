@@ -3,7 +3,7 @@
 # This script contains menu functions used only by main script.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-31
-# @version 	1.3, 2016-08-11
+# @version 	1.3, 2016-08-12
 # @license 	MIT
 ##########################################################################
 
@@ -59,7 +59,6 @@ function menu
 	# Array of selected Categories
 	local firstTime="true" selcat selectedCategories
 
-	credits
 	# Repeat select categories and applications windows until not selected categories
 	while [ "$selcat" != "" ] || [ "$firstTime" == "true" ]; do
 		# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.

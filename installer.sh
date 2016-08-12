@@ -6,7 +6,7 @@
 # installation steps and posible errors.
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-04-29
-# @version 	1.3, 2016-08-11
+# @version 	1.3, 2016-08-12
 # @license 	MIT
 ##########################################################################
 
@@ -19,6 +19,6 @@ scriptRootFolder="`pwd`"; username="`whoami`"; homeFolder="$HOME"
 . ./menu/menuFunctions.sh
 
 # Lauch menu and install selected applications
-prepareScript "$0" --no-notification
-local appsToInstall=( $(menu) )
+prepareScript "$0"
+declare -a appsToInstall=( $(menu) )
 installAndSetupApplications appsToInstall[@]

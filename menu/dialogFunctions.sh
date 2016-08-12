@@ -4,24 +4,9 @@
 # Terminal Mode. The application to manage windows is Dialog.
 # @author 	César Rodríguez González
 # @since 	1.3, 2016-08-01
-# @version 	1.3, 2016-08-11
+# @version 	1.3, 2016-08-12
 # @license 	MIT
 ##########################################################################
-
-##
-# This function show a initial credits dialog box
-# @since 	v1.3
-##
-function credits
-{
-	local whiteSpaces="                  "
-	printf "\n%.21s%s\n" "$scriptNameLabel:$whiteSpaces" "$linuxAppInstallerTitle" > $tempFolder/linux-app-installer.credits
-	printf "%.21s%s\n" "$scriptDescriptionLabel:$whiteSpaces" "$scriptDescription" >> $tempFolder/linux-app-installer.credits
-	printf "%.21s%s\n" "$testedOnLabel:$whiteSpaces" "$testedOnDistros" >> $tempFolder/linux-app-installer.credits
-	printf "%.21s%s\n" "$githubProjectLabel:$whiteSpaces" "$githubProjectUrl" >> $tempFolder/linux-app-installer.credits
-	printf "%.21s%s\n" "$authorLabel:$whiteSpaces" "$author" >> $tempFolder/linux-app-installer.credits
-	dialog --title "$creditsLabel" --backtitle "$linuxAppInstallerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
-}
 
 
 ##

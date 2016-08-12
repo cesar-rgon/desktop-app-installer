@@ -4,18 +4,10 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-08-11
+# @version 	1.3, 2016-08-12
 # @license 	MIT
 ##########################################################################
 
-##
-# This function show a initial credits popup message
-# @since 	v1.3
-##
-function credits
-{
-	notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks" -t 10000
-}
 
 ###
 # This function get the height of a Zenity window
