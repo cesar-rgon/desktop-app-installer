@@ -3,7 +3,7 @@
 # This script executes commands to add third-party repository of
 # Sublime Text 3 application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-14
 # @license MIT
 ##########################################################################
 
@@ -22,7 +22,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 repositoryURL="http://ppa.launchpad.net/webupd8team/sublime-text-3/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-targetFilename="webupd8team-ubuntu-sublime-text-3-$distroName.list"
+targetFilename="webupd8team-ubuntu-sublime-text-3*.list"
 
 # Commands to add third-party repository of the application.
 # SE ESTA DUPLICANDO DEB-SRC

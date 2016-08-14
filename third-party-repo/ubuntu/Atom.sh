@@ -3,7 +3,7 @@
 # This script executes commands to add third-party repository of Atom
 # editor application. Official text editor of Github.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-14
 # @license MIT
 ##########################################################################
 
@@ -22,7 +22,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 repositoryURL="http://ppa.launchpad.net/webupd8team/atom/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-targetFilename="webupd8team-ubuntu-atom-$distroName.list"
+targetFilename="webupd8team-ubuntu-atom*.list"
 
 # Commands to add third-party repository of the application.
 if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then

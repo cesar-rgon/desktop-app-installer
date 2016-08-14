@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 	1.0, 2014-05-10
-# @version 	1.3, 2016-08-12
+# @version 	1.3, 2016-08-14
 # @license 	MIT
 ##########################################################################
 
@@ -35,9 +35,14 @@ function credits
 function installNeededPackages
 {
 	if [ -z $DISPLAY ]; then
+		# Install needed packages
 		if [ -z "`dpkg -s dialog 2>&1 | grep "installed"`" ]; then
 			echo "$installingRepoApplication Dialog"
 			sudo apt-get -y install dialog --fix-missing
+		fi
+		if [ -z "`dpkg -s tmux 2>&1 | grep "installed"`" ]; then
+			echo "$installingRepoApplication Tmux"
+			sudo apt-get -y install tmux --fix-missing
 		fi
 	else
 		local neededPackages sudoHundler sudoOption sudoPackage
@@ -71,19 +76,18 @@ function installNeededPackages
 }
 
 ##
-# This funtion sets application log file
+# This funtion get Script Name executed
 # @since 	v1.3
 # @param  String scriptPath Folder path to access main script root folder
-# @return String 						path and log filename
+# @return String 						script name
 ##
-function getLogFilename
+function getScriptName
 {
 	local scriptPath="$1"
 	local splittedPath
 	IFS='/' read -ra splittedPath <<< "$scriptPath"
 	local numberItemsPath=${#splittedPath[@]}
-	local scriptName=${splittedPath[$(($numberItemsPath-1))]}
-	echo "${scriptName/.sh/}-$snapshot.log"
+	echo "${splittedPath[$(($numberItemsPath-1))]}"
 }
 
 ##
@@ -93,14 +97,16 @@ function getLogFilename
 ##
 function prepareScript
 {
-	logFilename=$( getLogFilename "$1" )
+	local scriptName=$( getScriptName "$1" )
+	logFilename="${scriptName/.sh/}-$snapshot.log"
 	logFile="$logsFolder/$logFilename"
 	# Create temporal folders and files
 	mkdir -p "$tempFolder" "$logsFolder"
 	rm -f "$logFile"
 	installNeededPackages
+	cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
+	sed -i 's/SCRIPTNAME/$scriptName/g' "$homeFolder/.tmux.conf"
 	echo -e "$linuxAppInstallerTitle\n========================" > "$logFile"
-
 	credits
 }
 
@@ -177,6 +183,26 @@ function generateCommands
 }
 
 ##
+# This funtion generates command to disable application third party repository
+# @param  String appName 	Application name
+# @return String 					Command to comment lines stating with 'deb'
+##
+function generateCommandToDisableAppThirdPartyRepo
+{
+	local appName="$1" scriptFile targetFileNameArray targetFileName
+	local tprScriptList=( $( getAppSubscripts "$thirdPartyRepoFolder" "$appName" ) )
+
+	for scriptFile in "${tprScriptList[@]}"; do
+		# Extract targetFilename value from script
+		targetFileNameArray
+		IFS='"' read -ra targetFileNameArray <<< "`grep 'targetFilename=\"' $scriptFile`"
+		targetFileName=${targetFileNameArray[1]}
+		# Command to comment lines starting with 'deb'
+		echo "sed -i 's/^deb/#deb/g' \"/etc/apt/sources.list.d/$targetFileName\""
+	done
+}
+
+##
 # This function execute all commands associated to one installation step
 # @since v1.3
 # @param String							stepName	Name of the Step. Key of commandsPerInstallationStep map [mandatory]
@@ -185,13 +211,15 @@ function generateCommands
 # @param Map<String,String> commandsPerInstallationStep 	Shell commands per installation steps [global]
 # 	Keys of installation steps are:
 # 		commandsDebconf				First step. Commands to setup interface to show terms of application
-# 		thirdPartyRepo				Second step. Commands to add all third-party repositories needed
-# 		preInstallation				Third step. Commands to prepare installation of some applications
-# 		updateRepo						Fouth step. Commands to update repositories
-# 		installRepoPackages		Fifth step. Commands to install applications from repositories
-# 		installNonRepoApps		Sixth step. Commands to install non-repository applications
-#		  eulaApp								Seventh step (only terminal mode). Commands to install apps with eula
-# 		postInstallation			Next step. Commands to setup some applications to be ready to use
+# 		preInstallation				Second step. Commands for each application:
+#															1. Prepare installation of application
+#															2. Update repositories
+# 		installRepoApps   		Third step. Commands for each application:
+#															1. Add third-party repository if needed, after that, update repositories
+#															2. Install application
+#															3. Disable third-party repository if activated, after that, update repos again
+# 		installNonRepoApps		Forth step. Commands to install non-repository applications
+# 		postInstallation			Fifth step. Commands to setup some applications to be ready to use
 # 		finalOperations				Final step. Final operations: clean packages, remove temp.files, etc
 ##
 function executeStep
@@ -200,10 +228,11 @@ function executeStep
 
 	if [ ${#commandsPerInstallationStep[$stepName]} -gt 0 ]; then
 		if [ -z $DISPLAY ]; then
-			if [ "$stepName" != "eulaApp" ]; then
-				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+			if [[ "$stepName" == install* ]]; then
+				sed -i 's/STEPDESCRIPTION/$message/g' "$homeFolder/.tmux.conf"
+				tmux new-session -c "$scriptRootFolder" "bash -c \"${commandsPerInstallationStep[stepName]}\""
 			else
-				clear; echo "\n$message\n\n"; sudo bash -c "${commandsPerInstallationStep[eulaApp]}"
+				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
 			fi
 		else
 			local autoclose=""
@@ -231,24 +260,18 @@ function showLogs
 
 ##
 # This funtion executes commands to install a set of applications
-# @param int totalRepoAppsToInstall			Number of repo apps to install
-# @param int totalNonRepoAppsToInstall	Number of non-repo apps to install
-# @param int totalEulaAppsToInstall			Number of eula apps to install
+# @param int totalAppsNumber						Number of apps to install
 # @since v1.0
 ##
 function executeCommands
 {
-	local totalRepoAppsToInstall=$1 totalNonRepoAppsToInstall=$2 totalEulaAppsToInstall=$3
-
+	local totalAppsNumber=$1
 	# sudo remember always password
 	sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
 	executeStep "commandsDebconf" "$settingDebconfInterface"
-	executeStep "thirdPartyRepo" "$addingThirdPartyRepos"
 	executeStep "preInstallation" "$preparingInstallationApps"
-	executeStep "updateRepo" "$updatingRepositories"
-	executeStep "installRepoPackages" "$installingRepoApplications $totalRepoAppsToInstall"
-	executeStep "installNonRepoApps" "$installingNonRepoApplications $totalNonRepoAppsToInstall"
-	executeStep "eulaApp" "$installingEulaApplications $totalEulaAppsToInstall"
+	executeStep "installRepoApps" "$installingRepoApplications $totalAppsNumber"
+	executeStep "installNonRepoApps" "$installingNonRepoApplications $totalAppsNumber"
 	executeStep "postInstallation" "$settingUpApplications"
 	executeStep "finalOperations" "$cleaningTempFiles"
 	echo "# $installationFinished"; echo -e "$installationFinished\n========================" >> "$logFile"
@@ -265,38 +288,46 @@ function executeCommands
 function installAndSetupApplications
 {
 	local appsToInstall=("${!1}")
-	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local totalAppsNumber=${#appsToInstall[@]} indexRepoApps=0 indexNonRepoApps=0 indexEulaApps=0 appName commands nonRepoScriptList
 
+	if [ ${#appsToInstall[@]} -gt 0 ]; then
+		local totalAppsNumber=${#appsToInstall[@]} appIndex=0 appName commandsAppThirdPartyRepo
 		if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
+
+		# STEP 1. Generate commands to setup debconf interface
+		commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
+
 		for appName in ${appsToInstall[@]}; do
-			commandsPerInstallationStep[thirdPartyRepo]+=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
+			# STEP 2. Generate commands to prepare installation of application
 			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-			if [ -f "$eulaFolder/$appName" ]; then
-				indexEulaApps=$(($indexEulaApps+1))
-				commandsPerInstallationStep[eulaApp]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingEulaApplication $indexEulaApps" "$appName" )
-			else
-				nonRepoScriptList=( $( getAppSubscripts "$nonRepositoryAppsFolder" "$appName" ) )
-				if [ ${#nonRepoScriptList[@]} -gt 0 ] ; then
-					indexNonRepoApps=$(($indexNonRepoApps+1))
-					commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $indexNonRepoApps" )
-				else
-					indexRepoApps=$(($indexRepoApps+1))
-					commandsPerInstallationStep[installRepoPackages]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $indexRepoApps" "$appName" )
-				fi
+			# STEP 3. Generate commands to add application third-party repo if needed
+			commandsAppThirdPartyRepo=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
+			commandsPerInstallationStep[installRepoApps]+="$commandsAppThirdPartyRepo"
+			if [ -n "$commandsAppThirdPartyRepo" ]; then
+				# STEP 4. Generate commands to update repositories if required
+				commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 			fi
+			# STEP 5. Generate commands to install application from repositories, if that's the case
+			commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $appIndex/$totalAppsNumber" "$appName" )
+			if [ -n "$commandsAppThirdPartyRepo" ]; then
+				# STEP 6. Generate commands to disable application third-party repository if activated
+				commandsPerInstallationStep[installRepoApps]+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
+				# STEP 7. Generate commands to update repositories again
+				commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+			fi
+			# STEP 8. Generate commands to install application from external sources, if that's the case
+			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $appIndex/$totalAppsNumber" )
+			# STEP 9. Generate commands to setup application
 			commandsPerInstallationStep[postInstallation]+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 			appIndex=$(($appIndex+1))
 		done
 
-		if [ $indexRepoApps -gt 0 ] || [ $indexNonRepoApps -gt 0 ] || [ $indexEulaApps -gt 0 ]; then
-			commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
-			if [ -n "${commandsPerInstallationStep[thirdPartyRepo]}" ] || [ -n  "${commandsPerInstallationStep[preInstallation]}" ]; then
-				commandsPerInstallationStep[updateRepo]=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
-			fi
-			commandsPerInstallationStep[finalOperations]=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
-			executeCommands $indexRepoApps $indexNonRepoApps $indexEulaApps
+		# STEP 10. Generate commands to execute final operations: clean, logs, etc.
+		commandsPerInstallationStep[finalOperations]=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
+		if [ ${#commandsPerInstallationStep[preInstallation]} -gt 0 ]; then
+			# Pre-installation commands could require update repositories
+			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 		fi
+		executeCommands $totalAppsNumber
 	fi
 	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi
 }
