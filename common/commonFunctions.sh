@@ -15,14 +15,14 @@ function credits
 {
 	if [ -z $DISPLAY ]; then
 		local whiteSpaces="                  "
-		printf "\n%.21s%s\n" "$scriptNameLabel:$whiteSpaces" "$linuxAppInstallerTitle" > $tempFolder/linux-app-installer.credits
+		printf "\n%.21s%s\n" "$scriptNameLabel:$whiteSpaces" "$installerTitle" > $tempFolder/linux-app-installer.credits
 		printf "%.21s%s\n" "$scriptDescriptionLabel:$whiteSpaces" "$scriptDescription" >> $tempFolder/linux-app-installer.credits
 		printf "%.21s%s\n" "$testedOnLabel:$whiteSpaces" "$testedOnDistros" >> $tempFolder/linux-app-installer.credits
 		printf "%.21s%s\n" "$githubProjectLabel:$whiteSpaces" "$githubProjectUrl" >> $tempFolder/linux-app-installer.credits
 		printf "%.21s%s\n" "$authorLabel:$whiteSpaces" "$author" >> $tempFolder/linux-app-installer.credits
-		dialog --title "$creditsLabel" --backtitle "$linuxAppInstallerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
+		dialog --title "$creditsLabel" --backtitle "$installerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
 	else
-			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$linuxAppInstallerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks" -t 10000
+			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks" -t 10000
 	fi
 }
 
@@ -94,10 +94,9 @@ function prepareScript
 	rm -f "$logFile"
 	installNeededPackages
 	cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
-	sed -i "s/SCRIPTNAME/$scriptName/g" "$homeFolder/.tmux.conf"
-	sed -i "s/LEFT-LENGHT/$(($width - 15))/g" "$homeFolder/.tmux.conf"
-	sed -i "s/RIGHT-LENGT/15/g" "$homeFolder/.tmux.conf"
-	echo -e "$linuxAppInstallerTitle\n========================" > "$logFile"
+	sed -i "s/LEFT-LENGHT/$(($width - 10))/g" "$homeFolder/.tmux.conf"
+	sed -i "s/RIGHT-LENGT/10/g" "$homeFolder/.tmux.conf"
+	echo -e "$logFile\n$boxSeparator" > "$logFile"
 	credits
 }
 
@@ -157,7 +156,7 @@ function generateCommands
 		if [[ "$2" == *.sh ]]; then			# Name is a script filename
 			if [ -f "$targetFolder/$2" ]; then
 				argument="$4"
-				messageCommand="echo \"# $  $message: $argument\"; echo \"$  $message: $argument\" >> \"$logFile\";"
+				messageCommand="echo -e \"\n# $  $message $argument\"; echo \"$  $message $argument\" >> \"$logFile\";"
 				commands="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$argument\" 2>>\"$logFile\";"
 			fi
 		else														# Name is an application name
@@ -166,7 +165,7 @@ function generateCommands
 			# Iterate through all subscript files
 			for script in "${scriptList[@]}"; do
 				commands+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
-				messageCommand+="echo \"# $  $message: $appName\"; echo \"$  $message: $appName\" >> \"$logFile\";"
+				messageCommand+="echo -e \"\n# $  $message: $appName\"; echo \"$  $message: $appName\" >> \"$logFile\";"
 			done
 		fi
 		if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
@@ -198,10 +197,11 @@ function generateCommandToDisableAppThirdPartyRepo
 # @since v1.3
 # @param String							stepName	Name of the Step. Key of commandsPerInstallationStep map [mandatory]
 # @param String							message		Message to display on box / window [mandatory]
+# @param String							totalApps	Total number of apps to be installed [optional]
 # @param int 								stepIndex	Index of current step during installation process [global]
 # @param Map<String,String> commandsPerInstallationStep 	Shell commands per installation steps [global]
 # 	Keys of installation steps are:
-# 		commandsDebconf				First step. Commands to setup interface to show terms of application
+# 		beginningOperations		First step. Commands to proceed with installation proccess
 # 		preInstallation				Second step. Commands for each application:
 #															1. Prepare installation of application
 #															2. Update repositories
@@ -223,7 +223,7 @@ function executeStep
 				sed -i "s/STEPDESCRIPTION/$message/g" "$homeFolder/.tmux.conf"
 				tmux new-session sudo bash -c "${commandsPerInstallationStep[$stepName]}"
 			else
-				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$linuxAppInstallerTitle" --progressbox $(($height - 6)) $(($width - 4))
+				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
 			fi
 		else
 			local autoclose=""
@@ -240,11 +240,11 @@ function executeStep
 function showLogs
 {
 	if [ -z $DISPLAY ]; then
-		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
+		dialog --title "$installerLogsLabel" --backtitle "$installerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
 		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
-		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$width --height=$zenityHeight --window-icon="$installerIconFolder/tux-shell-console32.png"
+		zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 	chown $username:$username "$logFile"
 }
@@ -256,18 +256,15 @@ function showLogs
 ##
 function executeCommands
 {
-	local totalAppsNumber=$1
-	# sudo remember always password
-	sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
-	executeStep "commandsDebconf" "$settingDebconfInterface"
+  if [ -z $DISPLAY ]; then sed -i "s/TOTALAPPS/$total: $1/g" "$homeFolder/.tmux.conf"; fi
+	executeStep "beginningOperations" "$settingDebconfInterface"
 	executeStep "preInstallation" "$preparingInstallationApps"
-	executeStep "installRepoApps" "$installingRepoApplications $totalAppsNumber"
-	executeStep "installNonRepoApps" "$installingNonRepoApplications $totalAppsNumber"
+	executeStep "installRepoApps" "$installingRepoApplications"
+	executeStep "installNonRepoApps" "$installingNonRepoApplications"
 	executeStep "postInstallation" "$settingUpApplications"
 	executeStep "finalOperations" "$cleaningTempFiles"
-	echo "# $installationFinished"; echo -e "$installationFinished\n========================" >> "$logFile"
+	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
-	sudo rm -f /etc/sudoers.d/app-installer-sudo
 }
 
 ##
@@ -284,8 +281,11 @@ function installAndSetupApplications
 		local totalAppsNumber=${#appsToInstall[@]} appIndex=1 appName commandsAppThirdPartyRepo
 		if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
 
-		# STEP 1. Generate commands to setup debconf interface
-		commandsPerInstallationStep[commandsDebconf]=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
+		# STEP 1. Generate initial commands to proceed with installation proccess
+		# sudo remember always password
+		commandsPerInstallationStep[beginningOperations]="cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/;"
+		# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
+		commandsPerInstallationStep[beginningOperations]+=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
 
 		for appName in ${appsToInstall[@]}; do
 			# STEP 2. Generate commands to prepare installation of application
@@ -314,6 +314,7 @@ function installAndSetupApplications
 
 		# STEP 10. Generate commands to execute final operations: clean, logs, etc.
 		commandsPerInstallationStep[finalOperations]=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
+		commandsPerInstallationStep[finalOperations]+="rm -f /etc/sudoers.d/app-installer-sudo;"
 		if [ ${#commandsPerInstallationStep[preInstallation]} -gt 0 ]; then
 			# Pre-installation commands could require update repositories
 			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
