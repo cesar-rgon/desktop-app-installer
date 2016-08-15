@@ -1,7 +1,7 @@
 $ Desktop && app installer script
 =================================
 
-| Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux bricoleur] |
+| Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux-shell-terminal-logo] |
 | --- | --- |
 
 There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
@@ -32,7 +32,7 @@ There are a lot of applications included in the default list, but this list can 
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/10 (yyyy/mm/dd)
+Last change: 2016/08/15 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -384,5 +384,5 @@ I hope you find it useful.
 [screenshot-terminal-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-terminal-1.3-02.png
 [screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-terminal-1.3-03.png
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-[tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
+[tux-shell-terminal-logo]:http://cesar-rgon.github.io/linux-app-installer/images/tux-shell-console-logo.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png

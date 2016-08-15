@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-08-12
+# @version 	1.3, 2016-08-15
 # @license 	MIT
 ##########################################################################
 
@@ -75,7 +75,7 @@ function getCategoriesWindow
 	# Set rest of rows. One per category
 	rows+=$( getCategoryOptions categoryArray[@] )
 	# Create zenity window (desktop mode)
-	window="zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$zenityWidth --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows $hideColumns --window-icon=\"$installerIconFolder/tux32.png\""
+	window="zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$zenityWidth --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows $hideColumns --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
 	echo "$window"
 }
 
@@ -167,6 +167,6 @@ function getApplicationsWindow
 	# Set rest of rows. One per aplication
 	appRows+=$( getApplicationOptions applicationArray[@] "$categoryName" )
 	# Create zenity window (desktop mode)
-	window="zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $appRows --window-icon=\"$installerIconFolder/tux32.png\""
+	window="zenity --title=\"$linuxAppInstallerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $appRows --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
  	echo "$window"
 }

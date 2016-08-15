@@ -1,7 +1,7 @@
 $ Desktop && app installer script
 =================================
 
-| Menú de instalación de escritorios y aplicaciones de repositorios oficiales, terceros o fuentes externas para Ubuntu, Debian, Linux Mint o LMDE (escritorio o servidor).| ![Logo][tux bricoleur] |
+| Menú de instalación de escritorios y aplicaciones de repositorios oficiales, terceros o fuentes externas para Ubuntu, Debian, Linux Mint o LMDE (escritorio o servidor).| ![Logo][tux-shell-terminal-logo] |
 | --- | --- |
 
 Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado puede ser modificado por el usuario tan sólo editando un fichero de texto. Además, los usuarios pueden añadir subscripts que extiendan la funcionalidad del menú, por ejemplo, añadir nuevos repositorios, configurar aplicaciones, etc. Por otro lado, existe un script individual por cada aplicación como modo alternativo de realizar el proceso de instalación sin el menú principal.
@@ -32,7 +32,7 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 10/08/2016 (dd/mm/yyyy)
+Último cambio: 15/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -389,5 +389,5 @@ Espero que lo encontréis útil.
 [screenshot-terminal-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-terminal-1.3-02.png
 [screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-terminal-1.3-03.png
 [ISO639]:http://es.wikipedia.org/wiki/ISO_639-1
-[tux bricoleur]:https://nowhere.dk/wp-content/uploads/2010/03/lilitux-tux-bricoleur.png
+[tux-shell-terminal-logo]:http://cesar-rgon.github.io/linux-app-installer/images/tux-shell-console-logo.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png

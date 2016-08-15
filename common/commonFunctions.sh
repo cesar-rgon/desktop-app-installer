@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 	1.0, 2014-05-10
-# @version 	1.3, 2016-08-14
+# @version 	1.3, 2016-08-15
 # @license 	MIT
 ##########################################################################
 
@@ -22,7 +22,7 @@ function credits
 		printf "%.21s%s\n" "$authorLabel:$whiteSpaces" "$author" >> $tempFolder/linux-app-installer.credits
 		dialog --title "$creditsLabel" --backtitle "$linuxAppInstallerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
 	else
-			notify-send -i "$installerIconFolder/tux96.png" "$linuxAppInstallerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks" -t 10000
+			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$linuxAppInstallerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks" -t 10000
 	fi
 }
 
@@ -228,7 +228,7 @@ function executeStep
 		else
 			local autoclose=""
 			if [ "$stepName" != "installNonRepoApps" ]; then autoclose="--auto-close"; fi
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "${commandsPerInstallationStep[$stepName]}" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux32.png"
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "${commandsPerInstallationStep[$stepName]}" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
 		stepIndex=$(($stepIndex+1))
 	fi
@@ -244,7 +244,7 @@ function showLogs
 	else
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
 		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
-		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$width --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
+		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$width --height=$zenityHeight --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 	chown $username:$username "$logFile"
 }
