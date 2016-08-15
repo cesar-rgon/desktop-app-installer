@@ -34,44 +34,33 @@ function credits
 ##
 function installNeededPackages
 {
+	local neededPackages
 	if [ -z $DISPLAY ]; then
-		# Install needed packages
-		if [ -z "`dpkg -s dialog 2>&1 | grep "installed"`" ]; then
-			echo "$installingRepoApplication Dialog"
-			sudo apt-get -y install dialog --fix-missing
-		fi
-		if [ -z "`dpkg -s tmux 2>&1 | grep "installed"`" ]; then
-			echo "$installingRepoApplication Tmux"
-			sudo apt-get -y install tmux --fix-missing
-		fi
+		neededPackages="dialog tmux"
 	else
-		local neededPackages sudoHundler sudoOption sudoPackage
+		neededPackages="zenity libnotify-bin"
 		if [ "$KDE_FULL_SESSION" != "true" ]; then
-			sudoHundler="gksudo"; sudoOption="-S"; sudoPackage="gksu"
+			neededPackages+=" gksu";
 		else
-			sudoHundler="kdesudo"; sudoOption="-c"; sudoPackage="kdesudo"
+			neededPackages+=" kdesudo";
+			if [ "$distro" == "ubuntu" ]; then neededPackages+=" libqtgui4-perl"; fi
 		fi
-		if [ -z "`dpkg -s $sudoPackage 2>&1 | grep "installed"`" ]; then
-			echo "$installingRepoApplication $sudoPackage"
-			sudo apt-get -y install $sudoPackage --fix-missing
-		fi
-		if [ -z "`dpkg -s zenity 2>&1 | grep "installed"`" ]; then
-			neededPackages+="zenity"
-		fi
-		if [ -z "`dpkg -s libnotify-bin 2>&1 | grep "installed"`" ]; then
-			if [ -n "$neededPackages" ]; then neededPackages+=" "; fi
-			neededPackages+="libnotify-bin"
-		fi
-		if [ "$distro" == "ubuntu" ] && [ "$KDE_FULL_SESSION" == "true" ]; then
-			# KDE needs to install Debconf dependencies.
-			if [ -z "`dpkg -s libqtgui4-perl 2>&1 | grep "installed"`" ]; then
-				if [ -n "$neededPackages" ]; then neededPackages+=" "; fi
-				neededPackages+="libqtgui4-perl"
+	fi
+	if [ -n "$neededPackages" ]; then
+		for package in "$neededPackages"; do
+			if [ -z "`dpkg -s $package 2>&1 | grep "installed"`" ]; then
+				echo "$installingRepoApplication $package"
+				if [ -z $DISPLAY ]; then
+					sudo apt-get -y install $package --fix-missing
+				else
+					if [ "$KDE_FULL_SESSION" != "true" ]; then
+						`gksudo -S "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
+					else
+						`kdesudo -c "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
+					fi
+				fi
 			fi
-		fi
-		if [ -n "$neededPackages" ]; then
-			`$sudoHundler $sudoOption "apt-get -y install $neededPackages" 1>/dev/null 2>>"$logFile"`
-		fi
+		done
 	fi
 }
 
@@ -105,7 +94,9 @@ function prepareScript
 	rm -f "$logFile"
 	installNeededPackages
 	cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
-	sed -i 's/SCRIPTNAME/$scriptName/g' "$homeFolder/.tmux.conf"
+	sed -i "s/SCRIPTNAME/$scriptName/g" "$homeFolder/.tmux.conf"
+	sed -i "s/LEFT-LENGHT/$(($width - 15))/g" "$homeFolder/.tmux.conf"
+	sed -i "s/RIGHT-LENGT/15/g" "$homeFolder/.tmux.conf"
 	echo -e "$linuxAppInstallerTitle\n========================" > "$logFile"
 	credits
 }
@@ -229,15 +220,15 @@ function executeStep
 	if [ ${#commandsPerInstallationStep[$stepName]} -gt 0 ]; then
 		if [ -z $DISPLAY ]; then
 			if [[ "$stepName" == install* ]]; then
-				sed -i 's/STEPDESCRIPTION/$message/g' "$homeFolder/.tmux.conf"
-				tmux new-session -c "$scriptRootFolder" "bash -c \"${commandsPerInstallationStep[stepName]}\""
+				sed -i "s/STEPDESCRIPTION/$message/g" "$homeFolder/.tmux.conf"
+				tmux new-session sudo bash -c "${commandsPerInstallationStep[$stepName]}"
 			else
-				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$linuxAppInstallerTitle" --progressbox $dialogHeight $dialogWidth
+				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$linuxAppInstallerTitle" --progressbox $(($height - 6)) $(($width - 4))
 			fi
 		else
 			local autoclose=""
 			if [ "$stepName" != "installNonRepoApps" ]; then autoclose="--auto-close"; fi
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "${commandsPerInstallationStep[$stepName]}" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$zenityWidth --window-icon="$installerIconFolder/tux32.png"
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "${commandsPerInstallationStep[$stepName]}" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux32.png"
 		fi
 		stepIndex=$(($stepIndex+1))
 	fi
@@ -249,11 +240,11 @@ function executeStep
 function showLogs
 {
 	if [ -z $DISPLAY ]; then
-		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $dialogHeight $dialogWidth
+		dialog --title "Log. $pathLabel: $logFile" --backtitle "$linuxAppInstallerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
 		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
-		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$zenityWidth --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
+		zenity --text-info --title="$linuxAppInstallerTitle Log" --filename="$logFile" --width=$width --height=$zenityHeight --window-icon="$installerIconFolder/tux32.png"
 	fi
 	chown $username:$username "$logFile"
 }
@@ -290,7 +281,7 @@ function installAndSetupApplications
 	local appsToInstall=("${!1}")
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local totalAppsNumber=${#appsToInstall[@]} appIndex=0 appName commandsAppThirdPartyRepo
+		local totalAppsNumber=${#appsToInstall[@]} appIndex=1 appName commandsAppThirdPartyRepo
 		if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
 
 		# STEP 1. Generate commands to setup debconf interface

@@ -69,7 +69,7 @@ function getCategoriesWindow
 	# Set rest of rows. One per category
 	rows+=$( getCategoryOptions categoryArray[@] )
 	# Create dialog box (terminal mode)
-	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$text\" $height $width $totalCategoriesNumber $rows"
+	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$text\" $height $(($width - 4)) $totalCategoriesNumber $rows"
 	echo "$window"
 }
 
@@ -165,6 +165,6 @@ function getApplicationsWindow
  	# Set rest of rows. One per aplication
  	appRows+=$( getApplicationOptions applicationArray[@] "$categoryName" )
  	# Create dialog box (terminal mode)
- 	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$checklistText\" $height $width $totalApplicationNumber $appRows"
+ 	window="dialog --title \"$mainMenuLabel\" --backtitle \"$linuxAppInstallerTitle\" --stdout --separate-output --output-separator \"|\" --checklist \"$checklistText\" $height $(($width - 4)) $totalApplicationNumber $appRows"
  	echo "$window"
 }
