@@ -7,7 +7,7 @@
 # script will back to parent directory, it means, available for both
 # linux OS.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-16
 # @license MIT
 ##########################################################################
 
@@ -32,31 +32,57 @@ AMULE_DAEMON_WEB_PORT="4711"
 AMULE_DAEMON_TCP_PORT="4662"
 AMULE_DAEMON_UDP_PORT="4672"
 AMULE_DAEMON_FILE="/etc/systemd/system/amuled.service"
+categories=( eMule Browser Proxy ExternalConnect WebServer GUI Razor_Preferences SkinGUIOptions Statistics Obfuscation PowerManagement UserEvents HTTPDownload )
+declare -A categoriesMap
 
+### FUNCTIONS ############################################################
+# This function sets a category parameter in amule.conf file
+function setCategoryParameter
+{
+	local category="$1" parameter="$2" value=$3
+	echo "`echo ${categoriesMap[$category]} | tr '|' '\n' | sed \"s/^$parameter=.*/$parameter=$value/g\" | tr '\n' '|'`"
+}
 
 ### CREATE FOLDERS #######################################################
 sudo -u $username mkdir -p $AMULE_DAEMON_DOWNLOAD_FOLDER $AMULE_DAEMON_TEMP_FOLDER
-
 
 ### SETUP APPLICATION CONFIG FILES #######################################
 # Try to start amule-daemon. The application can not start yet and will automatically create home folder and default config files
 sudo -u $username amuled -f 1>/dev/null
 # Backup of default main config file
 sudo -u $username cp $homeFolder/.aMule/amule.conf $homeFolder/.aMule/amule.conf.backup
+
+# Initialize categories map
+for category in "${categories[@]}"; do
+	parameters=`sed -n "/\[$category/,/\[/p" "$homeFolder/.aMule/amule.conf"`
+	lastParameter=`echo "$parameters" | tail -n1`
+	if [[ "$lastParameter" == [* ]]; then
+		# Delete last line
+		categoriesMap[$category]=`echo "$parameters" | sed '$ d' | tr '\n' '|'`
+	else
+		categoriesMap[$category]=`echo "$parameters" | tr '\n' '|'`
+	fi
+done
+
+
 # Set relevant amule variables in config file
-	# General
-sed -i "s/^IncomingDir=.*/IncomingDir=$(echo "$AMULE_DAEMON_DOWNLOAD_FOLDER" | sed -r 's/\/+/\\\//g')/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^TempDir=.*/TempDir=$(echo "$AMULE_DAEMON_TEMP_FOLDER" | sed -r 's/\/+/\\\//g')/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^Port=.*/Port=$AMULE_DAEMON_TCP_PORT/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^UDPPort=.*/UDPPort=$AMULE_DAEMON_UDP_PORT/g" $homeFolder/.aMule/amule.conf
-	# External connection
-sed -i "s/^AcceptExternalConnections=.*/AcceptExternalConnections=1/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^ECPassword=.*/ECPassword=`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^ECPort=.*/ECPort=$AMULE_DAEMON_CLIENT_PORT/g" $homeFolder/.aMule/amule.conf
-	# Web server
-sed -i "s/^Enabled=.*/Enabled=1/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^Password=.*/Password=`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`/g" $homeFolder/.aMule/amule.conf
-sed -i "s/^Port=.*/Port=$AMULE_DAEMON_WEB_PORT/g" $homeFolder/.aMule/amule.conf
+categoriesMap[eMule]=$( setCategoryParameter "eMule" "IncomingDir" "$(echo \"$AMULE_DAEMON_DOWNLOAD_FOLDER\" | sed -r 's/\/+/\\\//g')" )
+categoriesMap[eMule]=$( setCategoryParameter "eMule" "TempDir" "$(echo \"$AMULE_DAEMON_TEMP_FOLDER\" | sed -r 's/\/+/\\\//g')" )
+categoriesMap[eMule]=$( setCategoryParameter "eMule" "Port" "$AMULE_DAEMON_TCP_PORT" )
+categoriesMap[eMule]=$( setCategoryParameter "eMule" "UDPPort" "$AMULE_DAEMON_UDP_PORT" )
+
+categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "AcceptExternalConnections" "1" )
+categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPassword" "`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`" )
+categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPort" "$AMULE_DAEMON_CLIENT_PORT" )
+
+categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Enabled" "1" )
+categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Password" "`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`" )
+categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Port" "$AMULE_DAEMON_WEB_PORT" )
+
+echo "" > $homeFolder/.aMule/amule.conf
+for category in "${categories[@]}"; do
+	echo ${categoriesMap[$category]} | tr '|' '\n' >> $homeFolder/.aMule/amule.conf
+done
 
 
 ### SETUP SYSTEMD SERVICE ################################################
@@ -72,7 +98,7 @@ sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/amuled -f/g" $
 # Create menu launcher for amule-daemon's web client.
 echo "[Desktop Entry]
 Name=aMule Web
-Exec=xdg-open http://localhost:$AMULE_DAEMON_WEB_PORT
+Exec=xdg-open http://localhost:4711
 Icon=amule
 Terminal=false
 Type=Application
