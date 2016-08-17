@@ -4,7 +4,7 @@ $ Desktop && app installer script
 | Menú de instalación de escritorios y aplicaciones de repositorios oficiales, terceros o fuentes externas para Ubuntu, Debian, Linux Mint o LMDE (escritorio o servidor).| ![Logo][tux-shell-terminal-logo] |
 | --- | --- |
 
-Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado puede ser modificado por el usuario tan sólo editando un fichero de texto. Además, los usuarios pueden añadir subscripts que extiendan la funcionalidad del menú, por ejemplo, añadir nuevos repositorios, configurar aplicaciones, etc. Por otro lado, existe un script individual por cada aplicación como modo alternativo de realizar el proceso de instalación sin el menú principal.
+Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero dicho listado puede ser modificado por el usuario tan sólo editando un fichero de texto. Además, los usuarios pueden añadir subscripts que extiendan la funcionalidad del menú, por ejemplo, añadir nuevos repositorios, configurar aplicaciones, etc. Por otro lado, existe un script individual por cada aplicación como modo alternativo de realizar el proceso de instalación sin el menú principal.
 
 > _Versión inglesa disponible [aquí][readme.md] ( English version can be found [here][readme.md] )_
 
@@ -32,16 +32,17 @@ Hay un listado por defecto que incluye muchas aplicaciones, pero dicho listado p
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 15/08/2016 (dd/mm/yyyy)
+Último cambio: 17/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
-* Un script principal que muestra un menú de aplicaciones a ser seleccionado para instalación.
+* Un script principal que muestra un menú de aplicaciones o escritorios linux a seleccionar para instalación.
 * Alternativamente, hay un script individual por cada aplicación que se encarga de instalar la misma.
 * Instala aplicaciones de repositorios oficiales y repositorios de terceros. En este último caso agrega los repositorios necesarios.
 * Descarga, extrae e instala aplicaciones sin repositorios mediante subscripts propios que extienden la funcionalidad del script principal. Se incluyen varios por defecto.
 * Configura aplicaciones después de ser instaladas mediante subscripts específicos. Se incluyen varios por defecto.
 * Personaliza tu propia lista de aplicaciones a instalar y repositorios de terceros a agregar editando algunos ficheros de configuración (no hay necesidad de editar el script principal para este propósito).
+* Los repositorios de terceros añadidos por algunas aplicaciones serán desactivados automáticamente tras la instalación de las mismas.
 * Soporte EULA. Instala aplicaciones automáticamente sin necesidad de interacción del usuario para aceptar acuerdos legales de la aplicación.
 * El script se ejecuta con una interfaz adaptada al entorno detectado: Dialog para terminal. Zenity para escritorio o emulador de terminal.
 * Fichero de log que muestra los pasos de instalación y posibles errores si ocurrieran.
@@ -99,16 +100,29 @@ $ bash ./scripts/applicationName.sh
 [Regresar al índice](#indice)
 
 ### 4. Ciclo de vida de ejecución
-1. El usuario debe seleccionar las aplicaciones a instalar.
-2. El script añade los repositorios externos requeridos por algunas de las aplicaciones seleccionadas.
-3. El script ejecuta tareas previas a la instalación definidas en sub-scripts específicos que contienen los comandos necesarios para dejarlo todo listo.
-4. El script instala las aplicaciones seleccionadas, con soporte EULA si fuera requerido, tomando como origen los repositorios oficiales de la distribución o repositorios de terceros.
-5. El script instala aplicaciones ajenas a repositorios mediante la ejecución de subscripts específicos por aplicación.
-6. El script configura algunas aplicaciones tras el proceso de instalación mediante la ejecución de subscripts específicos por aplicación.
-7. El script ejecuta operaciones finales para terminal el proceso de instalación y limpiar ficheros temporales.
-8. El script muestra un fichero de log que contiene los pasos de instalación y posibles errores si ocurrieran.
+1. El usuario debe SELECCIONAR las APLICACIONES a instalar.
 
-El script principal ejecuta todos los pasos previos, mientras que los scripts individuales omiten el paso uno y ejecutan el resto.
+2. El script EJECUTA OPERACIONES INICIALES para preparar la instalación de las aplicaciones seleccionadas.
+
+3. Por cada aplicación, ejecuta los siguientes pasos:
+  * El script EJECUTA OPERACIONES de PRE-INSTALACIÓN de la aplicación a ser instalada si existe un sub-script propio para este propósito.
+  * El script AÑADE REPOSITORIO de TERCERO de la aplicación a ser instalada si existe un sub-script propio para este propósito.
+  * El script INSTALA la APLICACIÓN, con soporte EULA, tomando como fuente los repositorios oficiales, de terceros o bien un sub-script propio creado para tal propósito.
+  * El script DESACTIVA automáticamente el REPOSITORIO de TERCERO de la aplicación instalada para evitar posibles problemas derivados de esto.
+  * El script EJECUTA OPERACIONES de POST-INSTALACION para configurar la aplicación instalada si existe un sub-script propio para este propósito.
+
+4. El script EJECUTA OPERACIONES FINALES para limpiar paquetes y eliminar ficheros/carpetas temporales.
+
+5. El script MUESTRA LOGS del proceso de instalación que contiene los pasos de instalación y posbles errores producidos.
+
+```
+NOTA 1: El script principal ejecuta todos los pasos previos mientras
+que los scripts indididuales por aplicación omiten el primer paso.
+
+NOTA 2: El script actualiza automáticamente los repositorios tras
+las operaciones de pre-instalación, añadir repositorio de tercero
+o desactivar el mismo.
+```
 
 ---
 [Regresar al índice](#indice)
@@ -192,11 +206,15 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
     ├── lmde/*              Subscripts usados sólamente en sistemas LMDE
     └── ubuntu/*            Subscripts usados sólamente en sistemas Ubuntu
 ```
+-rw-rw-r-- 1 cesar cesar   905 ago 15 22:38
+-rw-rw-r-- 1 cesar cesar  2329 ago 15 22:38
+
 
 | Algunos ficheros importantes                                   | Descripción                                                                                          |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | [commonFunctions.sh][commonFunctions.sh]                       | Contiene funciones comunes usados por todos los scripts de instalación                               |
 | [commonVariables.properties][commonVariables.properties]       | Contiene variables comunes disponibles para todos los scripts                                        |
+| [installapp.sh][installapp.sh]       | Contiene los comandos necesarios para la instalación de una aplicación y posible reparación en caso de fallo                                       |
 | [dialogFunctions.sh][dialogFunctions.sh]                       | Contiene funciones del menú para cajas Dialog (modo terminal). Usado sólo por script principal       |
 | [menuFunctions.sh][menuFunctions.sh]                           | Contiene funciones del menú. Usado sólamente por el script principal                                 |
 | [menuVariables.properties][menuVariables.properties]           | Contiene variables globales del menú disponibles sólo para el script principal                       |
@@ -365,6 +383,7 @@ Espero que lo encontréis útil.
 [readme.md]:./README.md
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.properties]:./common/commonVariables.properties
+[installapp.sh]:./common/installapp.sh
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
 [menuFunctions.sh]:./menu/menuFunctions.sh
 [menuVariables.properties]:./menu/menuVariables.properties

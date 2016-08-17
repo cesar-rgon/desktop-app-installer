@@ -2,7 +2,7 @@
 ##########################################################################
 # This script configures qBittorrent daemon to be ready to use.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-17
 # @license MIT
 ##########################################################################
 
@@ -18,7 +18,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 ### VARIABLES ############################################################
-QBITTORRENT_DAEMON_USERNAME="$username"
+QBITTORRENT_DAEMON_USERNAME="qbtuser"
 # Transmission Daemon doesn't allow to change default password. You must change inside the application
 # QBITTORRENT_DAEMON_PASSWORD="adminadmin"
 QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
@@ -51,8 +51,8 @@ chown $username:$username $homeFolder/.config/qBittorrent/qBittorrent.conf
 sed -i "s/=DESCRIPTION.*/=qBittorrent Nox Daemon/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:qbitorrent-nox/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=SYSTEMD_TYPE.*/=forking/g" $QBITTORRENT_DAEMON_FILE
-sed -i "s/=USERNAME.*/=$QBITTORRENT_DAEMON_USERNAME/g" $QBITTORRENT_DAEMON_FILE
-sed -i "s/=GROUP.*/=$QBITTORRENT_DAEMON_USERNAME/g" $QBITTORRENT_DAEMON_FILE
+sed -i "s/=USERNAME.*/=$username/g" $QBITTORRENT_DAEMON_FILE
+sed -i "s/=GROUP.*/=$username/g" $QBITTORRENT_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/qbittorrent-nox -d/g" $QBITTORRENT_DAEMON_FILE
 
 

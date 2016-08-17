@@ -4,7 +4,7 @@ $ Desktop && app installer script
 | Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux-shell-terminal-logo] |
 | --- | --- |
 
-There are a lot of applications included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+There are a lot of applications or desktops enviroments included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 > _Spanish version can be found [here][leeme.md] ( Versión española disponible [aquí][leeme.md] )_
 
@@ -32,16 +32,17 @@ There are a lot of applications included in the default list, but this list can 
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/15 (yyyy/mm/dd)
+Last change: 2016/08/17 (yyyy/mm/dd)
 ```
 
 ### 1. Features
-* One main script that shows a menu of aplications which can be selected for installation.
+* One main script that shows a menu of aplications or linux desktops enviroment which can be selected for installation.
 * Alternatively, there is one separate script for each application, so it can be installed by just executing the appropriate script.
 * Install official and third-party repository applications. In the last case, first add the necessary repositories to the distro.
 * Download, extract and install non-repository applications through custom subscripts that extend the main script functionality. It includes several subscripts by default.
 * Set up applications after they are installed through custom subscripts.
-* Customize your own application list to install and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
+* Customize your own application list to be installed and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
+* Third-party repositories added by some applications will be disabled automatically after the installation of those applications.
 * EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
 * The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they have occurred.
@@ -100,16 +101,28 @@ $ bash ./scripts/applicationName.sh
 [Back to index](#index)
 
 ### 4. Execution's lifecycle
-1. The user must select the applications to install.
-2. The script would add third-party repositories of some of the selected applications, if required.
-3. The script executes previous tasks, before the installation process begins, defined in custom sub-scripts that contain needed commands to be executed to leave all ready to start.
-4. The script installs selected applications, with EULA support if needed, taking as source official distro repositories or third-party ones.
-5. The script executes custom subscripts to install the selected non-repository applications.
-6. The script executes custom subscripts to setup some of the selected applications.
-7. The script runs final operations to finish installation process and to clean all temporal files.
-8. The script shows an installation log file which contains installation steps and errors if occurred during installation process.
+1. The user must SELECT the APPLICATIONS to install.
 
-Main script runs all the previous steps, whereas individual application scripts skip step one and run the remaining.
+2. The script EXECUTES INITIAL OPERATIONS to be ready to install the selected applications.
+
+3. For each application, execute next steps:
+  * The script EXECUTES PRE-INSTALLATION OPERATIONS of the application to be installed if exists a custom sub-script for that purpose.
+  * The script ADDS THIRD-PARTY REPOSITORY of the application to be installed if exists a custom sub-script for that purpose.
+  * The script INSTALLS the APPLICATION, with EULA support, taking as source official distro repositories, third-party one or a custom sub-script created for that purpose.
+  * The script automatically DISABLES THIRD-PARTY REPOSITORY of the installed application to avoid possible problems related to this.
+  * The script EXECUTES POST-INSTALLATION OPERATIONS to set-up the installed application if exists a custom sub-script for that purpose.
+
+4. The script EXECUTES FINAL OPERATIONS to clean packages and remove temporal files/folders.
+
+5. The script SHOWS LOGS of the installation process which contains installation steps and posible errors occurred.
+
+```
+NOTE 1: Main script runs all the previous steps whereas each individual
+      application script skip step one and run the remaining.
+
+NOTE 2: The script automatically updates repositories after pre-installation
+      operations, add third-party repository or disable it.
+```
 
 ---
 [Back to index](#index)
@@ -197,7 +210,8 @@ Tree of folders and some files:
 | Some important files                                           | Description                                                                                   |
 | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------  |
 | [commonFunctions.sh][commonFunctions.sh]                       | It contains common functions used by all the installation scripts                             |
-| [commonVariables.properties][commonVariables.properties]       | It contains common variables available for all scripts                                        |
+| [commonVariables.properties][commonVariables.properties]       | It contains common variables available for all scripts                                                          |
+| [installapp.sh][installapp.sh]                                 | It contains needed commands to allow the installation of an application and posible reparation in case of error                                      |
 | [dialogFunctions.sh][dialogFunctions.sh]                       | It contains menu functions for Dialog box (terminal mode). Used only by main script           |
 | [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                          |
 | [menuVariables.properties][menuVariables.properties]           | It contains menu global variables available only for main script                              |
@@ -360,6 +374,7 @@ I hope you find it useful.
 [leeme.md]:./LEEME.md
 [commonFunctions.sh]:./common/commonFunctions.sh
 [commonVariables.properties]:./common/commonVariables.properties
+[installapp.sh]:./common/installapp.sh
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
 [menuFunctions.sh]:./menu/menuFunctions.sh
 [menuVariables.properties]:./menu/menuVariables.properties

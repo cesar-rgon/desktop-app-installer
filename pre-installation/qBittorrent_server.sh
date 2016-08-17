@@ -2,7 +2,7 @@
 ##########################################################################
 # This script prepare qBittorrent daemon installation.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-17
 # @license MIT
 ##########################################################################
 
@@ -22,3 +22,8 @@ QBITTORRENT_DAEMON_FILE="/etc/systemd/system/qbittorrent-nox.service"
 
 # Copy systemd service script
 yes | cp -f $scriptRootFolder/etc/systemd.service $QBITTORRENT_DAEMON_FILE
+
+# Create qBittorrent user
+useradd qbtuser -m
+# Add system user to qBittorrent group
+usermod -a -G qbtuser $username
