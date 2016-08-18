@@ -16,10 +16,10 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $scriptRootFolder/credentials/Transmission_server.properties
 
 ### VARIABLES ############################################################
-TRANSMISSION_DAEMON_USERNAME="$username"
-TRANSMISSION_DAEMON_USER_PASSWORD="transmission"
 TRANSMISSION_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/Transmission"
 TRANSMISSION_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/Transmission"
 TRANSMISSION_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
@@ -45,8 +45,8 @@ echo "\"download-dir\": \"$TRANSMISSION_DAEMON_DOWNLOAD_FOLDER\",
 \"incomplete-dir\": \"$TRANSMISSION_DAEMON_TEMP_FOLDER\",
 \"incomplete-dir-enabled\": true,
 \"peer-port\": $TRANSMISSION_DAEMON_TCP_PORT,
-\"rpc-password\": \"$TRANSMISSION_DAEMON_USER_PASSWORD\",
-\"rpc-username\": \"$TRANSMISSION_DAEMON_USERNAME\",
+\"rpc-password\": \"$PASSWORD\",
+\"rpc-username\": \"$USERNAME\",
 \"rpc-whitelist\": \"*\",
 \"rpc-port\": $TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT,
 \"umask\": 7,

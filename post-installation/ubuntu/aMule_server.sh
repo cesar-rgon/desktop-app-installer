@@ -21,10 +21,10 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $scriptRootFolder/credentials/aMule_server.properties
 
 ### VARIABLES ############################################################
-AMULE_DAEMON_USERNAME="$username"
-AMULE_DAEMON_USER_PASSWORD="amule"
 AMULE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/aMule"
 AMULE_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/aMule"
 AMULE_DAEMON_CLIENT_PORT="4712"
@@ -72,11 +72,11 @@ categoriesMap[eMule]=$( setCategoryParameter "eMule" "Port" "$AMULE_DAEMON_TCP_P
 categoriesMap[eMule]=$( setCategoryParameter "eMule" "UDPPort" "$AMULE_DAEMON_UDP_PORT" )
 
 categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "AcceptExternalConnections" "1" )
-categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPassword" "`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`" )
+categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPassword" "`echo -n $PASSWORD | md5sum | cut -d ' ' -f 1`" )
 categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPort" "$AMULE_DAEMON_CLIENT_PORT" )
 
 categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Enabled" "1" )
-categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Password" "`echo -n $AMULE_DAEMON_USER_PASSWORD | md5sum | cut -d ' ' -f 1`" )
+categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Password" "`echo -n $PASSWORD | md5sum | cut -d ' ' -f 1`" )
 categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Port" "$AMULE_DAEMON_WEB_PORT" )
 
 echo "" > $homeFolder/.aMule/amule.conf

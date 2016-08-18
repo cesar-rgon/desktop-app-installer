@@ -16,10 +16,10 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $scriptRootFolder/credentials/Deluge_server.properties
 
 ### VARIABLES ############################################################
-DELUGE_DAEMON_USERNAME="$username"
-DELUGE_DAEMON_PASSWORD="deluge"
 DELUGE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/deluge"
 DELUGE_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/deluge"
 DELUGE_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
@@ -34,7 +34,7 @@ sudo -u $username mkdir -p $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FO
 
 
 ### SETUP APPLICATION CONFIG FILES #######################################
-echo "$DELUGE_DAEMON_USERNAME:$DELUGE_DAEMON_PASSWORD:10" >> $homeFolder/.config/deluge/auth
+echo "$USERNAME:$PASSWORD:10" >> $homeFolder/.config/deluge/auth
 
 echo "{
   \"file\": 1,
@@ -64,15 +64,15 @@ echo "{
 sed -i "s/=DESCRIPTION.*/=Deluge Daemon/g" $DELUGE_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:deluged/g" $DELUGE_DAEMON_FILE
 sed -i "s/=SYSTEMD_TYPE.*/=simple/g" $DELUGE_DAEMON_FILE
-sed -i "s/=USERNAME.*/=$DELUGE_DAEMON_USERNAME/g" $DELUGE_DAEMON_FILE
-sed -i "s/=GROUP.*/=$DELUGE_DAEMON_USERNAME/g" $DELUGE_DAEMON_FILE
+sed -i "s/=USERNAME.*/=$USERNAME/g" $DELUGE_DAEMON_FILE
+sed -i "s/=GROUP.*/=$USERNAME/g" $DELUGE_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/deluged -d -l $(echo "$homeFolder" | sed -r 's/\/+/\\\//g')\/.config\/deluge\/daemon.log -L error/g" $DELUGE_DAEMON_FILE
 # Deluge-web service. Available only by a web browser
 sed -i "s/=DESCRIPTION.*/=Deluge Web/g" $DELUGE_WEB_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:deluge-web/g" $DELUGE_WEB_DAEMON_FILE
 sed -i "s/=SYSTEMD_TYPE.*/=simple/g" $DELUGE_WEB_DAEMON_FILE
-sed -i "s/=USERNAME.*/=$DELUGE_DAEMON_USERNAME/g" $DELUGE_WEB_DAEMON_FILE
-sed -i "s/=GROUP.*/=$DELUGE_DAEMON_USERNAME/g" $DELUGE_WEB_DAEMON_FILE
+sed -i "s/=USERNAME.*/=$USERNAME/g" $DELUGE_WEB_DAEMON_FILE
+sed -i "s/=GROUP.*/=$USERNAME/g" $DELUGE_WEB_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/deluge-web/g" $DELUGE_WEB_DAEMON_FILE
 
 

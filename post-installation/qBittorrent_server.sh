@@ -16,11 +16,10 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $scriptRootFolder/credentials/qBittorrent_server.properties
 
 ### VARIABLES ############################################################
-QBITTORRENT_DAEMON_USERNAME="qbtuser"
-# Transmission Daemon doesn't allow to change default password. You must change inside the application
-# QBITTORRENT_DAEMON_PASSWORD="adminadmin"
 QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
 QBITTORRENT_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/qBittorrent"
 QBITTORRENT_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
@@ -40,7 +39,7 @@ Downloads\SavePath=$QBITTORRENT_DAEMON_DOWNLOAD_FOLDER
 Downloads\TempPathEnabled=true
 Downloads\TempPath=$QBITTORRENT_DAEMON_TEMP_FOLDER
 Downloads\ScanDirs=$QBITTORRENT_DAEMON_TORRENT_FOLDER
-WebUI\Username=$QBITTORRENT_DAEMON_USERNAME
+WebUI\Username=$USERNAME
 WebUI\Port=$QBITTORRENT_DAEMON_WEB_PORT
 [LegalNotice]
 Accepted=true" > $homeFolder/.config/qBittorrent/qBittorrent.conf

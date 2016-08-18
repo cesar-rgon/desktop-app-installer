@@ -36,18 +36,18 @@ function installNeededPackages
 {
 	local neededPackages
 	if [ -z $DISPLAY ]; then
-		neededPackages="dialog tmux"
+		neededPackages=( dialog tmux )
 	else
-		neededPackages="zenity libnotify-bin"
+		neededPackages=( zenity libnotify-bin )
 		if [ "$KDE_FULL_SESSION" != "true" ]; then
-			neededPackages+=" gksu";
+			neededPackages+=( gksu );
 		else
-			neededPackages+=" kdesudo";
-			if [ "$distro" == "ubuntu" ]; then neededPackages+=" libqtgui4-perl"; fi
+			neededPackages+=( kdesudo );
+			if [ "$distro" == "ubuntu" ]; then neededPackages+=( libqtgui4-perl ); fi
 		fi
 	fi
-	if [ -n "$neededPackages" ]; then
-		for package in "$neededPackages"; do
+	if [ ${#neededPackages[@]} -gt 0 ]; then
+		for package in "${neededPackages[@]}"; do
 			if [ -z "`dpkg -s $package 2>&1 | grep "installed"`" ]; then
 				echo "$installingRepoApplication $package"
 				if [ -z $DISPLAY ]; then
@@ -92,6 +92,7 @@ function prepareScript
 	# Create temporal folders and files
 	mkdir -p "$tempFolder" "$logsFolder"
 	rm -f "$logFile"
+	rm -f "$tempFolder/credentials"
 	installNeededPackages
 	cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
 	sed -i "s/LEFT-LENGHT/$(($width - 10))/g" "$homeFolder/.tmux.conf"
@@ -101,35 +102,35 @@ function prepareScript
 }
 
 ##
-# This function gets all existing subscripts that matches following requisites:
-# 1. Filename must be: appName.sh / appName_x64.sh / appName_i386.sh
+# This function gets all existing files that matches following requisites:
+# 1. Pattern filename: appName* / appName_x64* / appName_i386*
 # 2. Filename must match O.S. arquitecture (*_i386 32bits / *_x64 64bits / other all)
 # 3. Must be placed in targetFolder or the subfolder that matchs your linux distro
 # @since 	v1.3
 # @param 	String targetFolder	Root scripts folder
-# @param 	String appName			Name of an application
-# @result String 							List of path/filename of found subscripts
+# @param 	String appFilename	Filename that starts with appName
+# @result String 							List of path/filename of found files
 ##
-function getAppSubscripts
+function getAppFiles
 {
 	if [ -z "$1" ] || [ -z "$2" ]; then
 		echo ""			# All parameters are mandatories
 	else
-		local targetFolder="$1" appName="$2"
-		local i386="_i386" x64="_x64" subscriptList
+		local targetFolder="$1" appFilename="$2"
+		local i386="_i386" x64="_x64" fileList
 		# Search subscript that matches all O.S. architecture
-		if [ -f "$targetFolder/$appName.sh" ]; then subscriptList+="$targetFolder/$appName.sh "; fi
-		if [ -f "$targetFolder/$distro/$appName.sh" ]; then subscriptList+="$targetFolder/$distro/$appName.sh "; fi
+		if [ -f "$targetFolder/$appFilename" ]; then fileList+="$targetFolder/$appFilename "; fi
+		if [ -f "$targetFolder/$distro/$appFilename" ]; then fileList+="$targetFolder/$distro/$appFilename "; fi
 		if [ `uname -m` == "x86_64" ]; then
 			# Search subscript that matches 64 bits O.S. architecture
-			if [ -f "$targetFolder/$appName$x64.sh" ]; then subscriptList+="$targetFolder/$appName$x64.sh "; fi
-			if [ -f "$targetFolder/$distro/$appName$x64.sh" ]; then subscriptList+="$targetFolder/$distro/$appName$x64.sh "; fi
+			if [[ -f $targetFolder/$appFilename$x64* ]]; then fileList+="$targetFolder/$appFilename$x64.sh "; fi
+			if [[ -f $targetFolder/$distro/$appFilename$x64* ]]; then fileList+="$targetFolder/$distro/$appFilename$x64.sh "; fi
 		else
 			# Search subscript that matches 32 bits O.S. architecture
-			if [ -f "$targetFolder/$appName$i386.sh" ]; then subscriptList+="$targetFolder/$appName$i386.sh "; fi
-			if [ -f "$targetFolder/$distro/$appName$i386.sh" ]; then subscriptList+="$targetFolder/$distro/$appName$i386.sh "; fi
+			if [[ -f $targetFolder/$appFilename$i386* ]]; then fileList+="$targetFolder/$appFilename$i386.sh "; fi
+			if [[ -f $targetFolder/$distro/$appFilename$i386* ]]; then fileList+="$targetFolder/$distro/$appFilename$i386.sh "; fi
 		fi
-		echo "$subscriptList"
+		echo "$fileList"
 	fi
 }
 
@@ -161,7 +162,7 @@ function generateCommands
 			fi
 		else														# Name is an application name
 			appName="$2"
-			local scriptList=( $( getAppSubscripts "$targetFolder" "$appName" ) )
+			local scriptList=( $( getAppFiles "$targetFolder" "$appName.sh" ) )
 			# Iterate through all subscript files
 			for script in "${scriptList[@]}"; do
 				commands+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
@@ -180,11 +181,11 @@ function generateCommands
 function generateCommandToDisableAppThirdPartyRepo
 {
 	local appName="$1" scriptFile targetFileNameArray targetFileName
-	local tprScriptList=( $( getAppSubscripts "$thirdPartyRepoFolder" "$appName" ) )
+	local tprScriptList=( $( getAppFiles "$thirdPartyRepoFolder" "$appName.sh" ) )
 
 	for scriptFile in "${tprScriptList[@]}"; do
 		# Extract targetFilename value from script
-		targetFileNameArray
+		local targetFileNameArray
 		IFS='"' read -ra targetFileNameArray <<< "`grep 'targetFilename=\"' $scriptFile`"
 		targetFileName=${targetFileNameArray[1]}
 		# Command to comment lines starting with 'deb'
@@ -220,6 +221,7 @@ function executeStep
 	if [ ${#commandsPerInstallationStep[$stepName]} -gt 0 ]; then
 		if [ -z $DISPLAY ]; then
 			if [[ "$stepName" == install* ]]; then
+				echo "AQUI" > /home/cesar/debug
 				sed -i "s/STEPDESCRIPTION/$message/g" "$homeFolder/.tmux.conf"
 				tmux new-session sudo bash -c "${commandsPerInstallationStep[$stepName]}"
 			else
@@ -235,7 +237,7 @@ function executeStep
 }
 
 ##
-# This function show logs after installation process
+# This function shows logs after installation process
 ##
 function showLogs
 {
@@ -247,6 +249,39 @@ function showLogs
 		zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 	chown $username:$username "$logFile"
+}
+
+##
+# This function shows credentials needed by some of the selected applications to login
+##
+function showCredentials
+{
+	if [ -z $DISPLAY ]; then
+		dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
+	else
+		notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" "" -t 10000
+		zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+	fi
+}
+
+##
+# This funtion gets username/password from application credential file
+# @param String appName		Application name
+##
+function getAppCredentials
+{
+	local appName="$1"
+	if [ -f "$credentialFolder/$appName.properties" ]; then
+		. "$credentialFolder/$appName.properties"
+		echo "$applicationLabel: $appName" >> "$tempFolder/credentials"
+		if [ -n "$USERNAME" ]; then
+			echo "$usernameLabel: $USERNAME" >> "$tempFolder/credentials"
+		fi
+		if [ -n "$PASSWORD" ]; then
+			echo "$passwordLabel: $PASSWORD" >> "$tempFolder/credentials"
+		fi
+		echo -e "$boxSeparator\n" >> "$tempFolder/credentials"
+	fi
 }
 
 ##
@@ -265,6 +300,7 @@ function executeCommands
 	executeStep "finalOperations" "$cleaningTempFiles"
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
+	showCredentials
 }
 
 ##
@@ -300,7 +336,7 @@ function installAndSetupApplications
 			# STEP 5. Generate commands to install application from repositories, if that's the case
 			commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $appIndex/$totalAppsNumber" "$appName" )
 			if [ -n "$commandsAppThirdPartyRepo" ]; then
-				# STEP 6. Generate commands to disable application third-party repository if activated
+				# STEP																																																																																												 6. Generate commands to disable application third-party repository if activated
 				commandsPerInstallationStep[installRepoApps]+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
 				# STEP 7. Generate commands to update repositories again
 				commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
@@ -309,10 +345,12 @@ function installAndSetupApplications
 			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $appIndex/$totalAppsNumber" )
 			# STEP 9. Generate commands to setup application
 			commandsPerInstallationStep[postInstallation]+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+			# STEP 10. If exists application credential file, echo to temporal credential file
+			getAppCredentials "$appName"
 			appIndex=$(($appIndex+1))
 		done
 
-		# STEP 10. Generate commands to execute final operations: clean, logs, etc.
+		# STEP 11. Generate commands to execute final operations: clean, logs, etc.
 		commandsPerInstallationStep[finalOperations]=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
 		commandsPerInstallationStep[finalOperations]+="rm -f /etc/sudoers.d/app-installer-sudo;"
 		if [ ${#commandsPerInstallationStep[preInstallation]} -gt 0 ]; then
