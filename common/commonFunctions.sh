@@ -26,7 +26,6 @@ function credits
 	fi
 }
 
-
 ##
 # This funtion installs dialog or zenity packages, if not installed yet,
 # according to detected enviroment: desktop or terminal
@@ -49,7 +48,7 @@ function installNeededPackages
 	if [ ${#neededPackages[@]} -gt 0 ]; then
 		for package in "${neededPackages[@]}"; do
 			if [ -z "`dpkg -s $package 2>&1 | grep "installed"`" ]; then
-				echo "$installingRepoApplication $package"
+				echo "$installingApplication $package"
 				if [ -z $DISPLAY ]; then
 					sudo apt-get -y install $package --fix-missing
 				else
@@ -194,46 +193,105 @@ function generateCommandToDisableAppThirdPartyRepo
 }
 
 ##
-# This function execute all commands associated to one installation step
+# This function generates and executes needed commands to prepare, install
+# and setup an application. The source to get the application can be:
+# 1. Official repositories. Steps are:
+#		1a. Install application from repository
+# 2. Third-party repositories. Steps are:
+#		2a. Add third-party repository, after that, update repositories
+#		2b. Install application
+#		2c. Disable third-party repository, after that, update repositories again
+# 3. External source. Not from repositories. Steps are:
+#		3a. Download application from source (web page, ftp, etc)
+#		3b. Extract and install file content
 # @since v1.3
-# @param String							stepName	Name of the Step. Key of commandsPerInstallationStep map [mandatory]
-# @param String							message		Message to display on box / window [mandatory]
-# @param String							totalApps	Total number of apps to be installed [optional]
-# @param int 								stepIndex	Index of current step during installation process [global]
-# @param Map<String,String> commandsPerInstallationStep 	Shell commands per installation steps [global]
-# 	Keys of installation steps are:
-# 		beginningOperations		First step. Commands to proceed with installation proccess
-# 		preInstallation				Second step. Commands for each application:
-#															1. Prepare installation of application
-#															2. Update repositories
-# 		installRepoApps   		Third step. Commands for each application:
-#															1. Add third-party repository if needed, after that, update repositories
-#															2. Install application
-#															3. Disable third-party repository if activated, after that, update repos again
-# 		installNonRepoApps		Forth step. Commands to install non-repository applications
-# 		postInstallation			Fifth step. Commands to setup some applications to be ready to use
-# 		finalOperations				Final step. Final operations: clean packages, remove temp.files, etc
+# @param String	appName		Application name [mandatory]
+# @param String	message		Message to display on box / window [mandatory]
 ##
-function executeStep
+function installApplication
 {
-	local stepName="$1"	message="$step $stepIndex: $2"
+	local appName="$1" message="$step $stepIndex: $2"
+	local needtoUpdateRepos="false"
 
-	if [ ${#commandsPerInstallationStep[$stepName]} -gt 0 ]; then
+	# GENERATE COMMANDS TO PREPARE, INSTALL AND SETUP THE APPLICATION
+	# STEP 1: Generate commands to prepare installation of application
+	local commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
+	if [ -n $commands ]; then needtoUpdateRepos="true"; fi
+
+	# STEP 2: Generate commands to add application third-party repo if needed
+	local commadsTPRepo=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
+	if [ -n "$commadsTPRepo" ]; then
+		commands+="$commadsTPRepo"; needtoUpdateRepos="true"
+	fi
+
+	# STEP 3: Generate commands to update repositories if required
+	if [ "$needtoUpdateRepos" == "true" ]; then
+		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+	fi
+
+	# STEP 4. Generate commands to install application from repositories, if that's the case
+	commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingApplication $appIndex/$totalAppsNumber" "$appName" )
+	if [ -n "$commadsTPRepo" ]; then
+		# STEP 5. Generate commands to disable third-party repository
+		commands+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
+		# STEP 6. Generate commands to update repositories again
+		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+	fi
+
+	# STEP 7. Generate commands to install application from external sources, if that's the case
+	local commandsNR=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingApplication $appIndex/$totalAppsNumber" )
+	if [ -n "$commandsNR" ]; then commands+="NR#$commands"; fi
+
+	# STEP 8. Generate commands to setup application
+	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+
+	# EXECUTE COMMANDS TO INSTALL THE APPLICATION
+	if [ -n "$commands" ]; then
+		if [[ "$commands" == NR# ]]; then	commands=${commands/NR#/}; fi
 		if [ -z $DISPLAY ]; then
-			if [[ "$stepName" == install* ]]; then
-				echo "AQUI" > /home/cesar/debug
 				sed -i "s/STEPDESCRIPTION/$message/g" "$homeFolder/.tmux.conf"
-				tmux new-session sudo bash -c "${commandsPerInstallationStep[$stepName]}"
-			else
-				clear; sudo bash -c "${commandsPerInstallationStep[$stepName]}" | dialog --title "$message" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
-			fi
+				tmux new-session sudo bash -c "$commands"
 		else
 			local autoclose=""
-			if [ "$stepName" != "installNonRepoApps" ]; then autoclose="--auto-close"; fi
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "${commandsPerInstallationStep[$stepName]}" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+			if [[ "$commands" != NR# ]]; then autoclose="--auto-close"; fi
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
 		stepIndex=$(($stepIndex+1))
 	fi
+}
+
+##
+# This function generates and executes commands needed to begin the installation proccess
+##
+function executeBeginningOperations
+{
+	# sudo remember always password
+	local beginningOperations="cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/;"
+	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
+	beginningOperations+=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
+	if [ -z $DISPLAY ]; then
+		clear; sudo bash -c "$beginningOperations" | dialog --title "$step 1: $settingDebconfInterface" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
+	else
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$beginningOperations" ) | zenity --progress --title="$step 1: $settingDebconfInterface" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+	fi
+}
+
+##
+# This function generates and executes commands needed to finish the installation proccess
+# Clean packages, remove temp.files, etc
+##
+function executeFinalOperations
+{
+	local finalOperations=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
+	finalOperations+="rm -f /etc/sudoers.d/app-installer-sudo;"
+	if [ -z $DISPLAY ]; then
+		clear; sudo bash -c "$finalOperations" | dialog --title "$step $stepIndex: $cleaningTempFiles" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
+	else
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$finalOperations" ) | zenity --progress --title="$step $stepIndex: $cleaningTempFiles" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+	fi
+	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
+	showLogs
+	showCredentials
 }
 
 ##
@@ -287,25 +345,6 @@ function getAppCredentials
 }
 
 ##
-# This funtion executes commands to install a set of applications
-# @param int totalAppsNumber						Number of apps to install
-# @since v1.0
-##
-function executeCommands
-{
-  if [ -z $DISPLAY ]; then sed -i "s/TOTALAPPS/$total: $1/g" "$homeFolder/.tmux.conf"; fi
-	executeStep "beginningOperations" "$settingDebconfInterface"
-	executeStep "preInstallation" "$preparingInstallationApps"
-	executeStep "installRepoApps" "$installingRepoApplications"
-	executeStep "installNonRepoApps" "$installingNonRepoApplications"
-	executeStep "postInstallation" "$settingUpApplications"
-	executeStep "finalOperations" "$cleaningTempFiles"
-	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
-	showLogs
-	showCredentials
-}
-
-##
 # This funtion generates and executes bash commands to install a
 # set of applications
 # @since v1.0
@@ -316,50 +355,23 @@ function installAndSetupApplications
 	local appsToInstall=("${!1}")
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local totalAppsNumber=${#appsToInstall[@]} appIndex=1 appName commandsAppThirdPartyRepo
-		if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
+		local totalAppsNumber=${#appsToInstall[@]} appIndex=1 appName commands commadsTPRepo needtoUpdateRepos
+		if [ -n $DISPLAY ]; then
+			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
+		else
+			sed -i "s/TOTALAPPS/$total: $totalAppsNumber/g" "$homeFolder/.tmux.conf"; fi
+		fi
 
-		# STEP 1. Generate initial commands to proceed with installation proccess
-		# sudo remember always password
-		commandsPerInstallationStep[beginningOperations]="cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/;"
-		# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
-		commandsPerInstallationStep[beginningOperations]+=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
-
+		# Execute initial commands to proceed with installation proccess
+		executeBeginningOperations
 		for appName in ${appsToInstall[@]}; do
-			# STEP 2. Generate commands to prepare installation of application
-			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-			# STEP 3. Generate commands to add application third-party repo if needed
-			commandsAppThirdPartyRepo=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
-			commandsPerInstallationStep[installRepoApps]+="$commandsAppThirdPartyRepo"
-			if [ -n "$commandsAppThirdPartyRepo" ]; then
-				# STEP 4. Generate commands to update repositories if required
-				commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
-			fi
-			# STEP 5. Generate commands to install application from repositories, if that's the case
-			commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $appIndex/$totalAppsNumber" "$appName" )
-			if [ -n "$commandsAppThirdPartyRepo" ]; then
-				# STEP																																																																																												 6. Generate commands to disable application third-party repository if activated
-				commandsPerInstallationStep[installRepoApps]+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
-				# STEP 7. Generate commands to update repositories again
-				commandsPerInstallationStep[installRepoApps]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
-			fi
-			# STEP 8. Generate commands to install application from external sources, if that's the case
-			commandsPerInstallationStep[installNonRepoApps]+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $appIndex/$totalAppsNumber" )
-			# STEP 9. Generate commands to setup application
-			commandsPerInstallationStep[postInstallation]+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
-			# STEP 10. If exists application credential file, echo to temporal credential file
+			# Generate and executes commands to prepare, install and setup the application
+			installApplication "$appName" "$installingApplication $appName $appIndex/$totalAppsNumber"
 			getAppCredentials "$appName"
 			appIndex=$(($appIndex+1))
 		done
-
-		# STEP 11. Generate commands to execute final operations: clean, logs, etc.
-		commandsPerInstallationStep[finalOperations]=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
-		commandsPerInstallationStep[finalOperations]+="rm -f /etc/sudoers.d/app-installer-sudo;"
-		if [ ${#commandsPerInstallationStep[preInstallation]} -gt 0 ]; then
-			# Pre-installation commands could require update repositories
-			commandsPerInstallationStep[preInstallation]+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
-		fi
-		executeCommands $totalAppsNumber
+		# Execute final commands to clean packages and remove temporal files/folders
+		executeFinalOperations
 	fi
 	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi
 }
