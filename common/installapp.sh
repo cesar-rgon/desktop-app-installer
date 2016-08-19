@@ -4,7 +4,7 @@
 # an application package. If so, apply contingence measure.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-28
-# @version 	1.3, 2016-08-09
+# @version 	1.3, 2016-08-19
 # @license 	MIT
 ##########################################################################
 
@@ -47,9 +47,6 @@ if [ -n "$packageList" ]; then
 			rm /var/lib/dpkg/info/$package.pre* 2>/dev/null
 			rm /var/lib/dpkg/info/$package.post* 2>/dev/null
 			apt-get -y install -f >/dev/null
-			if [ $? -ne 0 ]; then
-				echo -e "$packageReparationFailed" 1>&2
-			fi
 		fi
 	done
 fi

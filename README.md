@@ -32,7 +32,7 @@ There are a lot of applications or desktops enviroments included in the default 
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/17 (yyyy/mm/dd)
+Last change: 2016/08/19 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -111,10 +111,13 @@ $ bash ./scripts/applicationName.sh
   * The script INSTALLS the APPLICATION, with EULA support, taking as source official distro repositories, third-party one or a custom sub-script created for that purpose.
   * The script automatically DISABLES THIRD-PARTY REPOSITORY of the installed application to avoid possible problems related to this.
   * The script EXECUTES POST-INSTALLATION OPERATIONS to set-up the installed application if exists a custom sub-script for that purpose.
+  * The script STORES CREDENTIALS for AUTHENTICATION to the applicacion, if required.
 
 4. The script EXECUTES FINAL OPERATIONS to clean packages and remove temporal files/folders.
 
 5. The script SHOWS LOGS of the installation process which contains installation steps and posible errors occurred.
+
+6. The script SHOWS the CREDENTIALS of those installed applications that require user authentication.
 
 ```
 NOTE 1: Main script runs all the previous steps whereas each individual
@@ -142,7 +145,12 @@ Tree of folders and some files:
 ├── common                  It contains common functions, common variables and commands used by installation scripts
 │   ├── commonFunctions.sh
 │   ├── commonVariables.properties
-│   └── installapp.sh
+│   ├── installapp.sh
+│   └── *.sh
+│
+├── credentials             It contains a file per application with username/password needed for authentication
+│   ├── template-credentials.properties
+│   └── *.properties
 │
 ├── etc                     It contains config files used by some subscripts and version number of main installation script
 │   ├── systemd.service
@@ -162,7 +170,7 @@ Tree of folders and some files:
 ├── languages               It contains language translation files used by installation scripts
 │   ├── en.properties
 │   ├── es.properties
-│   └── *
+│   └── *.properties
 │
 ├── menu                    It contains functions used by main script menu (Terminal / Desktop)
 │   ├── dialogFuntions.sh
@@ -172,27 +180,27 @@ Tree of folders and some files:
 │
 ├── non-repository-apps     It contains subscripts to install non-repository applications
 │   ├── template-non-repo-app.sh
-│   ├── *                   Subscripts used on any linux system
-│   ├── debian/*            Subscripts only used on a Debian system
-│   ├── linuxmint/*         Subscripts only used on a Linux Mint system
-│   ├── lmde/*              Subscripts only used on a LMDE system
-│   └── ubuntu/*            Subscripts only used on an Ubuntu system
+│   ├── *.sh                Subscripts used on any linux system
+│   ├── debian/*.sh         Subscripts only used on a Debian system
+│   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
+│   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 │
 ├── post-installation       It contains subscripts to setup applications after installation
 │   ├── template-post-installation.sh
-│   ├── *                   Subscripts used on any linux system
-│   ├── debian/*            Subscripts only used on a Debian system
-│   ├── linuxmint/*         Subscripts only used on a Linux Mint system
-│   ├── lmde/*              Subscripts only used on a LMDE system
-│   └── ubuntu/*            Subscripts only used on an Ubuntu system
+│   ├── *.sh                Subscripts used on any linux system
+│   ├── debian/*.sh         Subscripts only used on a Debian system
+│   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
+│   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 │
-├── pre-installation       It contains subscripts to prepare the installation of some applications
+├── pre-installation        It contains subscripts to prepare the installation of some applications
 │   ├── template-pre-installation.sh
-│   ├── *                   Subscripts used on any linux system
-│   ├── debian/*            Subscripts only used on a Debian system
-│   ├── linuxmint/*         Subscripts only used on a Linux Mint system
-│   ├── lmde/*              Subscripts only used on a LMDE system
-│   └── ubuntu/*            Subscripts only used on an Ubuntu system
+│   ├── *.sh                Subscripts used on any linux system
+│   ├── debian/*.sh         Subscripts only used on a Debian system
+│   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
+│   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 │
 ├── scripts                 It contains one installation script per application
 │   ├── template-script.sh
@@ -200,11 +208,11 @@ Tree of folders and some files:
 │
 └── third-party-repo        It contains subscripts to add third-party repositories for some applications
     ├── template-repository.sh
-    ├── *                   Subscripts used on any linux system
-    ├── debian/*            Subscripts only used on a Debian system
-    ├── linuxmint/*         Subscripts only used on a Linux Mint system
-    ├── lmde/*              Subscripts only used on a LMDE system
-    └── ubuntu/*            Subscripts only used on an Ubuntu system
+    ├── *.sh                Subscripts used on any linux system
+    ├── debian/*.sh         Subscripts only used on a Debian system
+    ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
+    ├── lmde/*.sh           Subscripts only used on a LMDE system
+    └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 ```
 
 | Some important files                                           | Description                                                                                   |

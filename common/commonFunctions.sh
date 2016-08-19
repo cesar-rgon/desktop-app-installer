@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 	1.0, 2014-05-10
-# @version 	1.3, 2016-08-15
+# @version 	1.3, 2016-08-19
 # @license 	MIT
 ##########################################################################
 
@@ -256,11 +256,13 @@ function showLogs
 ##
 function showCredentials
 {
-	if [ -z $DISPLAY ]; then
-		dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
-	else
-		notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" "" -t 10000
-		zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+	if [ -f "$tempFolder/credentials" ]; then
+		if [ -z $DISPLAY ]; then
+			dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
+		else
+			notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" "" -t 10000
+			zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+		fi
 	fi
 }
 
@@ -274,11 +276,11 @@ function getAppCredentials
 	if [ -f "$credentialFolder/$appName.properties" ]; then
 		. "$credentialFolder/$appName.properties"
 		echo "$applicationLabel: $appName" >> "$tempFolder/credentials"
-		if [ -n "$USERNAME" ]; then
-			echo "$usernameLabel: $USERNAME" >> "$tempFolder/credentials"
+		if [ -n "$appUsername" ]; then
+			echo "$usernameLabel: $appUsername" >> "$tempFolder/credentials"
 		fi
-		if [ -n "$PASSWORD" ]; then
-			echo "$passwordLabel: $PASSWORD" >> "$tempFolder/credentials"
+		if [ -n "$appPassword" ]; then
+			echo "$passwordLabel: $appPassword" >> "$tempFolder/credentials"
 		fi
 		echo -e "$boxSeparator\n" >> "$tempFolder/credentials"
 	fi

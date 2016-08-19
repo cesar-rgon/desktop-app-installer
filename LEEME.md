@@ -32,7 +32,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 17/08/2016 (dd/mm/yyyy)
+Último cambio: 19/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -110,10 +110,13 @@ $ bash ./scripts/applicationName.sh
   * El script INSTALA la APLICACIÓN, con soporte EULA, tomando como fuente los repositorios oficiales, de terceros o bien un sub-script propio creado para tal propósito.
   * El script DESACTIVA automáticamente el REPOSITORIO de TERCERO de la aplicación instalada para evitar posibles problemas derivados de esto.
   * El script EJECUTA OPERACIONES de POST-INSTALACION para configurar la aplicación instalada si existe un sub-script propio para este propósito.
+  * El script ALMACENA CREDENCIALES de AUTENTICACION a la aplicación, si esta lo requiere.
 
 4. El script EJECUTA OPERACIONES FINALES para limpiar paquetes y eliminar ficheros/carpetas temporales.
 
 5. El script MUESTRA LOGS del proceso de instalación que contiene los pasos de instalación y posbles errores producidos.
+
+6. El script MUESTRA las CREDENCIALES de aquellas aplicaciones instaladas que requieren autenticación de usuario.
 
 ```
 NOTA 1: El script principal ejecuta todos los pasos previos mientras
@@ -142,7 +145,12 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 ├── common                  Contiene funciones comúnes, variables comunes y comandos usados por los scripts de instalación
 │   ├── commonFunctions.sh
 │   ├── commonVariables.properties
-│   └── installapp.sh
+│   ├── installapp.sh
+│   └── *.sh
+│
+├── credentials             Contiene un fichero por aplicacion con nombre-usuario/contraseña requerido para autenticación
+│   ├── template-credentials.properties
+│   └── *.properties
 │
 ├── etc                     Contiene ficheros de configuración usados por subscripts y el número de version del script principal
 │   ├── systemd.service
@@ -162,7 +170,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 ├── languages               Contiene ficheros de traducción usados por los scripts de instalación
 │   ├── en.properties
 │   ├── es.properties
-│   └── *
+│   └── *.properties
 │
 ├── menu                    Contiene funciones usados por el menú del script principal (Terminal / Escritorio)
 │   ├── dialogFuntions.sh
@@ -172,27 +180,27 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │
 ├── non-repository-apps     Contiene subscripts para instalar aplicaciones externas a repositorios
 │   ├── template-non-repo-app.sh
-│   ├── *                   Subscripts usados en cualquier sistema linux
-│   ├── debian/*            Subscripts usados sólamente en sistemas Debian
-│   ├── linuxmint/*         Subscripts usados sólamente en sistemas Linux Mint
-│   ├── lmde/*              Subscripts usados sólamente en sistemas LMDE
-│   └── ubuntu/*            Subscripts usados sólamente en sistemas Ubuntu
+│   ├── *.sh                Subscripts usados en cualquier sistema linux
+│   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
+│   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
+│   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+│   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 ├── post-installation       Contiene subscripts para configurar aplicaciones después de la instalación
 │   ├── template-post-installation.sh
-│   ├── *                   Subscripts usados en cualquier sistema linux
-│   ├── debian/*            Subscripts usados sólamente en sistemas Debian
-│   ├── linuxmint/*         Subscripts usados sólamente en sistemas Linux Mint
-│   ├── lmde/*              Subscripts usados sólamente en sistemas LMDE
-│   └── ubuntu/*            Subscripts usados sólamente en sistemas Ubuntu
+│   ├── *.sh                Subscripts usados en cualquier sistema linux
+│   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
+│   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
+│   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+│   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 ├── pre-installation        Contiene subscripts para preparar la instalación de algunas aplicaciones
 │   ├── template-pre-installation.sh
-│   ├── *                   Subscripts usados en cualquier sistema linux
-│   ├── debian/*            Subscripts usados sólamente en sistemas Debian
-│   ├── linuxmint/*         Subscripts usados sólamente en sistemas Linux Mint
-│   ├── lmde/*              Subscripts usados sólamente en sistemas LMDE
-│   └── ubuntu/*            Subscripts usados sólamente en sistemas Ubuntu
+│   ├── *.sh                Subscripts usados en cualquier sistema linux
+│   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
+│   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
+│   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+│   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 ├── scripts                 Contiene un script de instalación por aplicación
 │   ├── template-script.sh
@@ -200,15 +208,12 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │
 └── third-party-repo        Contiene subscripts que añaden repositorios de terceros para algunas aplicaciones
     ├── template-repository.sh
-    ├── *                   Subscripts usados en cualquier sistema linux
-    ├── debian/*            Subscripts usados sólamente en sistemas Debian
-    ├── linuxmint/*         Subscripts usados sólamente en sistemas Linux Mint
-    ├── lmde/*              Subscripts usados sólamente en sistemas LMDE
-    └── ubuntu/*            Subscripts usados sólamente en sistemas Ubuntu
+    ├── *.sh                Subscripts usados en cualquier sistema linux
+    ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
+    ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
+    ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+    └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 ```
--rw-rw-r-- 1 cesar cesar   905 ago 15 22:38
--rw-rw-r-- 1 cesar cesar  2329 ago 15 22:38
-
 
 | Algunos ficheros importantes                                   | Descripción                                                                                          |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |

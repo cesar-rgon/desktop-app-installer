@@ -2,7 +2,7 @@
 ##########################################################################
 # This script configures Transmission daemon to be ready to use.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-19
 # @license MIT
 ##########################################################################
 
@@ -45,8 +45,8 @@ echo "\"download-dir\": \"$TRANSMISSION_DAEMON_DOWNLOAD_FOLDER\",
 \"incomplete-dir\": \"$TRANSMISSION_DAEMON_TEMP_FOLDER\",
 \"incomplete-dir-enabled\": true,
 \"peer-port\": $TRANSMISSION_DAEMON_TCP_PORT,
-\"rpc-password\": \"$PASSWORD\",
-\"rpc-username\": \"$USERNAME\",
+\"rpc-password\": \"$appPassword\",
+\"rpc-username\": \"$appUsername\",
 \"rpc-whitelist\": \"*\",
 \"rpc-port\": $TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT,
 \"umask\": 7,

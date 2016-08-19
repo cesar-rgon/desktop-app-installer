@@ -2,7 +2,7 @@
 ##########################################################################
 # This script configures qBittorrent daemon to be ready to use.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-17
+# @version 1.3, 2016-08-19
 # @license MIT
 ##########################################################################
 
@@ -39,7 +39,7 @@ Downloads\SavePath=$QBITTORRENT_DAEMON_DOWNLOAD_FOLDER
 Downloads\TempPathEnabled=true
 Downloads\TempPath=$QBITTORRENT_DAEMON_TEMP_FOLDER
 Downloads\ScanDirs=$QBITTORRENT_DAEMON_TORRENT_FOLDER
-WebUI\Username=$USERNAME
+WebUI\Username=$appUsername
 WebUI\Port=$QBITTORRENT_DAEMON_WEB_PORT
 [LegalNotice]
 Accepted=true" > $homeFolder/.config/qBittorrent/qBittorrent.conf

@@ -2,7 +2,7 @@
 ##########################################################################
 # This script configures Deluge daemon to be ready to use.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-19
 # @license MIT
 ##########################################################################
 
@@ -34,7 +34,7 @@ sudo -u $username mkdir -p $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FO
 
 
 ### SETUP APPLICATION CONFIG FILES #######################################
-echo "$USERNAME:$PASSWORD:10" >> $homeFolder/.config/deluge/auth
+echo "$appUsername:$appPassword:10" >> $homeFolder/.config/deluge/auth
 
 echo "{
   \"file\": 1,
@@ -64,15 +64,15 @@ echo "{
 sed -i "s/=DESCRIPTION.*/=Deluge Daemon/g" $DELUGE_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:deluged/g" $DELUGE_DAEMON_FILE
 sed -i "s/=SYSTEMD_TYPE.*/=simple/g" $DELUGE_DAEMON_FILE
-sed -i "s/=USERNAME.*/=$USERNAME/g" $DELUGE_DAEMON_FILE
-sed -i "s/=GROUP.*/=$USERNAME/g" $DELUGE_DAEMON_FILE
+sed -i "s/=USERNAME.*/=$username/g" $DELUGE_DAEMON_FILE
+sed -i "s/=GROUP.*/=$username/g" $DELUGE_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/deluged -d -l $(echo "$homeFolder" | sed -r 's/\/+/\\\//g')\/.config\/deluge\/daemon.log -L error/g" $DELUGE_DAEMON_FILE
 # Deluge-web service. Available only by a web browser
 sed -i "s/=DESCRIPTION.*/=Deluge Web/g" $DELUGE_WEB_DAEMON_FILE
 sed -i "s/=man:PACKAGE.*/=man:deluge-web/g" $DELUGE_WEB_DAEMON_FILE
 sed -i "s/=SYSTEMD_TYPE.*/=simple/g" $DELUGE_WEB_DAEMON_FILE
-sed -i "s/=USERNAME.*/=$USERNAME/g" $DELUGE_WEB_DAEMON_FILE
-sed -i "s/=GROUP.*/=$USERNAME/g" $DELUGE_WEB_DAEMON_FILE
+sed -i "s/=USERNAME.*/=$username/g" $DELUGE_WEB_DAEMON_FILE
+sed -i "s/=GROUP.*/=$username/g" $DELUGE_WEB_DAEMON_FILE
 sed -i "s/=COMMAND_AND_PARAMETERS_TO_START_SERVICE.*/=\/usr\/bin\/deluge-web/g" $DELUGE_WEB_DAEMON_FILE
 
 
@@ -106,6 +106,16 @@ Categories=Network;P2P;
 Comment=Stop Deluge server" > /usr/share/applications/deluged-stop.desktop
 
 
+### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
+systemctl stop deluged 2>/dev/null
+systemctl stop deluge-web 2>/dev/null
+systemctl enable /etc/systemd/system/deluged.service
+systemctl enable /etc/systemd/system/deluge-web.service
+systemctl daemon-reload
+systemctl start deluged
+systemctl start deluge-web
+
+
 ### OTHERS ###############################################################
 # Extract application icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/deluge.tar.gz"
@@ -115,13 +125,3 @@ chown -R $username:$username $homeFolder/.config/deluge/*
 chmod -R 770 $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER
 find $homeFolder/.config/deluge/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
 find $homeFolder/.config/deluge/* -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
-
-
-### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
-systemctl stop deluged 2>/dev/null
-systemctl stop deluge-web 2>/dev/null
-systemctl enable /etc/systemd/system/deluged.service
-systemctl enable /etc/systemd/system/deluge-web.service
-systemctl daemon-reload
-systemctl start deluged
-systemctl start deluge-web

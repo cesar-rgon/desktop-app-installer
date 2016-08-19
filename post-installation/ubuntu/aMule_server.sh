@@ -7,7 +7,7 @@
 # script will back to parent directory, it means, available for both
 # linux OS.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-16
+# @version 1.3, 2016-08-19
 # @license MIT
 ##########################################################################
 
@@ -72,11 +72,11 @@ categoriesMap[eMule]=$( setCategoryParameter "eMule" "Port" "$AMULE_DAEMON_TCP_P
 categoriesMap[eMule]=$( setCategoryParameter "eMule" "UDPPort" "$AMULE_DAEMON_UDP_PORT" )
 
 categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "AcceptExternalConnections" "1" )
-categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPassword" "`echo -n $PASSWORD | md5sum | cut -d ' ' -f 1`" )
+categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPassword" "`echo -n $appPassword | md5sum | cut -d ' ' -f 1`" )
 categoriesMap[ExternalConnect]=$( setCategoryParameter "ExternalConnect" "ECPort" "$AMULE_DAEMON_CLIENT_PORT" )
 
 categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Enabled" "1" )
-categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Password" "`echo -n $PASSWORD | md5sum | cut -d ' ' -f 1`" )
+categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Password" "`echo -n $appPassword | md5sum | cut -d ' ' -f 1`" )
 categoriesMap[WebServer]=$( setCategoryParameter "WebServer" "Port" "$AMULE_DAEMON_WEB_PORT" )
 
 echo "" > $homeFolder/.aMule/amule.conf

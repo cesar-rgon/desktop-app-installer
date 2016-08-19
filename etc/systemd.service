@@ -13,7 +13,7 @@ Group=GROUP
 # Command and parameters to execute de application daemon
 ExecStart=COMMAND_AND_PARAMETERS_TO_START_SERVICE
 # Permission of the downloader files with application daemon
-UMask=117
+UMask=007
 # Indicate if the service is restarted after failure
 Restart=on-failure
 # Configures the time to wait before service is stopped forcefully.
