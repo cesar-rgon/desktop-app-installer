@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 	1.0, 2014-05-10
-# @version 	1.3, 2016-08-19
+# @version 	1.3, 2016-08-21
 # @license 	MIT
 ##########################################################################
 
@@ -13,7 +13,7 @@
 ##
 function credits
 {
-	if [ -z $DISPLAY ]; then
+	if [ -z "$DISPLAY" ]; then
 		local whiteSpaces="                  "
 		printf "\n%.21s%s\n" "$scriptNameLabel:$whiteSpaces" "$installerTitle" > $tempFolder/linux-app-installer.credits
 		printf "%.21s%s\n" "$scriptDescriptionLabel:$whiteSpaces" "$scriptDescription" >> $tempFolder/linux-app-installer.credits
@@ -34,7 +34,7 @@ function credits
 function installNeededPackages
 {
 	local neededPackages
-	if [ -z $DISPLAY ]; then
+	if [ -z "$DISPLAY" ]; then
 		neededPackages=( dialog tmux )
 	else
 		neededPackages=( zenity libnotify-bin )
@@ -49,7 +49,7 @@ function installNeededPackages
 		for package in "${neededPackages[@]}"; do
 			if [ -z "`dpkg -s $package 2>&1 | grep "installed"`" ]; then
 				echo "$installingApplication $package"
-				if [ -z $DISPLAY ]; then
+				if [ -z "$DISPLAY" ]; then
 					sudo apt-get -y install $package --fix-missing
 				else
 					if [ "$KDE_FULL_SESSION" != "true" ]; then
@@ -106,28 +106,41 @@ function prepareScript
 # 2. Filename must match O.S. arquitecture (*_i386 32bits / *_x64 64bits / other all)
 # 3. Must be placed in targetFolder or the subfolder that matchs your linux distro
 # @since 	v1.3
-# @param 	String targetFolder	Root scripts folder
-# @param 	String appFilename	Filename that starts with appName
-# @result String 							List of path/filename of found files
+# @param 	String targetFolder		Root scripts folder
+# @param 	String fullFilename		Filename[.extension] where filename starts
+#																	with application name
+# @result String 								List of path/filename of found files
 ##
 function getAppFiles
 {
 	if [ -z "$1" ] || [ -z "$2" ]; then
 		echo ""			# All parameters are mandatories
 	else
-		local targetFolder="$1" appFilename="$2"
-		local i386="_i386" x64="_x64" fileList
+		local targetFolder="$1"
+		local fileNameArray filename="" extension=""
+		IFS='.' read -ra fileNameArray <<< "$2"
+		if [ ${#fileNameArray[@]} -gt 1 ]; then
+			# The filename has extension
+			local lastItem="${fileNameArray[((${#fileNameArray[@]}-1))]}"
+			filename="`echo ${fileNameArray[@]/$lastItem/} | tr ' ' '.'`"
+			extension=".$lastItem"
+		else
+			# Filename without extension
+			filename="`echo ${fileNameArray[@]} | tr ' ' '.'`"
+		fi
+
+		local i386="_i386" x64="_x64" fileList=""
 		# Search subscript that matches all O.S. architecture
-		if [ -f "$targetFolder/$appFilename" ]; then fileList+="$targetFolder/$appFilename "; fi
-		if [ -f "$targetFolder/$distro/$appFilename" ]; then fileList+="$targetFolder/$distro/$appFilename "; fi
+		if [ -f "$targetFolder/$filename$extension" ]; then fileList+="$targetFolder/$filename$extension "; fi
+		if [ -f "$targetFolder/$distro/$filename$extension" ]; then fileList+="$targetFolder/$distro/$filename$extension "; fi
 		if [ `uname -m` == "x86_64" ]; then
 			# Search subscript that matches 64 bits O.S. architecture
-			if [[ -f $targetFolder/$appFilename$x64* ]]; then fileList+="$targetFolder/$appFilename$x64.sh "; fi
-			if [[ -f $targetFolder/$distro/$appFilename$x64* ]]; then fileList+="$targetFolder/$distro/$appFilename$x64.sh "; fi
+			if [ -f "$targetFolder/$filename$x64$extension" ]; then fileList+="$targetFolder/$filename$x64$extension "; fi
+			if [ -f "$targetFolder/$distro/$filename$x64$extension" ]; then fileList+="$targetFolder/$distro/$filename$x64$extension "; fi
 		else
 			# Search subscript that matches 32 bits O.S. architecture
-			if [[ -f $targetFolder/$appFilename$i386* ]]; then fileList+="$targetFolder/$appFilename$i386.sh "; fi
-			if [[ -f $targetFolder/$distro/$appFilename$i386* ]]; then fileList+="$targetFolder/$distro/$appFilename$i386.sh "; fi
+			if [ -f "$targetFolder/$filename$i386$extension" ]; then fileList+="$targetFolder/$filename$i386$extension "; fi
+			if [ -f "$targetFolder/$distro/$filename$i386$extension" ]; then fileList+="$targetFolder/$distro/$filename$i386$extension "; fi
 		fi
 		echo "$fileList"
 	fi
@@ -188,12 +201,14 @@ function generateCommandToDisableAppThirdPartyRepo
 		IFS='"' read -ra targetFileNameArray <<< "`grep 'targetFilename=\"' $scriptFile`"
 		targetFileName=${targetFileNameArray[1]}
 		# Command to comment lines starting with 'deb'
-		echo "sed -i 's/^deb/#deb/g' \"/etc/apt/sources.list.d/$targetFileName\""
+		local messageCommand="echo -e \"\n# $  $disableThirdPartyRepo: $appName\"; echo \"$  $disableThirdPartyRepo: $appName\" >> \"$logFile\";"
+		local command="sed -i 's/^deb/#deb/g' `ls /etc/apt/sources.list.d/$targetFileName | tr '\n' ' '`"
+		echo "$messageCommand $command;"
 	done
 }
 
 ##
-# This function generates and executes needed commands to prepare, install
+# This function generates needed commands to prepare, install
 # and setup an application. The source to get the application can be:
 # 1. Official repositories. Steps are:
 #		1a. Install application from repository
@@ -208,15 +223,13 @@ function generateCommandToDisableAppThirdPartyRepo
 # @param String	appName		Application name [mandatory]
 # @param String	message		Message to display on box / window [mandatory]
 ##
-function installApplication
+function generateCommandsInstallApp
 {
-	local appName="$1" message="$step $stepIndex: $2"
-	local needtoUpdateRepos="false"
+	local appName="$1" message="$2" needtoUpdateRepos="false"
 
-	# GENERATE COMMANDS TO PREPARE, INSTALL AND SETUP THE APPLICATION
 	# STEP 1: Generate commands to prepare installation of application
 	local commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-	if [ -n $commands ]; then needtoUpdateRepos="true"; fi
+	if [ -n "$commands" ]; then needtoUpdateRepos="true"; fi
 
 	# STEP 2: Generate commands to add application third-party repo if needed
 	local commadsTPRepo=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
@@ -245,18 +258,26 @@ function installApplication
 	# STEP 8. Generate commands to setup application
 	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 
-	# EXECUTE COMMANDS TO INSTALL THE APPLICATION
+	echo "$commands"
+}
+
+##
+# This function executes bash commands to install applications
+##
+function installApplications
+{
+	local commands="$1"
+
 	if [ -n "$commands" ]; then
 		if [[ "$commands" == NR# ]]; then	commands=${commands/NR#/}; fi
-		if [ -z $DISPLAY ]; then
-				sed -i "s/STEPDESCRIPTION/$message/g" "$homeFolder/.tmux.conf"
+		if [ -z "$DISPLAY" ]; then
+				sed -i "s/MESSAGE/$installingApplications/g" "$homeFolder/.tmux.conf"
 				tmux new-session sudo bash -c "$commands"
 		else
 			local autoclose=""
 			if [[ "$commands" != NR# ]]; then autoclose="--auto-close"; fi
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$message" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$installerTitle" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
-		stepIndex=$(($stepIndex+1))
 	fi
 }
 
@@ -269,10 +290,10 @@ function executeBeginningOperations
 	local beginningOperations="cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/;"
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
 	beginningOperations+=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
-	if [ -z $DISPLAY ]; then
-		clear; sudo bash -c "$beginningOperations" | dialog --title "$step 1: $settingDebconfInterface" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
+	if [ -z "$DISPLAY" ]; then
+		clear; sudo bash -c "$beginningOperations" | dialog --title "$settingDebconfInterface" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
 	else
-		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$beginningOperations" ) | zenity --progress --title="$step 1: $settingDebconfInterface" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$beginningOperations" ) | zenity --progress --title="$installerTitle" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 }
 
@@ -284,10 +305,10 @@ function executeFinalOperations
 {
 	local finalOperations=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
 	finalOperations+="rm -f /etc/sudoers.d/app-installer-sudo;"
-	if [ -z $DISPLAY ]; then
-		clear; sudo bash -c "$finalOperations" | dialog --title "$step $stepIndex: $cleaningTempFiles" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
+	if [ -z "$DISPLAY" ]; then
+		clear; sudo bash -c "$finalOperations" | dialog --title "$cleaningTempFiles" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
 	else
-		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$finalOperations" ) | zenity --progress --title="$step $stepIndex: $cleaningTempFiles" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$finalOperations" ) | zenity --progress --title="$installerTitle" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
@@ -299,7 +320,7 @@ function executeFinalOperations
 ##
 function showLogs
 {
-	if [ -z $DISPLAY ]; then
+	if [ -z "$DISPLAY" ]; then
 		dialog --title "$installerLogsLabel" --backtitle "$installerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
@@ -315,7 +336,7 @@ function showLogs
 function showCredentials
 {
 	if [ -f "$tempFolder/credentials" ]; then
-		if [ -z $DISPLAY ]; then
+		if [ -z "$DISPLAY" ]; then
 			dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
 		else
 			notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" "" -t 10000
@@ -356,22 +377,25 @@ function installAndSetupApplications
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
 		local totalAppsNumber=${#appsToInstall[@]} appIndex=1 appName commands commadsTPRepo needtoUpdateRepos
-		if [ -n $DISPLAY ]; then
-			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000; fi
+		if [ -n "$DISPLAY" ]; then
+			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000
 		else
-			sed -i "s/TOTALAPPS/$total: $totalAppsNumber/g" "$homeFolder/.tmux.conf"; fi
+			echo "AQUI" > /home/cesar/debug
+			sed -i "s/TOTALAPPS/$total: $totalAppsNumber/g" "$homeFolder/.tmux.conf"
 		fi
 
 		# Execute initial commands to proceed with installation proccess
 		executeBeginningOperations
+		local commandsToInstall
 		for appName in ${appsToInstall[@]}; do
 			# Generate and executes commands to prepare, install and setup the application
-			installApplication "$appName" "$installingApplication $appName $appIndex/$totalAppsNumber"
+			commandsToInstall+=$( generateCommandsInstallApp "$appName" "$installingApplication $appName $appIndex/$totalAppsNumber" )
 			getAppCredentials "$appName"
 			appIndex=$(($appIndex+1))
 		done
+		installApplications "$commandsToInstall"
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
 	fi
-	if [ -n $DISPLAY ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi
+	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$linuxAppInstallerAuthor" -t 10000; fi
 }

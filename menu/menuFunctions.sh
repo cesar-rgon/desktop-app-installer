@@ -3,14 +3,14 @@
 # This script contains menu functions used only by main script.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-31
-# @version 	1.3, 2016-08-12
+# @version 	1.3, 2016-08-20
 # @license 	MIT
 ##########################################################################
 
 
 # IMPORT GLOBAL VARIABLES
 . $scriptRootFolder/menu/menuVariables.properties
-if [ -z $DISPLAY ]; then . $scriptRootFolder/menu/dialogFunctions.sh; else . $scriptRootFolder/menu/zenityFunctions.sh; fi
+if [ -z "$DISPLAY" ]; then . $scriptRootFolder/menu/dialogFunctions.sh; else . $scriptRootFolder/menu/zenityFunctions.sh; fi
 
 
 ##

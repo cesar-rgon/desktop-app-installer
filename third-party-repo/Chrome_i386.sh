@@ -3,7 +3,7 @@
 # This script executes commands to add third-party repository of Google
 # Chrome application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-20
 # @license MIT
 ##########################################################################
 
@@ -25,6 +25,6 @@ else
 fi
 
 echo "$message" 1>&2
-if [ -n $DISPLAY ]; then
+if [ -n "$DISPLAY" ]; then
 	notify-send -i "$installerIconFolder/applications-other.svg" "ERROR" "$message"
 fi
