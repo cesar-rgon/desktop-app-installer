@@ -32,7 +32,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 19/08/2016 (dd/mm/yyyy)
+Último cambio: 22/08/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -112,19 +112,16 @@ $ bash ./scripts/applicationName.sh
   * El script EJECUTA OPERACIONES de POST-INSTALACION para configurar la aplicación instalada si existe un sub-script propio para este propósito.
   * El script ALMACENA CREDENCIALES de AUTENTICACION a la aplicación, si esta lo requiere.
 
-4. El script EJECUTA OPERACIONES FINALES para limpiar paquetes y eliminar ficheros/carpetas temporales.
-
-5. El script MUESTRA LOGS del proceso de instalación que contiene los pasos de instalación y posbles errores producidos.
-
-6. El script MUESTRA las CREDENCIALES de aquellas aplicaciones instaladas que requieren autenticación de usuario.
+4. El script EJECUTA OPERACIONES FINALES para limpiar paquetes, eliminar ficheros/carpetas temporales, mostrar logs y credenciales de login.
 
 ```
-NOTA 1: El script principal ejecuta todos los pasos previos mientras
-que los scripts indididuales por aplicación omiten el primer paso.
+NOTA 1: El script principal ejecuta todos los pasos previos mientras que los scripts indididuales por aplicación omiten el primer paso.
 
-NOTA 2: El script actualiza automáticamente los repositorios tras
-las operaciones de pre-instalación, añadir repositorio de tercero
-o desactivar el mismo.
+NOTA 2: El script actualiza automáticamente los repositorios tras las operaciones de pre-instalación, añadir repositorio de tercero o desactivar el mismo.
+
+NOTA 3: Los logs generados durante el proceso de instalación contiene los pasos seguidos y posibles errores ocurridos.
+
+NOTA 4: Las credenciales de login son usadas por aquellas aplicaciones instaladas que requieren autenticación de usuario.
 ```
 
 ---

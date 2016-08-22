@@ -32,7 +32,7 @@ There are a lot of applications or desktops enviroments included in the default 
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/19 (yyyy/mm/dd)
+Last change: 2016/08/22 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -113,18 +113,16 @@ $ bash ./scripts/applicationName.sh
   * The script EXECUTES POST-INSTALLATION OPERATIONS to set-up the installed application if exists a custom sub-script for that purpose.
   * The script STORES CREDENTIALS for AUTHENTICATION to the applicacion, if required.
 
-4. The script EXECUTES FINAL OPERATIONS to clean packages and remove temporal files/folders.
-
-5. The script SHOWS LOGS of the installation process which contains installation steps and posible errors occurred.
-
-6. The script SHOWS the CREDENTIALS of those installed applications that require user authentication.
+4. The script EXECUTES FINAL OPERATIONS to clean packages, remove temporal files/folders, show logs and show login credentials.
 
 ```
-NOTE 1: Main script runs all the previous steps whereas each individual
-      application script skip step one and run the remaining.
+NOTE 1: Main script runs all the previous steps whereas each individual application script skip step one and run the remaining.
 
-NOTE 2: The script automatically updates repositories after pre-installation
-      operations, add third-party repository or disable it.
+NOTE 2: The script automatically updates repositories after pre-installation operations, add third-party repository or disable it.
+
+NOTE 3: Logs generated during installation process contains installation steps and posible errors occurred.
+
+NOTE 4: The Login credentials are used by those installed applications that require user authentication.
 ```
 
 ---
