@@ -278,7 +278,9 @@ function installApplications
 	if [ -z "$DISPLAY" ]; then
 			if [ -n "$commandsRepoApp" ] || [ -n "$commandsNonRepoApp" ]; then
 				sed -i "s/MESSAGE/$installingApplications/g" "$homeFolder/.tmux.conf"
-				tmux new-session sudo bash -c "$commandsRepoApp $commandsNonRepoApp"
+				echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
+				echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
+				tmux new-session sudo bash "$tempFolder/commandsToInstallApps"
 			fi
 	else
 		if [ -n "$commandsRepoApp" ]; then
