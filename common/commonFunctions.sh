@@ -202,8 +202,8 @@ function generateCommandToDisableAppThirdPartyRepo
 		targetFileName=${targetFileNameArray[1]}
 		# Command to comment lines starting with 'deb'
 		local messageCommand="echo -e \"\n# $  $disableThirdPartyRepo: $appName\"; echo \"$  $disableThirdPartyRepo: $appName\" >> \"$logFile\";"
-		local command="sed -i 's/^deb/#deb/g' `ls /etc/apt/sources.list.d/$targetFileName | tr '\n' ' '`"
-		echo "$messageCommand $command;"
+		local command="sed -i 's/^deb/#deb/g' `ls /etc/apt/sources.list.d/$targetFileName 2>>/dev/null | tr '\n' ' '` 2>>\"$logFile\";"
+		echo "$messageCommand $command"
 	done
 }
 
