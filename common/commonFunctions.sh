@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-08-22
+# @version 	1.3, 2016-09-19
 # @license 	MIT
 ##########################################################################
 
@@ -95,7 +95,7 @@ function prepareScript
 	installNeededPackages
 	cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
 	sed -i "s/LEFT-LENGHT/$(($width - 10))/g" "$homeFolder/.tmux.conf"
-	sed -i "s/RIGHT-LENGT/10/g" "$homeFolder/.tmux.conf"
+	sed -i "s/RIGHT-LENGHT/10/g" "$homeFolder/.tmux.conf"
 	echo -e "$logFile\n$boxSeparator" > "$logFile"
 	credits
 }
@@ -224,7 +224,7 @@ function generateCommandToDisableAppThirdPartyRepo
 ##
 function generateCommandsInstallApp
 {
-	local appName="$1" totalAppsNumber="$2"
+	local appName="$1"
 	local needtoUpdateRepos="false"
 
 	# STEP 1: Generate commands to prepare installation of application
@@ -244,12 +244,12 @@ function generateCommandsInstallApp
 
 	# STEP 4. Generate commands to install the application
 	# CASE 1. Non-repo application
-	local commandsNR=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $appIndex/$totalAppsNumber" )
+	local commandsNR=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $nonRepoAppIndex/totalNonRepoAppsNumber" )
 	if [ -n "$commandsNR" ]; then
 		commands+="$commandsNR"
 	else
 		# CASE 2. Repo application
-		commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $appIndex/$totalAppsNumber" "$appName" )
+		commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $repoAppIndex/totalRepoAppsNumber" "$appName" )
 	fi
 
 	if [ -n "$commadsTPRepo" ]; then
@@ -271,23 +271,30 @@ function generateCommandsInstallApp
 
 ##
 # This function executes bash commands to install applications
+# @since v1.3
+# @param String	commandsRepoApp	 		Commands to install repository apps [optional]
+# @param String	commandsNonRepoApp 	Commands to install non-repository apps [optional]
 ##
 function installApplications
 {
-	local commandsRepoApp="$1" commandsNonRepoApp="$2" message="$3"
+	local commandsRepoApp="$1" commandsNonRepoApp="$2"
+	local totalRepoAppsNumber=$(($repoAppIndex-1))
+	local totalNonRepoAppsNumber=$(($nonRepoAppIndex-1))
+
 	if [ -z "$DISPLAY" ]; then
-			if [ -n "$commandsRepoApp" ] || [ -n "$commandsNonRepoApp" ]; then
-				sed -i "s/MESSAGE/$installingApplications/g" "$homeFolder/.tmux.conf"
-				echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
-				echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
-				tmux new-session sudo bash "$tempFolder/commandsToInstallApps"
-			fi
+		if [ -n "$commandsRepoApp" ] || [ -n "$commandsNonRepoApp" ]; then
+			sed -i "s/MESSAGE/$installingApplications/g" "$homeFolder/.tmux.conf"
+			sed -i "s/TOTALAPPS/$total: $(($totalRepoAppsNumber+$totalNonRepoAppsNumber))/g" "$homeFolder/.tmux.conf"
+			echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
+			echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
+		  tmux new-session sudo bash "$tempFolder/commandsToInstallApps"
+		fi
 	else
 		if [ -n "$commandsRepoApp" ]; then
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commandsRepoApp" ) | zenity --progress --title="$installingApplications. $message" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commandsRepoApp" ) | zenity --progress --title="$installingRepoApplications. $total: $totalRepoAppsNumber" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
 		if [ -n "$commandsNonRepoApp" ]; then
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commandsNonRepoApp" ) | zenity --progress --title="$installingApplications. $message" --no-cancel --pulsate --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commandsNonRepoApp" ) | zenity --progress --title="$installingNonRepoApplications. $total: $totalNonRepoAppsNumber" --no-cancel --pulsate --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
 	fi
 }
@@ -387,10 +394,7 @@ function installAndSetupApplications
 	local appsToInstall=("${!1}")
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		local totalAppsNumber=${#appsToInstall[@]}
-		if [ -z "$DISPLAY" ]; then
-			sed -i "s/TOTALAPPS/$total: $totalAppsNumber/g" "$homeFolder/.tmux.conf"
-		else
+		if [ -n "$DISPLAY" ]; then
 			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000
 		fi
 
@@ -399,16 +403,22 @@ function installAndSetupApplications
 		local appName commands commandsRepoApp commandsNonRepoApp
 		for appName in ${appsToInstall[@]}; do
 			# Generate and executes commands to prepare, install and setup the application
-			commands=$( generateCommandsInstallApp "$appName" $totalAppsNumber )
+			commands=$( generateCommandsInstallApp "$appName" )
 			if [[ "$commands" != NR#* ]]; then
 				commandsRepoApp+="$commands"
+				repoAppIndex=$(($repoAppIndex+1))
 			else
 				commandsNonRepoApp+=${commands/NR#/}
+				nonRepoAppIndex=$(($nonRepoAppIndex+1))
 			fi
 			getAppCredentials "$appName"
-			appIndex=$(($appIndex+1))
 		done
-		installApplications "$commandsRepoApp" "$commandsNonRepoApp" "$total: $totalAppsNumber"
+
+		local totalRepoAppsNumber=$(($repoAppIndex-1)) totalNonRepoAppsNumber=$(($nonRepoAppIndex-1))
+		commandsRepoApp=`echo "$commandsRepoApp" | sed "s/totalRepoAppsNumber/$totalRepoAppsNumber/g"`
+		commandsNonRepoApp=`echo "$commandsNonRepoApp" | sed "s/totalNonRepoAppsNumber/$totalNonRepoAppsNumber/g"`
+		installApplications "$commandsRepoApp" "$commandsNonRepoApp"
+
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
 	fi
