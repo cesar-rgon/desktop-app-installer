@@ -287,7 +287,7 @@ function installApplications
 			sed -i "s/TOTALAPPS/$total: $(($totalRepoAppsNumber+$totalNonRepoAppsNumber))/g" "$homeFolder/.tmux.conf"
 			echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
 			echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
-		  tmux new-session "sudo bash $tempFolder/commandsToInstallApps"
+		  	tmux new-session "sudo bash $tempFolder/commandsToInstallApps"
 		fi
 	else
 		if [ -n "$commandsRepoApp" ]; then
