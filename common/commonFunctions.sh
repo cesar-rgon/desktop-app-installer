@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-19
+# @version 	1.3, 2016-09-20
 # @license 	MIT
 ##########################################################################
 
@@ -287,7 +287,7 @@ function installApplications
 			sed -i "s/TOTALAPPS/$total: $(($totalRepoAppsNumber+$totalNonRepoAppsNumber))/g" "$homeFolder/.tmux.conf"
 			echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
 			echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
-		  tmux new-session sudo bash "$tempFolder/commandsToInstallApps"
+		  tmux new-session "sudo bash $tempFolder/commandsToInstallApps"
 		fi
 	else
 		if [ -n "$commandsRepoApp" ]; then
