@@ -17,7 +17,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
-. $scriptRootFolder/credentials/qBittorrent_server.properties
+. $credentialFolder/qBittorrent_server.properties
 
 ### VARIABLES ############################################################
 QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
@@ -28,9 +28,20 @@ QBITTORRENT_DAEMON_TCP_PORT="8999"
 QBITTORRENT_DAEMON_FILE="/etc/systemd/system/qbittorrent-nox.service"
 
 
+### COPY SYSTEMD SERVICE SCRIPT ##########################################
+yes | cp -f $scriptRootFolder/etc/systemd.service $QBITTORRENT_DAEMON_FILE
+
+
+### CREATE QBITTORRENT USER ##############################################
+useradd qbtuser -m
+# Add system user to qBittorrent group
+usermod -a -G qbtuser $username
+
+
 ### CREATE FOLDERS #######################################################
 sudo -u $username mkdir -p $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
 sudo -u $username mkdir -p $homeFolder/.local/share/data/qBittorrent
+
 
 ### SETUP APPLICATION CONFIG FILES #######################################
 echo "[Preferences]

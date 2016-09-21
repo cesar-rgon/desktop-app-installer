@@ -1,9 +1,9 @@
 #!/bin/bash
 ##########################################################################
-# This script executes commands to add third-party repository of Grub
-# Customizer application.
+# This script executes commands to add third-party repository of
+# Sublime Text 3 application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-08-14
 # @license MIT
 ##########################################################################
 
@@ -19,12 +19,13 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Variables
-repositoryURL="http://ppa.launchpad.net/danielrichter2007/grub-customizer/ubuntu"
+repositoryURL="http://ppa.launchpad.net/webupd8team/sublime-text-3/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-targetFilename="*grub-customizer*.list"
+repositoryFilename="webupd8team-ubuntu-sublime-text-3*.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
-	add-apt-repository -y ppa:danielrichter2007/grub-customizer 2>&1
+# SE ESTA DUPLICANDO DEB-SRC
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
+	add-apt-repository -y ppa:webupd8team/sublime-text-3
 fi 2>/dev/null

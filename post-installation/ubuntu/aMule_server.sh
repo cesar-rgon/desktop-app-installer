@@ -22,7 +22,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
-. $scriptRootFolder/credentials/aMule_server.properties
+. $credentialFolder/aMule_server.properties
 
 ### VARIABLES ############################################################
 AMULE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/aMule"
@@ -34,6 +34,10 @@ AMULE_DAEMON_UDP_PORT="4672"
 AMULE_DAEMON_FILE="/etc/systemd/system/amuled.service"
 categories=( eMule Browser Proxy ExternalConnect WebServer GUI Razor_Preferences SkinGUIOptions Statistics Obfuscation PowerManagement UserEvents HTTPDownload )
 declare -A categoriesMap
+
+### COPY SYSTEMD SERVICE SCRIPT ##########################################
+yes | cp -f $scriptRootFolder/etc/systemd.service $AMULE_DAEMON_FILE
+
 
 ### FUNCTIONS ############################################################
 # This function sets a category parameter in amule.conf file

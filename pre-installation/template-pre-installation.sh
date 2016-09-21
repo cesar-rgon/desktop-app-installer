@@ -24,4 +24,20 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 #	* etc.										#
 #########################################################################################
 
+### Commands to add a third party repository if required
+# Optional variables
+repositoryURL="..."
+repository="deb $repositoryURL <parameters>"
+repositorySource="deb-src $repositoryURL <parameters>"
+# MANDATORY VARIABLE. Required for main script. Must be declared always to properly add third-party-repo
+repositoryFilename="destinationFilename"
+
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
+	# Command to add repository key if needed
+	# ...
+	echo "$repository" >> "/etc/apt/sources.list.d/$repositoryFilename"
+	# Uncomment if needed [optional]
+	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"
+fi 2>/dev/null
+
 # Commands to prepare the installation of an application ...

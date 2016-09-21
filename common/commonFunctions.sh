@@ -192,17 +192,17 @@ function generateCommands
 ##
 function generateCommandToDisableAppThirdPartyRepo
 {
-	local appName="$1" scriptFile targetFileNameArray targetFileName
-	local tprScriptList=( $( getAppFiles "$thirdPartyRepoFolder" "$appName.sh" ) )
+	local appName="$1" scriptFile repositoryFileNameArray repositoryFilename
+	local tprScriptList=( $( getAppFiles "$preInstallationFolder" "$appName.sh" ) )
 
 	for scriptFile in "${tprScriptList[@]}"; do
-		# Extract targetFilename value from script
-		local targetFileNameArray
-		IFS='"' read -ra targetFileNameArray <<< "`grep 'targetFilename=\"' $scriptFile`"
-		targetFileName=${targetFileNameArray[1]}
+		# Extract repositoryFilename value from script
+		local repositoryFileNameArray
+		IFS='"' read -ra repositoryFileNameArray <<< "`grep 'repositoryFilename=\"' $scriptFile`"
+		repositoryFilename=${repositoryFileNameArray[1]}
 		# Command to comment lines starting with 'deb'
 		local messageCommand="echo -e \"\n# $  $disableThirdPartyRepo: $appName\"; echo \"$  $disableThirdPartyRepo: $appName\" >> \"$logFile\";"
-		local command="sed -i 's/^deb/#deb/g' `ls /etc/apt/sources.list.d/$targetFileName 2>>/dev/null | tr '\n' ' '` 2>>\"$logFile\";"
+		local command="sed -i 's/^deb/#deb/g' `ls /etc/apt/sources.list.d/$repositoryFilename 2>>/dev/null | tr '\n' ' '` 2>>\"$logFile\";"
 		echo "$messageCommand $command"
 	done
 }
@@ -226,23 +226,19 @@ function generateCommandsInstallApp
 {
 	local appName="$1"
 	local needtoUpdateRepos="false"
+	# Check if the application has a script with commands to add a third-party repository
+	local checkTPRepo=`grep -r "repositoryFilename" 2>/dev/null | awk -F : '{print $1}' | uniq`
 
 	# STEP 1: Generate commands to prepare installation of application
 	local commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
 	if [ -n "$commands" ]; then needtoUpdateRepos="true"; fi
 
-	# STEP 2: Generate commands to add application third-party repo if needed
-	local commadsTPRepo=$( generateCommands "$thirdPartyRepoFolder" "$appName" "$addingThirdPartyRepo" )
-	if [ -n "$commadsTPRepo" ]; then
-		commands+="$commadsTPRepo"; needtoUpdateRepos="true"
-	fi
-
-	# STEP 3: Generate commands to update repositories if required
+	# STEP 2: Generate commands to update repositories if required
 	if [ "$needtoUpdateRepos" == "true" ]; then
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
 
-	# STEP 4. Generate commands to install the application
+	# STEP 3. Generate commands to install the application
 	# CASE 1. Non-repo application
 	local commandsNR=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $nonRepoAppIndex/totalNonRepoAppsNumber" )
 	if [ -n "$commandsNR" ]; then
@@ -252,7 +248,7 @@ function generateCommandsInstallApp
 		commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $repoAppIndex/totalRepoAppsNumber" "$appName" )
 	fi
 
-	if [ -n "$commadsTPRepo" ]; then
+	if [ -n "$checkTPRepo" ]; then
 		# STEP 5. Generate commands to disable third-party repository
 		commands+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
 		# STEP 6. Generate commands to update repositories again

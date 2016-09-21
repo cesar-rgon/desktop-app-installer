@@ -13,7 +13,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 # Uncomment if authentication is required
-#. $scriptRootFolder/credentials/applicationName.properties
+#. $credentialFolder/applicationName.properties
 
 #########################################################################################
 # CONSIDERATIONS									#

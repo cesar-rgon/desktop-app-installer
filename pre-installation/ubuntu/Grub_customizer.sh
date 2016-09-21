@@ -1,9 +1,9 @@
 #!/bin/bash
 ##########################################################################
-# This script executes commands to add third-party repository of Atom
-# editor application. Official text editor of Github.
+# This script executes commands to add third-party repository of Grub
+# Customizer application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-14
+# @version 1.3, 2016-08-09
 # @license MIT
 ##########################################################################
 
@@ -19,12 +19,12 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Variables
-repositoryURL="http://ppa.launchpad.net/webupd8team/atom/ubuntu"
+repositoryURL="http://ppa.launchpad.net/danielrichter2007/grub-customizer/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-targetFilename="webupd8team-ubuntu-atom*.list"
+repositoryFilename="*grub-customizer*.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
-	add-apt-repository -y ppa:webupd8team/atom 2>&1
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
+	add-apt-repository -y ppa:danielrichter2007/grub-customizer 2>&1
 fi 2>/dev/null

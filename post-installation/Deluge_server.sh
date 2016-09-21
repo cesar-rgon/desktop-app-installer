@@ -17,7 +17,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
-. $scriptRootFolder/credentials/Deluge_server.properties
+. $credentialFolder/Deluge_server.properties
 
 ### VARIABLES ############################################################
 DELUGE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/deluge"
@@ -27,6 +27,11 @@ DELUGE_DAEMON_TCP_AND_CLIENT_PORT="58846"
 DELUGE_DAEMON_WEB_PORT="8112"
 DELUGE_DAEMON_FILE="/etc/systemd/system/deluged.service"
 DELUGE_WEB_DAEMON_FILE="/etc/systemd/system/deluge-web.service"
+
+
+### COPY SYSTEMD SERVICE SCRIPT
+yes | cp -f $scriptRootFolder/etc/systemd.service $DELUGE_DAEMON_FILE
+yes | cp -f $scriptRootFolder/etc/systemd.service $DELUGE_WEB_DAEMON_FILE
 
 
 ### CREATE FOLDERS #######################################################

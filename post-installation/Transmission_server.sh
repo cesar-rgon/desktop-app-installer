@@ -17,7 +17,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
-. $scriptRootFolder/credentials/Transmission_server.properties
+. $credentialFolder/Transmission_server.properties
 
 ### VARIABLES ############################################################
 TRANSMISSION_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/Transmission"
@@ -26,6 +26,10 @@ TRANSMISSION_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
 TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT="9091"
 TRANSMISSION_DAEMON_TCP_PORT="51413"
 TRANSMISSION_DAEMON_FILE="/etc/systemd/system/transmission-daemon.service"
+
+
+### COPY SYSTEMD SERVICE SCRIPT ##########################################
+yes | cp -f $scriptRootFolder/etc/systemd.service $TRANSMISSION_DAEMON_FILE
 
 
 ### CREATE FOLDERS #######################################################

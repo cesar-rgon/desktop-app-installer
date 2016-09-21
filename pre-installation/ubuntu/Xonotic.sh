@@ -1,9 +1,9 @@
 #!/bin/bash
 ##########################################################################
-# This script executes commands to add third-party repository of
-# Sublime Text 3 application.
+# This script executes commands to add third-party repository to be able
+# to install Xonotic game
 # @author César Rodríguez González
-# @version 1.3, 2016-08-14
+# @version 1.3, 2016-08-09
 # @license MIT
 ##########################################################################
 
@@ -19,13 +19,14 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Variables
-repositoryURL="http://ppa.launchpad.net/webupd8team/sublime-text-3/ubuntu"
-#repository="deb $repositoryURL $distroName main"
-#repositorySource="deb-src $repositoryURL $distroName main"
-targetFilename="webupd8team-ubuntu-sublime-text-3*.list"
+repositoryURL="http://archive.getdeb.net/ubuntu"
+repository="deb $repositoryURL xenial-getdeb games"
+#repositorySource="deb-src $repositoryURL xenial-getdeb games"
+repositoryFilename="getdeb.list"
 
 # Commands to add third-party repository of the application.
-# SE ESTA DUPLICANDO DEB-SRC
-if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
-	add-apt-repository -y ppa:webupd8team/sublime-text-3
-fi 2>/dev/null
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
+	# Command to add repository key if needed
+	wget -q -O - http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+	echo "$repository" > "/etc/apt/sources.list.d/$repositoryFilename"
+fi

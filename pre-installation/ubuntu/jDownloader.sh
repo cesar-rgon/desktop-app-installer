@@ -1,6 +1,7 @@
 #!/bin/bash
 ##########################################################################
-# This script prepare Deluge daemon installation.
+# This script executes commands to add third-party repository of
+# jDownloader application.
 # @author César Rodríguez González
 # @version 1.3, 2016-08-09
 # @license MIT
@@ -10,7 +11,7 @@
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
 # Parameters
-if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/.."; fi
+if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/../.."; fi
 if [ -n "$2" ]; then username="$2"; else username="`whoami`"; fi
 if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
@@ -18,9 +19,12 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Variables
-DELUGE_DAEMON_FILE="/etc/systemd/system/deluged.service"
-DELUGE_WEB_DAEMON_FILE="/etc/systemd/system/deluge-web.service"
+repositoryURL="http://ppa.launchpad.net/jd-team/jdownloader/ubuntu"
+#repository="deb $repositoryURL $distroName main"
+#repositorySource="deb-src $repositoryURL $distroName main"
+repositoryFilename="*jdownloader*.list"
 
-# Copy systemd service script
-yes | cp -f $scriptRootFolder/etc/systemd.service $DELUGE_DAEMON_FILE
-yes | cp -f $scriptRootFolder/etc/systemd.service $DELUGE_WEB_DAEMON_FILE
+# Commands to add third-party repository of the application.
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
+	add-apt-repository -y ppa:jd-team/jdownloader 2>&1
+fi

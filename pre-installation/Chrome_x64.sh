@@ -23,13 +23,13 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 repositoryURL="http://dl.google.com/linux/chrome/deb/"
 repository="deb [arch=amd64] $repositoryURL stable main"
 repositorySource="deb-src [arch=amd64] $repositoryURL stable main"
-targetFilename="google-chrome.list"
+repositoryFilename="google-chrome.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$targetFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$targetFilename" ]; then
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
 	# Command to add repository key if needed
 	wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub 2>&1 | apt-key add -
-	echo "$repository" >> "/etc/apt/sources.list.d/$targetFilename"
+	echo "$repository" >> "/etc/apt/sources.list.d/$repositoryFilename"
 	# Uncomment if needed [optional]
-	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$targetFilename"
+	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"
 fi 2>/dev/null

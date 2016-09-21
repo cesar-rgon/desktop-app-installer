@@ -1,6 +1,7 @@
 #!/bin/bash
 ##########################################################################
-# This script prepare qBittorrent daemon installation.
+# This script executes commands to add third-party repository of Cinelerra
+# application.
 # @author César Rodríguez González
 # @version 1.3, 2016-08-09
 # @license MIT
@@ -18,7 +19,12 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Variables
-AMULE_DAEMON_FILE="/etc/systemd/system/amuled.service"
+repositoryURL="http://ppa.launchpad.net/cinelerra-ppa/ppa/ubuntu"
+#repository="deb $repositoryURL $distroName main"
+#repositorySource="deb-src $repositoryURL $distroName main"
+repositoryFilename="cinelerra*.list"
 
-# Copy systemd service script
-yes | cp -f $scriptRootFolder/etc/systemd.service $AMULE_DAEMON_FILE
+# Commands to add third-party repository of the application.
+if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
+	add-apt-repository -y ppa:cinelerra-ppa/ppa 2>&1
+fi 2>/dev/null
