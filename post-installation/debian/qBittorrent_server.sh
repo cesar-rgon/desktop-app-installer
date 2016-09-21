@@ -2,7 +2,7 @@
 ##########################################################################
 # This script configures qBittorrent daemon to be ready to use.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-19
+# @version 1.3, 2016-09-21
 # @license MIT
 ##########################################################################
 

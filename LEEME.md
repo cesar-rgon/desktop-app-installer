@@ -21,18 +21,17 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 >   - [Entendiendo la estructura del proyecto](#51-entendiendo-la-estructura-del-proyecto)  
 >   - [Añadir nueva aplicación a una categoría. Modificar o borrar una existente](#52-añadir-nueva-aplicación-a-una-categoría-modificar-o-borrar-una-existente)  
 >   - [Añadir nuevo subscript para instalar una aplicación](#53-añadir-nuevo-subscript-para-instalar-una-aplicación)  
->   - [Añadir nuevo subscript para agregar un repositorio de tercero](#54-añadir-nuevo-subscript-para-agregar-un-repositorio-de-tercero)  
->   - [Añadir nuevo subscript para preparar la instalación de una aplicación](#55-añadir-nuevo-subscript-para-preparar-la-instalación-de-una-aplicación)
->   - [Añadir nuevo subscript para instalar una aplicación externa a repositorios](#56-añadir-nuevo-subscript-para-instalar-una-aplicación-externa-a-repositorios)  
->   - [Añadir nuevo subscript para configurar una aplicación](#57-añadir-nuevo-subscript-para-configurar-una-aplicación)  
->   - [Añadir nuevo subscript para configurar el soporte EULA](#58-añadir-nuevo-subscript-para-configurar-el-soporte-eula)
+>   - [Añadir nuevo subscript para preparar la instalación de una aplicación](#54-añadir-nuevo-subscript-para-preparar-la-instalación-de-una-aplicación)
+>   - [Añadir nuevo subscript para instalar una aplicación externa a repositorios](#55-añadir-nuevo-subscript-para-instalar-una-aplicación-externa-a-repositorios)  
+>   - [Añadir nuevo subscript para configurar una aplicación](#56-añadir-nuevo-subscript-para-configurar-una-aplicación)  
+>   - [Añadir nuevo subscript para configurar el soporte EULA](#57-añadir-nuevo-subscript-para-configurar-el-soporte-eula)
 > 6. [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción)
 
 ```
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 22/08/2016 (dd/mm/yyyy)
+Último cambio: 21/09/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -56,13 +55,13 @@ Versión:       1.3
 #### 2.1 Método 1. Clonar este repositorio
 ```bash
 $ sudo apt-get install git
-$ git clone -b master https://github.com/cesar-rgon/linux-app-installer.git
-$ cd linux-app-installer
+$ git clone https://github.com/cesar-rgon/app-installer.git
+$ cd app-installer
 ```
 
 #### 2.2 Método 2. Descargar y extraer ficheros
 ```bash
-$ wget https://github.com/cesar-rgon/linux-app-installer/archive/master.tar.gz
+$ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
 $ cd linux-app-installer-master
 ```
@@ -105,8 +104,7 @@ $ bash ./scripts/applicationName.sh
 2. El script EJECUTA OPERACIONES INICIALES para preparar la instalación de las aplicaciones seleccionadas.
 
 3. Por cada aplicación, ejecuta los siguientes pasos:
-  * El script EJECUTA OPERACIONES de PRE-INSTALACIÓN de la aplicación a ser instalada si existe un sub-script propio para este propósito.
-  * El script AÑADE REPOSITORIO de TERCERO de la aplicación a ser instalada si existe un sub-script propio para este propósito.
+  * El script EJECUTA OPERACIONES de PRE-INSTALACIÓN de la aplicación a ser instalada si existe un sub-script específico para este propósito. El sub-script podría añadir un repositorio de tercero y/o preparar la instalación de la aplicación.
   * El script INSTALA la APLICACIÓN, con soporte EULA, tomando como fuente los repositorios oficiales, de terceros o bien un sub-script propio creado para tal propósito.
   * El script DESACTIVA automáticamente el REPOSITORIO de TERCERO de la aplicación instalada para evitar posibles problemas derivados de esto.
   * El script EJECUTA OPERACIONES de POST-INSTALACION para configurar la aplicación instalada si existe un sub-script propio para este propósito.
@@ -133,11 +131,9 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 #### 5.1 Entendiendo la estructura del proyecto
 Árbol de directorios y algunos ficheros:
 ```
-├── applist                 Contiene listado de aplicaciones disponibles para instalar en cada distribucion linux soportada
-│   ├── applicationList.debian
-│   ├── applicationList.linuxmint
-│   ├── applicationList.lmde
-│   └── applicationList.ubuntu
+├── app-scripts             Contiene un script de instalación por aplicación
+│   ├── template-script.sh
+│   └── *.sh
 │
 ├── common                  Contiene funciones comúnes, variables comunes y comandos usados por los scripts de instalación
 │   ├── commonFunctions.sh
@@ -145,17 +141,31 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── installapp.sh
 │   └── *.sh
 │
-├── credentials             Contiene un fichero por aplicacion con nombre-usuario/contraseña requerido para autenticación
-│   ├── template-credentials.properties
-│   └── *.properties
-│
 ├── etc                     Contiene ficheros de configuración usados por subscripts y el número de version del script principal
 │   ├── systemd.service
 │   ├── version
-│   └── *
-│
-├── eula                    Evita preguntas de aceptacion de terminos de uso de algunas aplicaciones durante el proceso de instalacion
-│   ├── template-eula
+│   │
+│   ├── applist             Contiene listado de aplicaciones disponibles para instalar en cada distribucion linux soportada
+│   │   ├── applicationList.debian
+│   │   ├── applicationList.linuxmint
+│   │   ├── applicationList.lmde
+│   │   └── applicationList.ubuntu
+│   │
+│   ├── credentials         Contiene un fichero por aplicacion con nombre-usuario/contraseña requerido para autenticación
+│   │   ├── template-credentials.properties
+│   │   └── *.properties
+│   │
+│   ├── eula                Evita preguntas de aceptacion de terminos de uso de algunas aplicaciones durante el proceso de instalacion
+│   │   ├── template-eula
+│   │   └── *
+│   │
+│   ├── languages           Contiene ficheros de traducción usados por los scripts de instalación
+│   │   ├── en.properties
+│   │   ├── es.properties
+│   │   └── *.properties
+│   │
+│   ├── old-init.d          Contiene scripts basados en init.d. Usado por algunos demonios (para compatibilidad con LMDE 2)
+│   │   └── *
 │   └── *
 │
 ├── icons                   Contiene un conjunto de iconos de aplicaciones usado por algunos subscripts
@@ -164,10 +174,13 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │
 ├── installer.sh            Fichero que inicia el script principal de instalacion
 │
-├── languages               Contiene ficheros de traducción usados por los scripts de instalación
-│   ├── en.properties
-│   ├── es.properties
-│   └── *.properties
+├── install-non-repo-apps   Contiene subscripts para instalar aplicaciones externas a repositorios
+│   ├── template-non-repo-app.sh
+│   ├── *.sh                Subscripts usados en cualquier sistema linux
+│   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
+│   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
+│   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+│   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 ├── menu                    Contiene funciones usados por el menú del script principal (Terminal / Escritorio)
 │   ├── dialogFuntions.sh
@@ -175,13 +188,6 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── menuVariables.properties
 │   └── zenityFunctions.sh
 │
-├── non-repository-apps     Contiene subscripts para instalar aplicaciones externas a repositorios
-│   ├── template-non-repo-app.sh
-│   ├── *.sh                Subscripts usados en cualquier sistema linux
-│   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
-│   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
-│   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
-│   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 ├── post-installation       Contiene subscripts para configurar aplicaciones después de la instalación
 │   ├── template-post-installation.sh
@@ -191,20 +197,8 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
 │   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
-├── pre-installation        Contiene subscripts para preparar la instalación de algunas aplicaciones
-│   ├── template-pre-installation.sh
-│   ├── *.sh                Subscripts usados en cualquier sistema linux
-│   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
-│   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
-│   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
-│   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
-│
-├── scripts                 Contiene un script de instalación por aplicación
-│   ├── template-script.sh
-│   └── *.sh
-│
-└── third-party-repo        Contiene subscripts que añaden repositorios de terceros para algunas aplicaciones
-    ├── template-repository.sh
+└── pre-installation        Contiene subscripts para añadir repositorio de tercero y/o preparar instalación de aplicaciones
+    ├── template-pre-installation.sh
     ├── *.sh                Subscripts usados en cualquier sistema linux
     ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
     ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
@@ -229,8 +223,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 | [en.properties][en.properties]                                 | Fichero de idioma inglés                                                                             |
 | [es.properties][es.properties]                                 | Fichero de idioma español                                                                            |
 | [template-script.sh][template-script.sh]                       | Plantilla para ayudar a crear un nuevo script para instalar una aplicación                           |
-| [template-repository.sh][template-repository.sh]               | Plantilla para ayudar a crear un nuevo subscript para añadir un repositorio de tercero               |
-| [template-pre-installation.sh][template-pre-installation.sh]   | Plantilla para ayudar a crear un nuevo subscript con comandos de pre-instalación de una aplicación   |
+| [template-pre-installation.sh][template-pre-installation.sh]   | Plantilla para ayudar a crear un nuevo subscript que agrega repo-tercero y/o prepara instalación de aplicación   |
 | [template-eula][template-eula]                                 | Plantilla para ayudar a crear un nuevo subscript para configurar soporte EULA para una aplicación        |
 | [template-non-repo-app.sh][template-non-repo-app.sh]           | Plantilla para ayudar a crear un nuevo subscript para instalar una aplicación externa a repositorios |
 | [template-post-installation.sh][template-post-installation.sh] | Plantilla para ayudar a crear un nuevo subscript con comandos de post-instalación de una aplicación  |
@@ -293,26 +286,16 @@ Para añadir un nuevo script de instalación de una aplicación siga los siguien
 ---
 [Regresar al índice](#indice)
 
-#### 5.4 Añadir nuevo subscript para agregar un repositorio de tercero
-Para añadir un nuevo subscript que agregue un repositorio de terceros para una aplicación, siga los siguientes pasos:
-
-1. Crear un nuevo fichero tomando como base la plantilla [template-repository.sh][template-repository.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
-2. Añadir los comandos necesarios al final del fichero para agregar el repositorio teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
-
----
-[Regresar al índice](#indice)
-
-
-#### 5.5 Añadir nuevo subscript para preparar la instalación de una aplicación
+#### 5.4 Añadir nuevo subscript para preparar la instalación de una aplicación
 Para añadir un nuevo subscript que prepare una aplicación antes de que comience el proceso de instalación, siga los siguientes pasos:
 
 1. Crear un nuevo fichero tomando como base la plantilla [template-pre-installation.sh][template-pre-installation.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
-2. Añadir los comandos necesarios al final del fichero para preparar la instalación de la aplicación teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
+2. Añadir los comandos necesarios al final del fichero para agregar un repositorio de tercero y/o preparar la instalación de la aplicación teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
 
 ---
 [Regresar al índice](#indice)
 
-#### 5.6 Añadir nuevo subscript para instalar una aplicación externa a repositorios
+#### 5.5 Añadir nuevo subscript para instalar una aplicación externa a repositorios
 Para añadir un nuevo subscript para instalar una aplicación externa a repositorios, siga los siguientes pasos:
 
 1. Crear un nuevo fichero tomando como base la plantilla [template-non-repo-app.sh][template-non-repo-app.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
@@ -321,7 +304,7 @@ Para añadir un nuevo subscript para instalar una aplicación externa a reposito
 ---
 [Regresar al índice](#indice)
 
-#### 5.7 Añadir nuevo subscript para configurar una aplicación
+#### 5.6 Añadir nuevo subscript para configurar una aplicación
 Para añadir un nuevo subscript que configure una aplicación después del proceso de instalación, siga los siguientes pasos:
 
 1. Crear un nuevo fichero tomando como base la plantilla [template-post-installation.sh][template-post-installation.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
@@ -330,7 +313,7 @@ Para añadir un nuevo subscript que configure una aplicación después del proce
 ---
 [Regresar al índice](#indice)
 
-#### 5.8 Añadir nuevo subscript para configurar el soporte EULA
+#### 5.7 Añadir nuevo subscript para configurar el soporte EULA
 Para añadir un nuevo subscript que configure el soporte EULA para una aplicación, siga los siguientes pasos:
 
 1. Crear un nuevo fichero './eula/nombreAplicacion' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
@@ -390,19 +373,18 @@ Espero que lo encontréis útil.
 [menuFunctions.sh]:./menu/menuFunctions.sh
 [menuVariables.properties]:./menu/menuVariables.properties
 [zenityFunctions.sh]:./menu/zenityFunctions.sh
-[applicationList.debian]:./applist/applicationList.debian
-[applicationList.linuxmint]:./applist/applicationList.linuxmint
-[applicationList.lmde]:./applist/applicationList.lmde
-[applicationList.ubuntu]:./applist/applicationList.ubuntu
+[applicationList.debian]:./etc/applist/applicationList.debian
+[applicationList.linuxmint]:./etc/applist/applicationList.linuxmint
+[applicationList.lmde]:./etc/applist/applicationList.lmde
+[applicationList.ubuntu]:./etc/applist/applicationList.ubuntu
 [installer.sh]:./installer.sh
-[en.properties]:./languages/en.properties
-[es.properties]:./languages/es.properties
+[en.properties]:./etc/languages/en.properties
+[es.properties]:./etc/languages/es.properties
 [template-pre-installation.sh]:./pre-installation/template-pre-installation.sh
 [template-post-installation.sh]:./post-installation/template-post-installation.sh
-[template-eula]:./eula/template-eula
-[template-non-repo-app.sh]:./non-repository-apps/template-non-repo-app.sh
-[template-script.sh]:./scripts/template-script.sh
-[template-repository.sh]:./third-party-repo/template-repository.sh
+[template-eula]:./etc/eula/template-eula
+[template-non-repo-app.sh]:./non-repo-apps/template-non-repo-app.sh
+[template-script.sh]:./app-scripts/template-script.sh
 [screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-01.png
 [screenshot-desktop-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-02.png
 [screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-03.png

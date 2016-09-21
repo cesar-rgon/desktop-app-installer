@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-20
+# @version 	1.3, 2016-09-21
 # @license 	MIT
 ##########################################################################
 
@@ -197,7 +197,6 @@ function generateCommandToDisableAppThirdPartyRepo
 
 	for scriptFile in "${tprScriptList[@]}"; do
 		# Extract repositoryFilename value from script
-		local repositoryFileNameArray
 		IFS='"' read -ra repositoryFileNameArray <<< "`grep 'repositoryFilename=\"' $scriptFile`"
 		repositoryFilename=${repositoryFileNameArray[1]}
 		# Command to comment lines starting with 'deb'
@@ -227,7 +226,7 @@ function generateCommandsInstallApp
 	local appName="$1"
 	local needtoUpdateRepos="false"
 	# Check if the application has a script with commands to add a third-party repository
-	local checkTPRepo=`grep -r "repositoryFilename" 2>/dev/null | awk -F : '{print $1}' | uniq`
+	local checkTPRepo=`grep -r "repositoryFilename=\"" $preInstallationFolder/$appName*.sh 2>/dev/null`
 
 	# STEP 1: Generate commands to prepare installation of application
 	local commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
@@ -249,13 +248,13 @@ function generateCommandsInstallApp
 	fi
 
 	if [ -n "$checkTPRepo" ]; then
-		# STEP 5. Generate commands to disable third-party repository
+		# STEP 4. Generate commands to disable third-party repository
 		commands+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
-		# STEP 6. Generate commands to update repositories again
+		# STEP 5. Generate commands to update repositories again
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
 
-	# STEP 7. Generate commands to setup application
+	# STEP 6. Generate commands to setup application
 	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 
 	if [ -z "$commandsNR" ]; then

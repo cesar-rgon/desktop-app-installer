@@ -4,7 +4,7 @@ $ Desktop && app installer script
 | Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux-shell-terminal-logo] |
 | --- | --- |
 
-There are a lot of applications or desktops enviroments included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+There are a lot of applications or desktops environments included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 > _Spanish version can be found [here][leeme.md] ( Versión española disponible [aquí][leeme.md] )_
 
@@ -21,18 +21,17 @@ There are a lot of applications or desktops enviroments included in the default 
 >   - [Understanding project structure](#51-understanding-project-structure)  
 >   - [Add new application to a category. Modify or delete an existing one](#52-add-new-application-to-a-category-modify-or-delete-an-existing-one)  
 >   - [Add new subscript to install an application](#53-add-new-subscript-to-install-an-application)  
->   - [Add new subscript to add a third-party repository](#54-add-new-subscript-to-add-third-party-repository)  
->   - [Add new subscript to prepare the installation of an application](#55-add-new-subscript-to-prepare-the-installation-of-an-application)
->   - [Add new subscript to install a non-repository application](#56-add-new-subscript-to-install-a-non-repository-application)  
->   - [Add new subscript to setup an application](#57-add-new-subscript-to-setup-an-application)  
->   - [Add new subscript to setup EULA support](#58-add-new-subscript-to-setup-eula-support)
+>   - [Add new subscript to prepare the installation of an application](#54-add-new-subscript-to-prepare-the-installation-of-an-application)
+>   - [Add new subscript to install a non-repository application](#55-add-new-subscript-to-install-a-non-repository-application)  
+>   - [Add new subscript to setup an application](#56-add-new-subscript-to-setup-an-application)  
+>   - [Add new subscript to setup EULA support](#57-add-new-subscript-to-setup-eula-support)
 > 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/08/22 (yyyy/mm/dd)
+Last change: 2016/09/21 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -44,7 +43,7 @@ Last change: 2016/08/22 (yyyy/mm/dd)
 * Customize your own application list to be installed and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
 * Third-party repositories added by some applications will be disabled automatically after the installation of those applications.
 * EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
-* The script runs with an interface adapted to the detected enviroment: Dialog for terminal. Zenity for desktop or terminal emulator.
+* The script runs with an interface adapted to the detected environment: Dialog for terminal. Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
 
@@ -56,13 +55,13 @@ Last change: 2016/08/22 (yyyy/mm/dd)
 #### 2.1 Method 1. Clone this repository
 ```bash
 $ sudo apt-get install git
-$ git clone -b master https://github.com/cesar-rgon/linux-app-installer.git
-$ cd linux-app-installer
+$ git clone https://github.com/cesar-rgon/app-installer.git
+$ cd app-installer
 ```
 
 #### 2.2 Method 2. Download and extract files
 ```bash
-$ wget https://github.com/cesar-rgon/linux-app-installer/archive/master.tar.gz
+$ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
 $ cd linux-app-installer-master
 ```
@@ -106,8 +105,7 @@ $ bash ./scripts/applicationName.sh
 2. The script EXECUTES INITIAL OPERATIONS to be ready to install the selected applications.
 
 3. For each application, execute next steps:
-  * The script EXECUTES PRE-INSTALLATION OPERATIONS of the application to be installed if exists a custom sub-script for that purpose.
-  * The script ADDS THIRD-PARTY REPOSITORY of the application to be installed if exists a custom sub-script for that purpose.
+  * The script EXECUTES PRE-INSTALLATION OPERATIONS of the application to be installed if exists a custom sub-script for that purpose. The sub-script could add a third-party repository and/or prepare the installation of the application.
   * The script INSTALLS the APPLICATION, with EULA support, taking as source official distro repositories, third-party one or a custom sub-script created for that purpose.
   * The script automatically DISABLES THIRD-PARTY REPOSITORY of the installed application to avoid possible problems related to this.
   * The script EXECUTES POST-INSTALLATION OPERATIONS to set-up the installed application if exists a custom sub-script for that purpose.
@@ -134,11 +132,9 @@ To extend script functionality is required to add subscripts for custom purposes
 #### 5.1 Understanding project structure
 Tree of folders and some files:
 ```
-├── applist                 It contains application list available to install for every linux distribution supported
-│   ├── applicationList.debian
-│   ├── applicationList.linuxmint
-│   ├── applicationList.lmde
-│   └── applicationList.ubuntu
+├── app-scripts             It contains one installation script per application
+│   ├── template-script.sh
+│   └── *.sh
 │
 ├── common                  It contains common functions, common variables and commands used by installation scripts
 │   ├── commonFunctions.sh
@@ -146,17 +142,31 @@ Tree of folders and some files:
 │   ├── installapp.sh
 │   └── *.sh
 │
-├── credentials             It contains a file per application with username/password needed for authentication
-│   ├── template-credentials.properties
-│   └── *.properties
-│
 ├── etc                     It contains config files used by some subscripts and version number of main installation script
 │   ├── systemd.service
 │   ├── version
-│   └── *
-│
-├── eula                    It contains files to avoid questions to accept applications terms of use during installation's process
-│   ├── template-eula
+│   │
+│   ├── applist             It contains application list available to install for every linux distribution supported
+│   │   ├── applicationList.debian
+│   │   ├── applicationList.linuxmint
+│   │   ├── applicationList.lmde
+│   │   └── applicationList.ubuntu
+│   │
+│   ├── credentials         It contains a file per application with username/password needed for authentication
+│   │   ├── template-credentials.properties
+│   │   └── *.properties
+│   │
+│   ├── eula                It contains files to avoid questions to accept applications terms of use during installation's process
+│   │   ├── template-eula
+│   │   └── *
+│   │
+│   ├── languages           It contains language translation files used by installation scripts
+│   │   ├── en.properties
+│   │   ├── es.properties
+│   │   └── *.properties
+│   │
+│   ├── old-init.d          It contains init.d scripts. Used by some daemons (for compatibility with LMDE2)
+│   │   └── *
 │   └── *
 │
 ├── icons                   It contains a sets of application icons used by subscripts
@@ -165,24 +175,19 @@ Tree of folders and some files:
 │
 ├── installer.sh            File to start main installation script
 │
-├── languages               It contains language translation files used by installation scripts
-│   ├── en.properties
-│   ├── es.properties
-│   └── *.properties
-│
-├── menu                    It contains functions used by main script menu (Terminal / Desktop)
-│   ├── dialogFuntions.sh
-│   ├── menuFunctions.sh
-│   ├── menuVariables.properties
-│   └── zenityFunctions.sh
-│
-├── non-repository-apps     It contains subscripts to install non-repository applications
+├── install-non-repo-apps   It contains subscripts to install non-repository applications
 │   ├── template-non-repo-app.sh
 │   ├── *.sh                Subscripts used on any linux system
 │   ├── debian/*.sh         Subscripts only used on a Debian system
 │   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
 │   ├── lmde/*.sh           Subscripts only used on a LMDE system
 │   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
+│
+├── menu                    It contains functions used by main script menu (Terminal / Desktop)
+│   ├── dialogFuntions.sh
+│   ├── menuFunctions.sh
+│   ├── menuVariables.properties
+│   └── zenityFunctions.sh
 │
 ├── post-installation       It contains subscripts to setup applications after installation
 │   ├── template-post-installation.sh
@@ -192,20 +197,8 @@ Tree of folders and some files:
 │   ├── lmde/*.sh           Subscripts only used on a LMDE system
 │   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 │
-├── pre-installation        It contains subscripts to prepare the installation of some applications
-│   ├── template-pre-installation.sh
-│   ├── *.sh                Subscripts used on any linux system
-│   ├── debian/*.sh         Subscripts only used on a Debian system
-│   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
-│   ├── lmde/*.sh           Subscripts only used on a LMDE system
-│   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
-│
-├── scripts                 It contains one installation script per application
-│   ├── template-script.sh
-│   └── *.sh
-│
-└── third-party-repo        It contains subscripts to add third-party repositories for some applications
-    ├── template-repository.sh
+└── pre-installation        It contains subscripts to add third-party repositories and/or prepare the installation of apps
+    ├── template-pre-installation.sh
     ├── *.sh                Subscripts used on any linux system
     ├── debian/*.sh         Subscripts only used on a Debian system
     ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
@@ -230,8 +223,7 @@ Tree of folders and some files:
 | [en.properties][en.properties]                                 | English translation file                                                                      |
 | [es.properties][es.properties]                                 | Spanish translation file                                                                      |
 | [template-script.sh][template-script.sh]                       | Template file to help to create a new script file to install an application                   |
-| [template-repository.sh][template-repository.sh]               | Template file to help to create a new subscript to add a third-party repository               |
-| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create a new application subscript to run pre-installation commands  |
+| [template-pre-installation.sh][template-pre-installation.sh]   | Template file to help to create a new subscript to add TPrepo or run pre-inst. commands       |
 | [template-eula][template-eula]                                 | Template file to help to create a new subscript to setup EULA support for an application           |
 | [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create a new subscript to install a non-repository application       |
 | [template-post-installation.sh][template-post-installation.sh] | Template file to help to create a new application subscript to run post-installation commands |
@@ -294,25 +286,16 @@ To add a new installation script for an application follow next steps:
 ---
 [Back to index](#index)
 
-#### 5.4 Add new subscript to add third-party repository
-To add a new subscript that adds a third-party repository for an application follow next steps:
-
-1. Create a new file taking, as base, the [template-repository.sh][template-repository.sh] file following next [considerations](#subscript-file-considerations).
-2. Add neccessary commands at the end of the file to add the repository following next [considerations](#subscript-commands-considerations).
-
----
-[Back to index](#index)
-
-#### 5.5 Add new subscript to prepare the installation of an application
+#### 5.4 Add new subscript to prepare the installation of an application
 To add a new subscript that prepares the installation of an application before the installation proccess begins just follow next steps:
 
 1. Create a new file taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file following next [considerations](#subscript-file-considerations).
-2. Add neccessary commands at the end of the file to setup the application following next [considerations](#subscript-commands-considerations).
+2. Add neccessary commands at the end of the file to add a third-party repository and/or to setup the application following next [considerations](#subscript-commands-considerations).
 
 ---
 [Back to index](#index)
 
-#### 5.6 Add new subscript to install a non-repository application
+#### 5.5 Add new subscript to install a non-repository application
 To add a new subscript that installs a non-repository application just follow next steps:
 
 1. Create a new file taking, as base, the [template-non-repo-app.sh][template-non-repo-app.sh] file following next [considerations](#subscript-file-considerations).
@@ -321,7 +304,7 @@ To add a new subscript that installs a non-repository application just follow ne
 ---
 [Back to index](#index)
 
-#### 5.7 Add new subscript to setup an application
+#### 5.6 Add new subscript to setup an application
 To add a new subscript to setup an application after installation proccess just follow next steps:
 
 1. Create a new file taking, as base, the [template-post-installation.sh][template-post-installation.sh] file following next [considerations](#subscript-file-considerations).
@@ -330,7 +313,7 @@ To add a new subscript to setup an application after installation proccess just 
 ---
 [Back to index](#index)
 
-#### 5.8 Add new subscript to setup EULA support
+#### 5.7 Add new subscript to setup EULA support
 To add a new subscript to setup EULA support for an application just follow next steps:
 
 1. Create a new file './eula/applicationName' taking, as base, next commands from [template-eula][template-eula] file.
@@ -385,19 +368,18 @@ I hope you find it useful.
 [menuFunctions.sh]:./menu/menuFunctions.sh
 [menuVariables.properties]:./menu/menuVariables.properties
 [zenityFunctions.sh]:./menu/zenityFunctions.sh
-[applicationList.debian]:./applist/applicationList.debian
-[applicationList.linuxmint]:./applist/applicationList.linuxmint
-[applicationList.lmde]:./applist/applicationList.lmde
-[applicationList.ubuntu]:./applist/applicationList.ubuntu
+[applicationList.debian]:./etc/applist/applicationList.debian
+[applicationList.linuxmint]:./etc/applist/applicationList.linuxmint
+[applicationList.lmde]:./etc/applist/applicationList.lmde
+[applicationList.ubuntu]:./etc/applist/applicationList.ubuntu
 [installer.sh]:./installer.sh
-[en.properties]:./languages/en.properties
-[es.properties]:./languages/es.properties
+[en.properties]:./etc/languages/en.properties
+[es.properties]:./etc/languages/es.properties
 [template-pre-installation.sh]:./pre-installation/template-pre-installation.sh
 [template-post-installation.sh]:./post-installation/template-post-installation.sh
-[template-eula]:./eula/template-eula
-[template-non-repo-app.sh]:./non-repository-apps/template-non-repo-app.sh
-[template-script.sh]:./scripts/template-script.sh
-[template-repository.sh]:./third-party-repo/template-repository.sh
+[template-eula]:./etc/eula/template-eula
+[template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
+[template-script.sh]:./app-scripts/template-script.sh
 [screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-01.png
 [screenshot-desktop-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-02.png
 [screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/en/screenshot-desktop-1.3-03.png
