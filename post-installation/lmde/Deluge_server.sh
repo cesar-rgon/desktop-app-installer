@@ -3,42 +3,45 @@
 # This script configures Deluge daemon to be ready to use.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 15/05/2014
+# Version: 1.3
+# Last modified date (yyyy/mm/dd): 2016/09/22
 # Licence: MIT
 ##########################################################################
 
-# Get common variables and check if the script is being running by a root or sudoer user
-if [ "$1" != "" ]; then
-	scriptRootFolder="$1"
-else
-	scriptRootFolder=".."
-fi
-. $scriptRootFolder/common/commonVariables.sh
+# Parameters
+if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/../.."; fi
+if [ -n "$2" ]; then username="$2"; else username="`whoami`"; fi
+if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
+
+# Add common variables
+. $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $credentialFolder/Deluge_server.properties
 
 # Variables
 DELUGE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/deluge"
-TEMP_FOLDER="$homeFolder/.Temporal"
-DELUGE_DAEMON_TEMP_FOLDER="$TEMP_FOLDER/deluge"
+DELUGE_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/deluge"
 DELUGE_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
-DELUGE_DAEMON_USERNAME="$username"
-DELUGE_DAEMON_PASSWORD="deluge"
-DELUGE_DAEMON_CLIENT_PORT="58846"
+DELUGE_DAEMON_TCP_AND_CLIENT_PORT="58846"
 DELUGE_DAEMON_WEB_PORT="8112"
+DELUGE_DAEMON_FILE="/etc/init.d/deluge-daemon"
 
-# Create the necessary folders
-mkdir -p $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER $homeFolder/.config/deluge
-chown -R $username:$username $DELUGE_DAEMON_DOWNLOAD_FOLDER $TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER $homeFolder/.config/deluge
+# Create the necessary folders, set ownership and permissions
+sudo -u $username mkdir -p $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER $homeFolder/.config/deluge
+chown -R $username:$username $homeFolder/.config/deluge/*
+chmod -R 770 $DELUGE_DAEMON_DOWNLOAD_FOLDER $DELUGE_DAEMON_TEMP_FOLDER $DELUGE_DAEMON_TORRENT_FOLDER
+find $homeFolder/.config/deluge/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.config/deluge/* -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
 
 # Set variables in deluge-daemon config files
-echo "# Configuration for /etc/init.d/deluge-daemon
+echo "# Configuration for $DELUGE_DAEMON_FILE
 # The init.d script will only run if this variable non-empty.
 DELUGED_USER=\"$username\"
 # Should we run at startup?
 RUN_AT_STARTUP=\"YES\"" > /etc/default/deluge-daemon
 
 # Add username and password to Deluge's authentication file
-echo "$DELUGE_DAEMON_USERNAME:$DELUGE_DAEMON_PASSWORD:10" >> $homeFolder/.config/deluge/auth
+echo "$appUsername:$appPassword:10" >> $homeFolder/.config/deluge/auth
 chown $username:$username $homeFolder/.config/deluge/auth
 
 # Setup Deluge daemon's config file
@@ -53,7 +56,7 @@ echo "{
   \"autoadd_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
   \"copy_torrent_file\": true,
   \"torrentfiles_location\": \"$DELUGE_DAEMON_TORRENT_FOLDER\",
-  \"daemon_port\": $DELUGE_DAEMON_CLIENT_PORT,
+  \"daemon_port\": $DELUGE_DAEMON_TCP_AND_CLIENT_PORT,
   \"allow_remote\": true
 }" > "$homeFolder/.config/deluge/core.conf"
 
@@ -79,7 +82,7 @@ Comment=Deluge Web" > /usr/share/applications/deluged-web.desktop
 # Create menu launcher to start deluge-daemon.
 echo "[Desktop Entry]
 Name=Deluge daemon start
-Exec=gksudo /etc/init.d/deluge-daemon start
+Exec=gksudo $DELUGE_DAEMON_FILE start
 Icon=deluge
 Terminal=false
 Type=Application
@@ -89,7 +92,7 @@ Comment=Start Deluge server" > /usr/share/applications/deluged-start.desktop
 # Create menu launcher to stop deluge-daemon.
 echo "[Desktop Entry]
 Name=Deluge daemon stop
-Exec=gksudo /etc/init.d/deluge-daemon stop
+Exec=gksudo $DELUGE_DAEMON_FILE stop
 Icon=deluge
 Terminal=false
 Type=Application
@@ -100,8 +103,8 @@ Comment=Stop Deluge server" > /usr/share/applications/deluged-stop.desktop
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/deluge.tar.gz"
 
 # Copy deluge-daemon init script
-cp $scriptRootFolder/etc/deluge-daemon /etc/init.d/
-chmod +x /etc/init.d/deluge-daemon
+cp $scriptRootFolder/etc/old-init.d/deluge-daemon /etc/init.d/
+chmod +x $DELUGE_DAEMON_FILE
 
 # Start deluge-daemon
 service deluge-daemon start

@@ -383,7 +383,7 @@ Espero que lo encontréis útil.
 [template-pre-installation.sh]:./pre-installation/template-pre-installation.sh
 [template-post-installation.sh]:./post-installation/template-post-installation.sh
 [template-eula]:./etc/eula/template-eula
-[template-non-repo-app.sh]:./non-repo-apps/template-non-repo-app.sh
+[template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
 [screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-01.png
 [screenshot-desktop-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-02.png

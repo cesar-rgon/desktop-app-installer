@@ -3,48 +3,58 @@
 # This script configures qBittorrent daemon to be ready to use.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 15/05/2014
+# Version: 1.3
+# Last modified date (yyyy/mm/dd): 2016/09/22
 # Licence: MIT
 ##########################################################################
 
-# Get common variables and check if the script is being running by a root or sudoer user
-if [ "$1" != "" ]; then
-	scriptRootFolder="$1"
-else
-	scriptRootFolder=".."
-fi
-. $scriptRootFolder/common/commonVariables.sh
+# Parameters
+if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/../.."; fi
+if [ -n "$2" ]; then username="$2"; else username="`whoami`"; fi
+if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
-# INFO
-# QBITTORRENT_DAEMON_PASSWORD="adminadmin"
+# Add common variables
+. $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $credentialFolder/qBittorrent_server.properties
 
 # Variables
 QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
-TEMP_FOLDER="$homeFolder/.Temporal"
-QBITTORRENT_DAEMON_TEMP_FOLDER="$TEMP_FOLDER/qBittorrent"
+QBITTORRENT_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/qBittorrent"
 QBITTORRENT_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
-QBITTORRENT_DAEMON_USERNAME="$username"
 QBITTORRENT_DAEMON_WEB_PORT="8081"
+QBITTORRENT_DAEMON_TCP_PORT="8999"
+QBITTORRENT_DAEMON_FILE="/etc/init.d/qbittorrent-nox-daemon"
 
-# Create the necessary folders
-mkdir -p $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
-chown -R $username:$username $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent
+### CREATE QBITTORRENT USER ##############################################
+useradd qbtuser -m
+# Add system user to qBittorrent group
+usermod -a -G qbtuser $username
+
+
+# Create the necessary folders, set ownership and permissions
+sudo -u $username mkdir -p $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER $homeFolder/.config/qBittorrent $homeFolder/.local/share/data/qBittorrent
+chmod -R 770 $QBITTORRENT_DAEMON_DOWNLOAD_FOLDER $QBITTORRENT_DAEMON_TEMP_FOLDER $QBITTORRENT_DAEMON_TORRENT_FOLDER
+find $homeFolder/.config/qBittorrent/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.config/qBittorrent/* -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
+find $homeFolder/.local/share/data/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.local/share/data -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
 
 # Copy qbittorrent daemon init script
-cp $scriptRootFolder/etc/qbittorrent-nox-daemon /etc/init.d/
-chmod +x /etc/init.d/qbittorrent-nox-daemon
+cp $scriptRootFolder/etc/old-init.d/qbittorrent-nox-daemon /etc/init.d/
+chmod +x $QBITTORRENT_DAEMON_FILE
 
 # Set variables in qbittorrent-daemon config files
-sed -i "s/USER=.*/USER=$username/g" /etc/init.d/qbittorrent-nox-daemon
-sed -i "s/DAEMON_ARGS=.*/DAEMON_ARGS=\"--webui-port=$QBITTORRENT_DAEMON_WEB_PORT\"/g" /etc/init.d/qbittorrent-nox-daemon
+sed -i "s/USER=.*/USER=$username/g" $QBITTORRENT_DAEMON_FILE
+sed -i "s/DAEMON_ARGS=.*/DAEMON_ARGS=\"--webui-port=$QBITTORRENT_DAEMON_WEB_PORT\"/g" $QBITTORRENT_DAEMON_FILE
 
 echo "[Preferences]
+Connection\PortRangeMin=$QBITTORRENT_DAEMON_TCP_PORT
 Downloads\SavePath=$QBITTORRENT_DAEMON_DOWNLOAD_FOLDER
 Downloads\TempPathEnabled=true
 Downloads\TempPath=$QBITTORRENT_DAEMON_TEMP_FOLDER
 Downloads\ScanDirs=$QBITTORRENT_DAEMON_TORRENT_FOLDER
-WebUI\Username=$QBITTORRENT_DAEMON_USERNAME
+WebUI\Username=$appUsername
 WebUI\Port=$QBITTORRENT_DAEMON_WEB_PORT
 [LegalNotice]
 Accepted=true" > $homeFolder/.config/qBittorrent/qBittorrent.conf
@@ -63,7 +73,7 @@ Comment=qBittorrent Web" > /usr/share/applications/qbittorrent-nox-cli.desktop
 # Create menu launcher to start qbittorrent-daemon.
 echo "[Desktop Entry]
 Name=qBittorrent daemon start
-Exec=gksudo /etc/init.d/qbittorrent-nox-daemon start
+Exec=gksudo $QBITTORRENT_DAEMON_FILE start
 Icon=qbittorrent
 Terminal=false
 Type=Application
@@ -73,7 +83,7 @@ Comment=Start qBittorrent server" > /usr/share/applications/qbittorrent-nox-star
 # Create menu launcher to stop qbittorrent-daemon.
 echo "[Desktop Entry]
 Name=qBittorrent daemon stop
-Exec=gksudo /etc/init.d/qbittorrent-nox-daemon stop
+Exec=gksudo $QBITTORRENT_DAEMON_FILE stop
 Icon=qbittorrent
 Terminal=false
 Type=Application

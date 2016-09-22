@@ -3,27 +3,28 @@
 # This script configures Transmission daemon to be ready to use.
 #
 # Author: César Rodríguez González
-# Version: 1.1
-# Last modified date (dd/mm/yyyy): 15/05/2014
+# Version: 1.3
+# Last modified date (yyyy/mm/dd): 2016/09/22
 # Licence: MIT
 ##########################################################################
 
-# Get common variables and check if the script is being running by a root or sudoer user
-if [ "$1" != "" ]; then
-	scriptRootFolder="$1"
-else
-	scriptRootFolder=".."
-fi
-. $scriptRootFolder/common/commonVariables.sh
+# Parameters
+if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/../.."; fi
+if [ -n "$2" ]; then username="$2"; else username="`whoami`"; fi
+if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
+
+# Add common variables
+. $scriptRootFolder/common/commonVariables.properties
+# Add credentials for authentication
+. $credentialFolder/Transmission_server.properties
 
 # Variables
 TRANSMISSION_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/Transmission"
-TEMP_FOLDER="$homeFolder/.Temporal"
-TRANSMISSION_DAEMON_TEMP_FOLDER="$TEMP_FOLDER/Transmission"
+TRANSMISSION_DAEMON_TEMP_FOLDER="$homeFolder/.Temporal/Transmission"
 TRANSMISSION_DAEMON_TORRENT_FOLDER="$homeDownloadFolder/torrents"
-TRANSMISSION_DAEMON_USERNAME="$username"
-TRANSMISSION_DAEMON_USER_PASSWORD="transmission"
 TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT="9091"
+TRANSMISSION_DAEMON_TCP_PORT="51413"
+TRANSMISSION_DAEMON_FILE="/etc/init.d/transmission-daemon"
 
 # Install Transmission daemon
 apt-get -y install transmission-daemon
@@ -34,12 +35,12 @@ cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/
 # Add user to debian-transmission group
 usermod -a -G debian-transmission $username
 
-# Create the necessary folders
-mkdir -p $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
-# Set the owner and permissions of the folders
-chown $username:$username $TEMP_FOLDER
-chown $username:debian-transmission $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
+# Create the necessary folders, set ownership and permissions
+sudo -u $username mkdir -p $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER $homeFolder/.config/transmission-daemon
+chown -R $username:debian-transmission $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER /var/lib/transmission-daemon
 chmod -R 770 $TRANSMISSION_DAEMON_DOWNLOAD_FOLDER $TRANSMISSION_DAEMON_TEMP_FOLDER $TRANSMISSION_DAEMON_TORRENT_FOLDER
+find $homeFolder/.config/transmission-daemon/* -type f -print0 2>/dev/null | xargs -0 chmod 660 2>/dev/null
+find $homeFolder/.config/transmission-daemon/* -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
 
 # Stop transmission daemon
 service transmission-daemon stop
@@ -55,8 +56,9 @@ sed -i "s/$lastLine/$lastLine,/g" /tmp/transmission.json
 echo "\"download-dir\": \"$TRANSMISSION_DAEMON_DOWNLOAD_FOLDER\",
 \"incomplete-dir\": \"$TRANSMISSION_DAEMON_TEMP_FOLDER\",
 \"incomplete-dir-enabled\": true,
-\"rpc-password\": \"$TRANSMISSION_DAEMON_USER_PASSWORD\",
-\"rpc-username\": \"$TRANSMISSION_DAEMON_USERNAME\",
+\"peer-port\": $TRANSMISSION_DAEMON_TCP_PORT,
+\"rpc-password\": \"$appPassword\",
+\"rpc-username\": \"$appUsername\",
 \"rpc-whitelist\": \"*\",
 \"rpc-port\": $TRANSMISSION_DAEMON_CLIENT_AND_WEB_PORT,
 \"umask\": 7,
@@ -79,7 +81,7 @@ Comment=Transmission Web" > /usr/share/applications/transmission-web.desktop
 # Create menu launcher to start transmission-daemon.
 echo "[Desktop Entry]
 Name=Transmission daemon start
-Exec=gksudo /etc/init.d/transmission-daemon start
+Exec=gksudo $TRANSMISSION_DAEMON_FILE start
 Icon=transmission
 Terminal=false
 Type=Application
@@ -89,7 +91,7 @@ Comment=Start Transmission server" > /usr/share/applications/transmission-start.
 # Create menu launcher to stop transmission-daemon.
 echo "[Desktop Entry]
 Name=Transmission daemon stop
-Exec=gksudo /etc/init.d/transmission-daemon stop
+Exec=gksudo $TRANSMISSION_DAEMON_FILE stop
 Icon=transmission
 Terminal=false
 Type=Application
