@@ -3,7 +3,7 @@
 # This script executes commands to add third-party repository of
 # jDownloader application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-09-25
 # @license MIT
 ##########################################################################
 
@@ -22,9 +22,9 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 repositoryURL="http://ppa.launchpad.net/jd-team/jdownloader/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-repositoryFilename="*jdownloader*.list"
+repositoryFilename="jd-team-jdownloader*.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
-	add-apt-repository -y ppa:jd-team/jdownloader 2>&1
-fi
+rm -f "/etc/apt/sources.list.d/$repositoryFilename"
+apt-get -y install xterm
+xterm -e "add-apt-repository -y ppa:jd-team/jdownloader"

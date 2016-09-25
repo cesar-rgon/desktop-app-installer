@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-21
+# @version 	1.3, 2016-09-25
 # @license 	MIT
 ##########################################################################
 
@@ -186,22 +186,42 @@ function generateCommands
 }
 
 ##
+# This funtion get all pre-installation scripts of an application
+# that add third-party repository
+##
+function getThirdPartyRepoAppFiles
+{
+	local appName="$1"
+	local appScriptList=( $( getAppFiles "$preInstallationFolder" "$appName.sh" ) )
+	local scriptFile filter tprAppScriptList
+
+	# Filter scripts that add third-party repo
+	for scriptFile in "${appScriptList[@]}"; do
+		filter=`grep "repositoryFilename=\"" "$scriptFile"`
+		if [ -n "$filter" ]; then
+			tprAppScriptList+="$scriptFile "
+		fi
+	done
+	echo "$tprAppScriptList"
+}
+
+##
 # This funtion generates command to disable application third party repository
 # @param  String appName 	Application name
 # @return String 					Command to comment lines stating with 'deb'
 ##
-function generateCommandToDisableAppThirdPartyRepo
+function generateCommandsToDisableAppThirdPartyRepo
 {
-	local appName="$1" scriptFile repositoryFileNameArray repositoryFilename
-	local tprScriptList=( $( getAppFiles "$preInstallationFolder" "$appName.sh" ) )
+	local appName="$1" scriptFile repositoryFileNameArray repositoryFilenames
+	local tprAppScriptList=("${!2}")
 
-	for scriptFile in "${tprScriptList[@]}"; do
+	for scriptFile in "${tprAppScriptList[@]}"; do
 		# Extract repositoryFilename value from script
 		IFS='"' read -ra repositoryFileNameArray <<< "`grep 'repositoryFilename=\"' $scriptFile`"
-		repositoryFilename=${repositoryFileNameArray[1]}
+		repositoryFilenames=`find /etc/apt/sources.list.d/${repositoryFileNameArray[1]} 2>>/dev/null | tr '\n' ' '`
 		# Command to comment lines starting with 'deb'
 		local messageCommand="echo -e \"\n# $  $disableThirdPartyRepo: $appName\"; echo \"$  $disableThirdPartyRepo: $appName\" >> \"$logFile\";"
-		local command="sed -i 's/^deb/#deb/g' `ls /etc/apt/sources.list.d/$repositoryFilename 2>>/dev/null | tr '\n' ' '` 2>>\"$logFile\";"
+		local command="sed -i 's/^deb/#deb/g' $repositoryFilenames 2>>\"$logFile\";"
 		echo "$messageCommand $command"
 	done
 }
@@ -224,19 +244,14 @@ function generateCommandToDisableAppThirdPartyRepo
 function generateCommandsInstallApp
 {
 	local appName="$1"
-	local needtoUpdateRepos="false"
-	# Check if the application has a script with commands to add a third-party repository
-	local checkTPRepo=`grep -r "repositoryFilename=\"" $preInstallationFolder/$appName*.sh 2>/dev/null`
+	local tprAppScriptList=( $( getThirdPartyRepoAppFiles "$appName" ) )
 
 	# STEP 1: Generate commands to prepare installation of application
 	local commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-	if [ -n "$commands" ]; then needtoUpdateRepos="true"; fi
-
-	# STEP 2: Generate commands to update repositories if required
-	if [ "$needtoUpdateRepos" == "true" ]; then
+	if [ -n "$commands" ]; then
+		# STEP 2: Generate commands to update repositories if required
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
-
 	# STEP 3. Generate commands to install the application
 	# CASE 1. Non-repo application
 	local commandsNR=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $nonRepoAppIndex/totalNonRepoAppsNumber" )
@@ -246,14 +261,12 @@ function generateCommandsInstallApp
 		# CASE 2. Repo application
 		commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $repoAppIndex/totalRepoAppsNumber" "$appName" )
 	fi
-
-	if [ -n "$checkTPRepo" ]; then
+	if [ ${#tprAppScriptList[@]} -gt 0 ]; then
 		# STEP 4. Generate commands to disable third-party repository
-		commands+=$( generateCommandToDisableAppThirdPartyRepo "$appName" )
+		commands+=$( generateCommandsToDisableAppThirdPartyRepo "$appName" tprAppScriptList[@] )
 		# STEP 5. Generate commands to update repositories again
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
-
 	# STEP 6. Generate commands to setup application
 	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
 
@@ -282,7 +295,7 @@ function installApplications
 			sed -i "s/TOTALAPPS/$total: $(($totalRepoAppsNumber+$totalNonRepoAppsNumber))/g" "$homeFolder/.tmux.conf"
 			echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
 			echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
-		  	tmux new-session "sudo bash $tempFolder/commandsToInstallApps"
+			tmux new-session "sudo bash $tempFolder/commandsToInstallApps"
 		fi
 	else
 		if [ -n "$commandsRepoApp" ]; then

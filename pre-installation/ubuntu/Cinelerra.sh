@@ -1,9 +1,9 @@
 #!/bin/bash
 ##########################################################################
-# This script executes commands to add third-party repository of Cinelerra
-# application.
+# This script executes commands to add third-party repository of Atom
+# editor application. Official text editor of Github.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-09-25
 # @license MIT
 ##########################################################################
 
@@ -25,6 +25,6 @@ repositoryURL="http://ppa.launchpad.net/cinelerra-ppa/ppa/ubuntu"
 repositoryFilename="cinelerra*.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
-	add-apt-repository -y ppa:cinelerra-ppa/ppa 2>&1
-fi 2>/dev/null
+rm -f "/etc/apt/sources.list.d/$repositoryFilename"
+apt-get -y install xterm
+xterm -e "add-apt-repository -y ppa:cinelerra-ppa/ppa"

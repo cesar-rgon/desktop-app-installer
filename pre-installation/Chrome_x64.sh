@@ -26,10 +26,7 @@ repositorySource="deb-src [arch=amd64] $repositoryURL stable main"
 repositoryFilename="google-chrome.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
-	# Command to add repository key if needed
-	wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub 2>&1 | apt-key add -
-	echo "$repository" >> "/etc/apt/sources.list.d/$repositoryFilename"
-	# Uncomment if needed [optional]
-	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"
-fi 2>/dev/null
+rm -f "/etc/apt/sources.list.d/$repositoryFilename"
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub 2>&1 | apt-key add -
+echo "$repository" > "/etc/apt/sources.list.d/$repositoryFilename"
+#echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"

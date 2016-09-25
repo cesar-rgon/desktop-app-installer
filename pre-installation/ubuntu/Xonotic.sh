@@ -22,11 +22,11 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 repositoryURL="http://archive.getdeb.net/ubuntu"
 repository="deb $repositoryURL xenial-getdeb games"
 #repositorySource="deb-src $repositoryURL xenial-getdeb games"
-repositoryFilename="getdeb.list"
+repositoryFilename="getdeb-xonotic.list"
 
 # Commands to add third-party repository of the application.
-if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
-	# Command to add repository key if needed
-	wget -q -O - http://archive.getdeb.net/getdeb-archive.key | apt-key add -
-	echo "$repository" > "/etc/apt/sources.list.d/$repositoryFilename"
-fi
+rm -f "/etc/apt/sources.list.d/$repositoryFilename"
+wget -q -O - http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+echo "$repository" > "/etc/apt/sources.list.d/$repositoryFilename"
+# Uncomment if needed [optional]
+# echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"

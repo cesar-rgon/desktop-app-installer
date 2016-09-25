@@ -3,7 +3,7 @@
 # This script executes commands to add third-party repository of
 # Sublime Text 3 application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-14
+# @version 1.3, 2016-09-25
 # @license MIT
 ##########################################################################
 
@@ -22,10 +22,9 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 repositoryURL="http://ppa.launchpad.net/webupd8team/sublime-text-3/ubuntu"
 #repository="deb $repositoryURL $distroName main"
 #repositorySource="deb-src $repositoryURL $distroName main"
-repositoryFilename="webupd8team-ubuntu-sublime-text-3*.list"
+repositoryFilename="webupd8team-sublime-text*.list"
 
 # Commands to add third-party repository of the application.
-# SE ESTA DUPLICANDO DEB-SRC
-if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
-	add-apt-repository -y ppa:webupd8team/sublime-text-3
-fi 2>/dev/null
+rm -f "/etc/apt/sources.list.d/$repositoryFilename"
+apt-get -y install xterm
+xterm -e "add-apt-repository -y ppa:webupd8team/sublime-text-3"

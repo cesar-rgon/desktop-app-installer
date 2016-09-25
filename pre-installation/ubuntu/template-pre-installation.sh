@@ -32,12 +32,11 @@ repositorySource="deb-src $repositoryURL <parameters>"
 # MANDATORY VARIABLE. Required for main script. Must be declared always to properly add third-party-repo
 repositoryFilename="destinationFilename"
 
-if [ ! -f "/etc/apt/sources.list.d/$repositoryFilename" ] || [ ! grep -q "$repositoryURL" "/etc/apt/sources.list.d/$repositoryFilename" ]; then
-	# Command to add repository key if needed
-	# ...
-	echo "$repository" >> "/etc/apt/sources.list.d/$repositoryFilename"
-	# Uncomment if needed [optional]
-	# echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"
-fi 2>/dev/null
+# Command to add repository key if needed
+rm -f "/etc/apt/sources.list.d/$repositoryFilename"
+echo "$repository" >> "/etc/apt/sources.list.d/$repositoryFilename"
+# ...
+# Uncomment if needed [optional]
+# echo "$repositorySource" >> "/etc/apt/sources.list.d/$repositoryFilename"
 
 # Commands to prepare the installation of an application ...
