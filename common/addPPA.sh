@@ -22,11 +22,6 @@ if [ -n "$4" ]; then
   if [ -z "$DISPLAY" ]; then
     add-apt-repository -y $ppa
   else
-    apt-get -y install xterm --fix-missing
-    if [ -z "`dpkg -s xterm 2>&1 | grep "Status: install ok installed"`" ]; then
-      echo "$installingRepoApplication xterm"
-
-    fi
     # Some PPA could give problems on desktop mode, so, we open a terminal emulator to do add-ppa operation
     xterm -fn $xtermFont -e "add-apt-repository -y $ppa"
   fi
