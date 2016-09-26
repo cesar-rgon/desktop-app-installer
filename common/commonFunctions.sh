@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-25
+# @version 	1.3, 2016-09-26
 # @license 	MIT
 ##########################################################################
 
@@ -37,7 +37,7 @@ function installNeededPackages
 	if [ -z "$DISPLAY" ]; then
 		neededPackages=( dialog tmux )
 	else
-		neededPackages=( zenity libnotify-bin )
+		neededPackages=( zenity libnotify-bin xterm )
 		if [ "$KDE_FULL_SESSION" != "true" ]; then
 			neededPackages+=( gksu );
 		else
@@ -131,16 +131,16 @@ function getAppFiles
 
 		local i386="_i386" x64="_x64" fileList=""
 		# Search subscript that matches all O.S. architecture
-		if [ -f "$targetFolder/$filename$extension" ]; then fileList+="$targetFolder/$filename$extension "; fi
 		if [ -f "$targetFolder/$distro/$filename$extension" ]; then fileList+="$targetFolder/$distro/$filename$extension "; fi
+		if [ -f "$targetFolder/$filename$extension" ]; then fileList+="$targetFolder/$filename$extension "; fi
 		if [ `uname -m` == "x86_64" ]; then
 			# Search subscript that matches 64 bits O.S. architecture
-			if [ -f "$targetFolder/$filename$x64$extension" ]; then fileList+="$targetFolder/$filename$x64$extension "; fi
 			if [ -f "$targetFolder/$distro/$filename$x64$extension" ]; then fileList+="$targetFolder/$distro/$filename$x64$extension "; fi
+			if [ -f "$targetFolder/$filename$x64$extension" ]; then fileList+="$targetFolder/$filename$x64$extension "; fi
 		else
 			# Search subscript that matches 32 bits O.S. architecture
-			if [ -f "$targetFolder/$filename$i386$extension" ]; then fileList+="$targetFolder/$filename$i386$extension "; fi
 			if [ -f "$targetFolder/$distro/$filename$i386$extension" ]; then fileList+="$targetFolder/$distro/$filename$i386$extension "; fi
+			if [ -f "$targetFolder/$filename$i386$extension" ]; then fileList+="$targetFolder/$filename$i386$extension "; fi
 		fi
 		echo "$fileList"
 	fi
@@ -186,47 +186,6 @@ function generateCommands
 }
 
 ##
-# This funtion get all pre-installation scripts of an application
-# that add third-party repository
-##
-function getThirdPartyRepoAppFiles
-{
-	local appName="$1"
-	local appScriptList=( $( getAppFiles "$preInstallationFolder" "$appName.sh" ) )
-	local scriptFile filter tprAppScriptList
-
-	# Filter scripts that add third-party repo
-	for scriptFile in "${appScriptList[@]}"; do
-		filter=`grep "repositoryFilename=\"" "$scriptFile"`
-		if [ -n "$filter" ]; then
-			tprAppScriptList+="$scriptFile "
-		fi
-	done
-	echo "$tprAppScriptList"
-}
-
-##
-# This funtion generates command to disable application third party repository
-# @param  String appName 	Application name
-# @return String 					Command to comment lines stating with 'deb'
-##
-function generateCommandsToDisableAppThirdPartyRepo
-{
-	local appName="$1" scriptFile repositoryFileNameArray repositoryFilenames
-	local tprAppScriptList=("${!2}")
-
-	for scriptFile in "${tprAppScriptList[@]}"; do
-		# Extract repositoryFilename value from script
-		IFS='"' read -ra repositoryFileNameArray <<< "`grep 'repositoryFilename=\"' $scriptFile`"
-		repositoryFilenames=`find /etc/apt/sources.list.d/${repositoryFileNameArray[1]} 2>>/dev/null | tr '\n' ' '`
-		# Command to comment lines starting with 'deb'
-		local messageCommand="echo -e \"\n# $  $disableThirdPartyRepo: $appName\"; echo \"$  $disableThirdPartyRepo: $appName\" >> \"$logFile\";"
-		local command="sed -i 's/^deb/#deb/g' $repositoryFilenames 2>>\"$logFile\";"
-		echo "$messageCommand $command"
-	done
-}
-
-##
 # This function generates needed commands to prepare, install
 # and setup an application. The source to get the application can be:
 # 1. Official repositories. Steps are:
@@ -243,12 +202,19 @@ function generateCommandsToDisableAppThirdPartyRepo
 ##
 function generateCommandsInstallApp
 {
-	local appName="$1"
-	local tprAppScriptList=( $( getThirdPartyRepoAppFiles "$appName" ) )
+	local appName="$1" commands=""
 
-	# STEP 1: Generate commands to prepare installation of application
-	local commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
+	# STEP 1: Generate commands to prepare installation of the application
+	local applicationPPAFiles=( $( getAppFiles "$ppaFolder" "$appName" ) )
+
+	# Only use first PPA file found
+	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
+		local ppa=`grep -v '^$\|^\s*\#' ${applicationPPAFiles[0]}`
+		commands=$( generateCommands "$commonFolder" "addPPA.sh" "$addingThirdPartyRepository" "$ppa" )
+	fi
+	commands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
 	if [ -n "$commands" ]; then
+		notify-send "debug" "AQUI"
 		# STEP 2: Generate commands to update repositories if required
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
@@ -261,9 +227,9 @@ function generateCommandsInstallApp
 		# CASE 2. Repo application
 		commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $repoAppIndex/totalRepoAppsNumber" "$appName" )
 	fi
-	if [ ${#tprAppScriptList[@]} -gt 0 ]; then
-		# STEP 4. Generate commands to disable third-party repository
-		commands+=$( generateCommandsToDisableAppThirdPartyRepo "$appName" tprAppScriptList[@] )
+	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
+		# STEP 4. Generate commands to remove third-party repository
+		commands+=$( generateCommands "$commonFolder" "removePPA.sh" "$removingThirdPartyRepository" "$ppa" )
 		# STEP 5. Generate commands to update repositories again
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi

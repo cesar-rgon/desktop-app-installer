@@ -20,18 +20,19 @@ There are a lot of applications or desktops environments included in the default
 > 5. [Extend functionality and customize applications to install](#5-extend-functionality-and-customize-applications-to-install)  
 >   - [Understanding project structure](#51-understanding-project-structure)  
 >   - [Add new application to a category. Modify or delete an existing one](#52-add-new-application-to-a-category-modify-or-delete-an-existing-one)  
->   - [Add new subscript to install an application](#53-add-new-subscript-to-install-an-application)  
->   - [Add new subscript to prepare the installation of an application](#54-add-new-subscript-to-prepare-the-installation-of-an-application)
->   - [Add new subscript to install a non-repository application](#55-add-new-subscript-to-install-a-non-repository-application)  
->   - [Add new subscript to setup an application](#56-add-new-subscript-to-setup-an-application)  
->   - [Add new subscript to setup EULA support](#57-add-new-subscript-to-setup-eula-support)
+>   - [Add new subscript to prepare the installation of an application](#53-add-new-subscript-to-prepare-the-installation-of-an-application)
+>   - [Add a new file to add a third-party repo through a PPA](#54-add-a-new-file-to-add-a-third-party-repo-through-a-ppa)
+>   - [Add new subscript to install an application](#55-add-new-subscript-to-install-an-application)  
+>   - [Add new subscript to install a non-repository application](#56-add-new-subscript-to-install-a-non-repository-application)  
+>   - [Add new subscript to setup an application](#57-add-new-subscript-to-setup-an-application)  
+>   - [Add new subscript to setup EULA support](#58-add-new-subscript-to-setup-eula-support)
 > 6. [Add new translation file](#6-add-new-translation-file)
 
 ```
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/09/21 (yyyy/mm/dd)
+Last change: 2016/09/26 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -105,7 +106,8 @@ $ bash ./scripts/applicationName.sh
 2. The script EXECUTES INITIAL OPERATIONS to be ready to install the selected applications.
 
 3. For each application, execute next steps:
-  * The script EXECUTES PRE-INSTALLATION OPERATIONS of the application to be installed if exists a custom sub-script for that purpose. The sub-script could add a third-party repository and/or prepare the installation of the application.
+  * The script ADDS THIRD-PARTY REPOSITORY through a PPA, if defined in a specific file.
+  * The script EXECUTES PRE-INSTALLATION OPERATIONS of the application to be installed if exists a custom sub-script for that purpose. The sub-script could add a third-party repository, custom commands instead of use a PPA, and/or prepare the installation of the application.
   * The script INSTALLS the APPLICATION, with EULA support, taking as source official distro repositories, third-party one or a custom sub-script created for that purpose.
   * The script automatically DISABLES THIRD-PARTY REPOSITORY of the installed application to avoid possible problems related to this.
   * The script EXECUTES POST-INSTALLATION OPERATIONS to set-up the installed application if exists a custom sub-script for that purpose.
@@ -167,6 +169,10 @@ Tree of folders and some files:
 │   │
 │   ├── old-init.d          It contains init.d scripts. Used by some daemons (for compatibility with LMDE2)
 │   │   └── *
+│   │
+│   ├── ppa                 It contains one file per application which contains PPA to be added before installation
+│   │   └── *
+│   │
 │   └── *
 │
 ├── icons                   It contains a sets of application icons used by subscripts
@@ -273,7 +279,30 @@ To modify or delete an application or category just edit [applicationList.ubuntu
 ---
 [Back to index](#index)
 
-#### 5.3 Add new subscript to install an application
+#### 5.3 Add new subscript to prepare the installation of an application
+To add a new subscript that prepares the installation of an application before the installation proccess begins just follow next steps:
+
+1. Create a new file taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file following next [considerations](#subscript-file-considerations).
+2. Add neccessary commands at the end of the file to add a third-party repository and/or to setup the application following next [considerations](#subscript-commands-considerations).
+
+---
+[Back to index](#index)
+
+#### 5.4 Add a new file to add a third-party repo through a PPA
+To add a new file that defines PPA to be used to add a third-party repository for an application just follow next steps:
+1. Create a new file './etc/ppa/applicationName'
+  Considerations:
+  * The filename must be identically (case-sensitive) to the related application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+  * The filename must not have extension at all.
+2. The file must contain one and only one PPA. It can contains:
+  * Blanck lines [optional]
+  * # Comentary [optional]
+  * ppa:/...  [mandatory]
+
+---
+[Back to index](#index)
+
+#### 5.5 Add new subscript to install an application
 To add a new installation script for an application follow next steps:
 
 1. Create a new file './scripts/application-name.sh' taking, as base, next commands defined in [template-script.sh][template-script.sh] file
@@ -286,16 +315,9 @@ To add a new installation script for an application follow next steps:
 ---
 [Back to index](#index)
 
-#### 5.4 Add new subscript to prepare the installation of an application
-To add a new subscript that prepares the installation of an application before the installation proccess begins just follow next steps:
 
-1. Create a new file taking, as base, the [template-pre-installation.sh][template-pre-installation.sh] file following next [considerations](#subscript-file-considerations).
-2. Add neccessary commands at the end of the file to add a third-party repository and/or to setup the application following next [considerations](#subscript-commands-considerations).
 
----
-[Back to index](#index)
-
-#### 5.5 Add new subscript to install a non-repository application
+#### 5.6 Add new subscript to install a non-repository application
 To add a new subscript that installs a non-repository application just follow next steps:
 
 1. Create a new file taking, as base, the [template-non-repo-app.sh][template-non-repo-app.sh] file following next [considerations](#subscript-file-considerations).
@@ -304,7 +326,7 @@ To add a new subscript that installs a non-repository application just follow ne
 ---
 [Back to index](#index)
 
-#### 5.6 Add new subscript to setup an application
+#### 5.7 Add new subscript to setup an application
 To add a new subscript to setup an application after installation proccess just follow next steps:
 
 1. Create a new file taking, as base, the [template-post-installation.sh][template-post-installation.sh] file following next [considerations](#subscript-file-considerations).
@@ -313,7 +335,7 @@ To add a new subscript to setup an application after installation proccess just 
 ---
 [Back to index](#index)
 
-#### 5.7 Add new subscript to setup EULA support
+#### 5.8 Add new subscript to setup EULA support
 To add a new subscript to setup EULA support for an application just follow next steps:
 
 1. Create a new file './eula/applicationName' taking, as base, next commands from [template-eula][template-eula] file.

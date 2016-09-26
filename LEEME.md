@@ -20,18 +20,19 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 > 5. [Extender funcionalidad y personalizar aplicaciones a instalar](#5-extender-funcionalidad-y-personalizar-aplicaciones-a-instalar)  
 >   - [Entendiendo la estructura del proyecto](#51-entendiendo-la-estructura-del-proyecto)  
 >   - [Añadir nueva aplicación a una categoría. Modificar o borrar una existente](#52-añadir-nueva-aplicación-a-una-categoría-modificar-o-borrar-una-existente)  
->   - [Añadir nuevo subscript para instalar una aplicación](#53-añadir-nuevo-subscript-para-instalar-una-aplicación)  
->   - [Añadir nuevo subscript para preparar la instalación de una aplicación](#54-añadir-nuevo-subscript-para-preparar-la-instalación-de-una-aplicación)
->   - [Añadir nuevo subscript para instalar una aplicación externa a repositorios](#55-añadir-nuevo-subscript-para-instalar-una-aplicación-externa-a-repositorios)  
->   - [Añadir nuevo subscript para configurar una aplicación](#56-añadir-nuevo-subscript-para-configurar-una-aplicación)  
->   - [Añadir nuevo subscript para configurar el soporte EULA](#57-añadir-nuevo-subscript-para-configurar-el-soporte-eula)
+>   - [Añadir nuevo subscript para preparar la instalación de una aplicación](#53-añadir-nuevo-subscript-para-preparar-la-instalación-de-una-aplicación)
+<   - [Añadir un nuevo fichero para agregar repositorio de tercero mediante PPA](#54-añadir-un-nuevo-fichero-para-agregar-repositorio-de-tercero-mediante-ppa)
+>   - [Añadir nuevo subscript para instalar una aplicación](#55-añadir-nuevo-subscript-para-instalar-una-aplicación)  
+>   - [Añadir nuevo subscript para instalar una aplicación externa a repositorios](#56-añadir-nuevo-subscript-para-instalar-una-aplicación-externa-a-repositorios)  
+>   - [Añadir nuevo subscript para configurar una aplicación](#57-añadir-nuevo-subscript-para-configurar-una-aplicación)  
+>   - [Añadir nuevo subscript para configurar el soporte EULA](#58-añadir-nuevo-subscript-para-configurar-el-soporte-eula)
 > 6. [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción)
 
 ```
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 21/09/2016 (dd/mm/yyyy)
+Último cambio: 26/09/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -104,7 +105,8 @@ $ bash ./scripts/applicationName.sh
 2. El script EJECUTA OPERACIONES INICIALES para preparar la instalación de las aplicaciones seleccionadas.
 
 3. Por cada aplicación, ejecuta los siguientes pasos:
-  * El script EJECUTA OPERACIONES de PRE-INSTALACIÓN de la aplicación a ser instalada si existe un sub-script específico para este propósito. El sub-script podría añadir un repositorio de tercero y/o preparar la instalación de la aplicación.
+  * El script AGREGA un REPOSITORIO DE TERCERO mediante PPA, si es definido por fichero.
+  * El script EJECUTA OPERACIONES de PRE-INSTALACIÓN de la aplicación a ser instalada si existe un sub-script específico para este propósito. El sub-script podría añadir un repositorio de tercero, mediante comandos propios en lugar de uso de PPA, y/o preparar la instalación de la aplicación.
   * El script INSTALA la APLICACIÓN, con soporte EULA, tomando como fuente los repositorios oficiales, de terceros o bien un sub-script propio creado para tal propósito.
   * El script DESACTIVA automáticamente el REPOSITORIO de TERCERO de la aplicación instalada para evitar posibles problemas derivados de esto.
   * El script EJECUTA OPERACIONES de POST-INSTALACION para configurar la aplicación instalada si existe un sub-script propio para este propósito.
@@ -166,6 +168,10 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   │
 │   ├── old-init.d          Contiene scripts basados en init.d. Usado por algunos demonios (para compatibilidad con LMDE 2)
 │   │   └── *
+│   │
+│   ├── ppa                 Contiene un fichero por aplicación que contiene PPA a ser añadido antes de la instalación
+│   │   └── *
+│   │
 │   └── *
 │
 ├── icons                   Contiene un conjunto de iconos de aplicaciones usado por algunos subscripts
@@ -273,7 +279,30 @@ Para modificar o eliminar una aplicación o categoría, debe editar el fichero [
 ---
 [Regresar al índice](#indice)
 
-#### 5.3 Añadir nuevo subscript para instalar una aplicación
+#### 5.3 Añadir nuevo subscript para preparar la instalación de una aplicación
+Para añadir un nuevo subscript que prepare una aplicación antes de que comience el proceso de instalación, siga los siguientes pasos:
+
+1. Crear un nuevo fichero tomando como base la plantilla [template-pre-installation.sh][template-pre-installation.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
+2. Añadir los comandos necesarios al final del fichero para agregar un repositorio de tercero y/o preparar la instalación de la aplicación teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
+
+---
+[Regresar al índice](#indice)
+
+#### 5.4 Añadir un nuevo fichero para agregar repositorio de tercero mediante PPA
+Para añadir un fichero que define PPA a ser usado para agregar repositorio de tercero para una aplicación siga los siguientes pasos:
+1. Crear un nuevo fichero './etc/ppa/applicationName'
+  Considerationes:
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * El nombre de fichero no debe tener extensión.
+2. El fichero debe contener sólamente uno y solo un PPA. Puede estar formado por:
+  * Líneas en blanco [opcional]
+  * # Comentarios [opcional]
+  * ppa:/...  [obligatorio]
+
+---
+[Regresar al índice](#indice)
+
+#### 5.5 Añadir nuevo subscript para instalar una aplicación
 Para añadir un nuevo script de instalación de una aplicación siga los siguientes pasos:
 
 1. Crear un nuevo fichero './scripts/nombre-aplicacion.sh' tomando como base los comandos definidos en la plantilla [template-script.sh][template-script.sh]
@@ -286,16 +315,7 @@ Para añadir un nuevo script de instalación de una aplicación siga los siguien
 ---
 [Regresar al índice](#indice)
 
-#### 5.4 Añadir nuevo subscript para preparar la instalación de una aplicación
-Para añadir un nuevo subscript que prepare una aplicación antes de que comience el proceso de instalación, siga los siguientes pasos:
-
-1. Crear un nuevo fichero tomando como base la plantilla [template-pre-installation.sh][template-pre-installation.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
-2. Añadir los comandos necesarios al final del fichero para agregar un repositorio de tercero y/o preparar la instalación de la aplicación teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
-
----
-[Regresar al índice](#indice)
-
-#### 5.5 Añadir nuevo subscript para instalar una aplicación externa a repositorios
+#### 5.6 Añadir nuevo subscript para instalar una aplicación externa a repositorios
 Para añadir un nuevo subscript para instalar una aplicación externa a repositorios, siga los siguientes pasos:
 
 1. Crear un nuevo fichero tomando como base la plantilla [template-non-repo-app.sh][template-non-repo-app.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
@@ -304,7 +324,7 @@ Para añadir un nuevo subscript para instalar una aplicación externa a reposito
 ---
 [Regresar al índice](#indice)
 
-#### 5.6 Añadir nuevo subscript para configurar una aplicación
+#### 5.7 Añadir nuevo subscript para configurar una aplicación
 Para añadir un nuevo subscript que configure una aplicación después del proceso de instalación, siga los siguientes pasos:
 
 1. Crear un nuevo fichero tomando como base la plantilla [template-post-installation.sh][template-post-installation.sh] teniendo en cuenta estas [consideraciones](#consideraciones-del-fichero-subscript).
@@ -313,7 +333,7 @@ Para añadir un nuevo subscript que configure una aplicación después del proce
 ---
 [Regresar al índice](#indice)
 
-#### 5.7 Añadir nuevo subscript para configurar el soporte EULA
+#### 5.8 Añadir nuevo subscript para configurar el soporte EULA
 Para añadir un nuevo subscript que configure el soporte EULA para una aplicación, siga los siguientes pasos:
 
 1. Crear un nuevo fichero './eula/nombreAplicacion' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
