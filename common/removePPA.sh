@@ -22,7 +22,7 @@ if [ -n "$4" ]; then
   if [ -z "$DISPLAY" ]; then
     add-apt-repository -ry $ppa
   else
-    if [ -z "`dpkg -s xterm 2>&1 | grep "installed"`" ]; then
+    if [ -z "`dpkg -s xterm 2>&1 | grep "Status: install ok installed"`" ]; then
       echo "$installingRepoApplication xterm"
       apt-get -y install xterm --fix-missing
     fi

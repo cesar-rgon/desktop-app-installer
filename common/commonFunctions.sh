@@ -45,22 +45,21 @@ function installNeededPackages
 			if [ "$distro" == "ubuntu" ]; then neededPackages+=( libqtgui4-perl ); fi
 		fi
 	fi
-	if [ ${#neededPackages[@]} -gt 0 ]; then
-		for package in "${neededPackages[@]}"; do
-			if [ -z "`dpkg -s $package 2>&1 | grep "installed"`" ]; then
-				echo "$installingRepoApplication $package"
-				if [ -z "$DISPLAY" ]; then
-					sudo apt-get -y install $package --fix-missing
+	
+	for package in "${neededPackages[@]}"; do
+		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
+			echo "$installingRepoApplication $package"
+			if [ -z "$DISPLAY" ]; then
+				sudo apt-get -y install $package --fix-missing
+			else
+				if [ "$KDE_FULL_SESSION" != "true" ]; then
+					`gksudo -S "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
 				else
-					if [ "$KDE_FULL_SESSION" != "true" ]; then
-						`gksudo -S "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
-					else
-						`kdesudo -c "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
-					fi
+					`kdesudo -c "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
 				fi
 			fi
-		done
-	fi
+		fi
+	done
 }
 
 ##
@@ -214,7 +213,6 @@ function generateCommandsInstallApp
 	fi
 	commands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
 	if [ -n "$commands" ]; then
-		notify-send "debug" "AQUI"
 		# STEP 2: Generate commands to update repositories if required
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
