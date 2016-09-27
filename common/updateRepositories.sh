@@ -19,4 +19,12 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Update repositories
-apt-get update --fix-missing
+if [ -z "$DISPLAY" ]; then
+  apt-get update --fix-missing
+else
+  xterm -T "$terminalProgress. $updatingRepositories" \
+    -fa 'DejaVu Sans Mono' -fs 11 \
+    -geometry 200x15+0-0 \
+    -xrm 'XTerm.vt100.allowTitleOps: false' \
+    -e "apt-get update --fix-missing"
+fi

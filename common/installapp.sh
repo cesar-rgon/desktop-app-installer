@@ -39,14 +39,23 @@ if [ -n "$packageList" ]; then
 			done < "$eulaFolder/$appName"
 			bash -c "$debconfCommands"
 		fi
-	  # Install package
-		apt-get -y install $package --fix-missing
-		if [ $? -ne 0 ]; then
-			echo -e "$packageInstallFailed ..." 1>&2
-			# Error installing package. Applying contingence measure
-			rm /var/lib/dpkg/info/$package.pre* 2>/dev/null
-			rm /var/lib/dpkg/info/$package.post* 2>/dev/null
+		commands="
+			apt-get -y install $package --fix-missing;
+			if [ $? -ne 0 ]; then;
+				echo -e \"$packageInstallFailed ...\" 1>&2;
+				rm /var/lib/dpkg/info/$package.pre* 2>/dev/null;
+				rm /var/lib/dpkg/info/$package.post* 2>/dev/null;
+				apt-get -y install -f >/dev/null;
+			fi
+		"
+		if [ -z "$DISPLAY" ]; then
+			bash -c "$commands"
+		else
+			xterm -T "$terminalProgress. $applicationLabel: $appName" \
+				-fa 'DejaVu Sans Mono' -fs 11 \
+				-geometry 200x15+0-0 \
+				-xrm 'XTerm.vt100.allowTitleOps: false' \
+				-e "$commands"
 		fi
-		apt-get -y install -f >/dev/null
 	done
 fi

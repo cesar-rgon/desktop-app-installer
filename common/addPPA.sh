@@ -22,7 +22,10 @@ if [ -n "$4" ]; then
   if [ -z "$DISPLAY" ]; then
     add-apt-repository -y $ppa
   else
-    # Some PPA could give problems on desktop mode, so, we open a terminal emulator to do add-ppa operation
-    xterm -fn $xtermFont -e "add-apt-repository -y $ppa"
+    xterm -T "$terminalProgress. PPA: $ppa" \
+      -fa 'DejaVu Sans Mono' -fs 11 \
+      -geometry 200x15+0-0 \
+      -xrm 'XTerm.vt100.allowTitleOps: false' \
+      -e "add-apt-repository -y $ppa"
   fi
 fi
