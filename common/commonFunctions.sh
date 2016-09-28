@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-26
+# @version 	1.3, 2016-09-28
 # @license 	MIT
 ##########################################################################
 
@@ -45,7 +45,7 @@ function installNeededPackages
 			if [ "$distro" == "ubuntu" ]; then neededPackages+=( libqtgui4-perl ); fi
 		fi
 	fi
-	
+
 	for package in "${neededPackages[@]}"; do
 		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
 			echo "$installingRepoApplication $package"
@@ -259,7 +259,7 @@ function installApplications
 			sed -i "s/TOTALAPPS/$total: $(($totalRepoAppsNumber+$totalNonRepoAppsNumber))/g" "$homeFolder/.tmux.conf"
 			echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
 			echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
-			tmux new-session "sudo bash $tempFolder/commandsToInstallApps"
+			sudo tmux new-session "bash $tempFolder/commandsToInstallApps"
 		fi
 	else
 		if [ -n "$commandsRepoApp" ]; then

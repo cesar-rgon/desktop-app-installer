@@ -4,7 +4,7 @@
 # an application package. If so, apply contingence measure.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-28
-# @version 	1.3, 2016-08-19
+# @version 	1.3, 2016-09-28
 # @license 	MIT
 ##########################################################################
 
@@ -40,8 +40,7 @@ if [ -n "$packageList" ]; then
 			bash -c "$debconfCommands"
 		fi
 		commands="
-			apt-get -y install $package --fix-missing;
-			if [ $? -ne 0 ]; then;
+			apt-get -y install $package --fix-missing; if [ $? -ne 0 ]; then
 				echo -e \"$packageInstallFailed ...\" 1>&2;
 				rm /var/lib/dpkg/info/$package.pre* 2>/dev/null;
 				rm /var/lib/dpkg/info/$package.post* 2>/dev/null;

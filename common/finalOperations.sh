@@ -3,7 +3,7 @@
 # This script setup default Debconf interface to use
 # @author César Rodríguez González
 # @since   1.3, 2016-08-06
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-09-28
 # @license MIT
 ##########################################################################
 #
@@ -19,7 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Delete temp files and packages
-commands="apt-get install -f; apt-get -y autoremove; apt-get clean; rm -rf \"$tempFolder\""
+commands="apt-get -y install -f; apt-get -y autoremove; apt-get clean; rm -rf \"$tempFolder\""
 if [ -z "$DISPLAY" ]; then
   bash -c "$commands"
 else
