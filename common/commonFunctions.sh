@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-28
+# @version 	1.3, 2016-09-29
 # @license 	MIT
 ##########################################################################
 
@@ -85,16 +85,13 @@ function getScriptName
 function prepareScript
 {
 	local scriptName=$( getScriptName "$1" )
-	logFilename="${scriptName/.sh/}-$snapshot.log"
+	logFilename="${scriptName//.sh/}-$snapshot.log"
 	logFile="$logsFolder/$logFilename"
 	# Create temporal folders and files
 	mkdir -p "$tempFolder" "$logsFolder"
 	rm -f "$logFile"
 	rm -f "$tempFolder/credentials"
 	installNeededPackages
-	cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
-	sed -i "s/LEFT-LENGHT/$(($width - 10))/g" "$homeFolder/.tmux.conf"
-	sed -i "s/RIGHT-LENGHT/10/g" "$homeFolder/.tmux.conf"
 	echo -e "$logFile\n$boxSeparator" > "$logFile"
 	credits
 }
@@ -121,7 +118,7 @@ function getAppFiles
 		if [ ${#fileNameArray[@]} -gt 1 ]; then
 			# The filename has extension
 			local lastItem="${fileNameArray[((${#fileNameArray[@]}-1))]}"
-			filename="`echo ${fileNameArray[@]/$lastItem/} | tr ' ' '.'`"
+			filename="`echo ${fileNameArray[@]//$lastItem/} | tr ' ' '.'`"
 			extension=".$lastItem"
 		else
 			# Filename without extension
@@ -155,7 +152,7 @@ function getAppFiles
 #		- if name=identifier is considered as an application name
 #		- if name=identifier.sh is considered as a subscript filename
 # @param String message				Message to be showed in box/window [mandatory]
-# @param String argument			Argument passed to name script [optional]
+# @param String arguments			List os arguments separated by | character [optional]
 # @return String 							list of bash shell commands separated by ;
 ##
 function generateCommands
@@ -164,12 +161,12 @@ function generateCommands
 		echo ""			# First three parameters are mandatories
 	else
 		# Get parameters and initialize variables
-		local targetFolder="$1" message="$3" commands messageCommand argument appName
+		local targetFolder="$1" message="$3" commands messageCommand arguments appName
 		if [[ "$2" == *.sh ]]; then			# Name is a script filename
 			if [ -f "$targetFolder/$2" ]; then
-				argument="$4"
-				messageCommand="echo -e \"\n# $  $message $argument\"; echo \"$  $message $argument\" >> \"$logFile\";"
-				commands="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$argument\" 2>>\"$logFile\";"
+				arguments="$4"
+				messageCommand="echo -e \"\n# $  $message\"; echo \"$  $message\" >> \"$logFile\";"
+				commands="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$arguments\" 2>>\"$logFile\";"
 			fi
 		else														# Name is an application name
 			appName="$2"
@@ -177,7 +174,7 @@ function generateCommands
 			# Iterate through all subscript files
 			for script in "${scriptList[@]}"; do
 				commands+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
-				messageCommand+="echo -e \"\n# $  $message: $appName\"; echo \"$  $message: $appName\" >> \"$logFile\";"
+				messageCommand+="echo -e \"\n# $  $message\"; echo \"$  $message\" >> \"$logFile\";"
 			done
 		fi
 		if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
@@ -192,24 +189,21 @@ function generateCommands
 # 2. Third-party repositories. Steps are:
 #		2a. Add third-party repository, after that, update repositories
 #		2b. Install application
-#		2c. Disable third-party repository, after that, update repositories again
-# 3. External source. Not from repositories. Steps are:
-#		3a. Download application from source (web page, ftp, etc)
-#		3b. Extract and install file content
+#		2c. Remove third-party repository, after that, update repositories again
 # @since v1.3
-# @param String	appName	 Application name [mandatory]
+# @param String	appName	 		Application name [mandatory]
+# @param int		index	 			Index to enumarate the installation order of the app [mandatory]
+# @param int		totalApps	 	Total number of repo apps to be installed [mandatory]
 ##
-function generateCommandsInstallApp
+function installRepoApplication
 {
-	local appName="$1" commands=""
+	local appName="$1" index=$2 totalApps=$3 commands=""
 
 	# STEP 1: Generate commands to prepare installation of the application
 	local applicationPPAFiles=( $( getAppFiles "$ppaFolder" "$appName" ) )
-
-	# Only use first PPA file found
 	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
 		local ppa=`grep -v '^$\|^\s*\#' ${applicationPPAFiles[0]}`
-		commands=$( generateCommands "$commonFolder" "addPPA.sh" "$addingThirdPartyRepository" "$ppa" )
+		commands=$( generateCommands "$commonFolder" "addPPA.sh" "$addingThirdPartyRepository" "$appName|$ppa" )
 	fi
 	commands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
 	if [ -n "$commands" ]; then
@@ -217,62 +211,72 @@ function generateCommandsInstallApp
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
 	# STEP 3. Generate commands to install the application
-	# CASE 1. Non-repo application
-	local commandsNR=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $nonRepoAppIndex/totalNonRepoAppsNumber" )
-	if [ -n "$commandsNR" ]; then
-		commands+="$commandsNR"
-	else
-		# CASE 2. Repo application
-		commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $repoAppIndex/totalRepoAppsNumber" "$appName" )
-	fi
+	commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $index/$totalApps: $appName" "$appName|$index|$totalApps" )
+
 	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
 		# STEP 4. Generate commands to remove third-party repository
-		commands+=$( generateCommands "$commonFolder" "removePPA.sh" "$removingThirdPartyRepository" "$ppa" )
+		commands+=$( generateCommands "$commonFolder" "removePPA.sh" "$removingThirdPartyRepository" "$appName|$ppa" )
 		# STEP 5. Generate commands to update repositories again
 		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
 	fi
 	# STEP 6. Generate commands to setup application
 	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+	# STEP 7. Generate credentials to authenticate in required applications
+	getAppCredentials "$appName"
 
-	if [ -z "$commandsNR" ]; then
-		echo "$commands"
-	else
-		echo "NR#$commands"
+	# Install the application with generated commands
+	if [ -n "$commands" ]; then
+		if [ -z "$DISPLAY" ]; then
+				sudo bash -c "$commands"
+		else
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$installingRepoApplications. $total: $totalApps" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+		fi
 	fi
 }
 
 ##
-# This function executes bash commands to install applications
+# This function generates needed commands to prepare, install
+# and setup an application. The source to get the application if external,
+# that means, not from any repository. Steps are:
+#		3a. Download application from source (web page, ftp, etc)
+#		3b. Extract and install file content
 # @since v1.3
-# @param String	commandsRepoApp	 		Commands to install repository apps [optional]
-# @param String	commandsNonRepoApp 	Commands to install non-repository apps [optional]
+# @param String	appName	 		Application name [mandatory]
+# @param int		index	 			Index to enumarate the installation order of the app [mandatory]
+# @param int		totalApps	 	Total number of non-repo apps to be installed [mandatory]
 ##
-function installApplications
+function installNonRepoApplication
 {
-	local commandsRepoApp="$1" commandsNonRepoApp="$2"
-	local totalRepoAppsNumber=$(($repoAppIndex-1))
-	local totalNonRepoAppsNumber=$(($nonRepoAppIndex-1))
+	local appName="$1" index=$2 totalApps=$2 commands=""
 
-	if [ -z "$DISPLAY" ]; then
-		if [ -n "$commandsRepoApp" ] || [ -n "$commandsNonRepoApp" ]; then
-			sed -i "s/MESSAGE/$installingApplications/g" "$homeFolder/.tmux.conf"
-			sed -i "s/TOTALAPPS/$total: $(($totalRepoAppsNumber+$totalNonRepoAppsNumber))/g" "$homeFolder/.tmux.conf"
-			echo "$commandsRepoApp" | tr ';' '\n' > $tempFolder/commandsToInstallApps
-			echo "$commandsNonRepoApp" | tr ';' '\n' >> $tempFolder/commandsToInstallApps
-			sudo tmux new-session "bash $tempFolder/commandsToInstallApps"
-		fi
-	else
-		if [ -n "$commandsRepoApp" ]; then
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commandsRepoApp" ) | zenity --progress --title="$installingRepoApplications. $total: $totalRepoAppsNumber" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
-		fi
-		if [ -n "$commandsNonRepoApp" ]; then
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commandsNonRepoApp" ) | zenity --progress --title="$installingNonRepoApplications. $total: $totalNonRepoAppsNumber" --no-cancel --pulsate --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+	# STEP 1: Generate commands to prepare installation of the application
+	commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
+	if [ -n "$commands" ]; then
+		# STEP 2: Generate commands to update repositories if required
+		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+	fi
+	# STEP 3. Generate commands to install the application
+	commands+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $index/$totalApps: $appName" )
+	# STEP 4. Generate commands to setup application
+	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+	# STEP 7. Generate credentials to authenticate in required applications
+	getAppCredentials "$appName"
+
+	# Install the application with generated commands
+	if [ -n "$commands" ]; then
+		if [ -z "$DISPLAY" ]; then
+			cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
+			sed -i "s/LEFT-LENGHT/$width/g" "$homeFolder/.tmux.conf"
+			sed -i "s/MESSAGE/$installingNonRepoApplication $index\/$totalApps: $appName/g" "$homeFolder/.tmux.conf"
+			sudo tmux new-session "$commands"
+		else
+			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$installingNonRepoApplications. $total: $totalApps" --no-cancel --pulsate --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
 	fi
 }
 
 ##
-# This function generates and executes commands needed to begin the installation proccess
+# This function generates and executes commands needed to begin the installation process
 ##
 function executeBeginningOperations
 {
@@ -281,7 +285,7 @@ function executeBeginningOperations
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
 	beginningOperations+=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
 	if [ -z "$DISPLAY" ]; then
-		clear; sudo bash -c "$beginningOperations" | dialog --title "$settingDebconfInterface" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
+		clear; sudo bash -c "$beginningOperations"
 	else
 		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$beginningOperations" ) | zenity --progress --title="$installerTitle" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
@@ -370,27 +374,33 @@ function installAndSetupApplications
 			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000
 		fi
 
-		# Execute initial commands to proceed with installation proccess
-		executeBeginningOperations
-		local appName commands commandsRepoApp commandsNonRepoApp
+		# Separates repo/non-repo applications
+		local repoAppsToInstall=() nonRepoAppsToInstall=() repoIndex=0 nonRepoIndex=0 appName=""
 		for appName in ${appsToInstall[@]}; do
-			# Generate and executes commands to prepare, install and setup the application
-			commands=$( generateCommandsInstallApp "$appName" )
-			if [[ "$commands" != NR#* ]]; then
-				commandsRepoApp+="$commands"
-				repoAppIndex=$(($repoAppIndex+1))
-			else
-				commandsNonRepoApp+=${commands/NR#/}
-				nonRepoAppIndex=$(($nonRepoAppIndex+1))
-			fi
-			getAppCredentials "$appName"
+				local applicationNonRepoScripts=( $( getAppFiles "$nonRepositoryAppsFolder" "$appName.sh" ) )
+				if [ -z "$applicationNonRepoScripts" ]; then   	# Repo application
+					repoAppsToInstall[$repoIndex]="$appName"
+					repoIndex=$(($repoIndex+1))
+				else																						# Non-repo application
+					nonRepoAppsToInstall[$nonRepoIndex]="$appName"
+					nonRepoIndex=$(($nonRepoIndex+1))
+				fi
 		done
 
-		local totalRepoAppsNumber=$(($repoAppIndex-1)) totalNonRepoAppsNumber=$(($nonRepoAppIndex-1))
-		commandsRepoApp=`echo "$commandsRepoApp" | sed "s/totalRepoAppsNumber/$totalRepoAppsNumber/g"`
-		commandsNonRepoApp=`echo "$commandsNonRepoApp" | sed "s/totalNonRepoAppsNumber/$totalNonRepoAppsNumber/g"`
-		installApplications "$commandsRepoApp" "$commandsNonRepoApp"
-
+		# Generate and execute initial commands to proceed with installation proccess
+		executeBeginningOperations
+		# Generate and execute commands to install each repo application
+		repoIndex=1
+		for appName in ${repoAppsToInstall[@]}; do
+			installRepoApplication "$appName" $repoIndex ${#repoAppsToInstall[@]}
+			repoIndex=$(($repoIndex+1))
+		done
+		# Generate and execute commands to install each non-repo application
+		nonRepoIndex=1
+		for appName in ${nonRepoAppsToInstall[@]}; do
+			installNonRepoApplication "$appName" $nonRepoIndex ${#nonRepoAppsToInstall[@]}
+			nonRepoIndex=$(($nonRepoIndex+1))
+		done
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
 	fi

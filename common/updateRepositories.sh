@@ -3,7 +3,7 @@
 # This script setup default Debconf interface to use
 # @author César Rodríguez González
 # @since   1.3, 2016-08-06
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-09-29
 # @license MIT
 ##########################################################################
 #
@@ -20,7 +20,10 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Update repositories
 if [ -z "$DISPLAY" ]; then
-  apt-get update --fix-missing
+  cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
+  sed -i "s/LEFT-LENGHT/$width/g" "$homeFolder/.tmux.conf"
+  sed -i "s/MESSAGE/$updatingRepositories/g" "$homeFolder/.tmux.conf"
+  tmux new-session "apt-get update --fix-missing"
 else
   xterm -T "$terminalProgress. $updatingRepositories" \
     -fa 'DejaVu Sans Mono' -fs 11 \
