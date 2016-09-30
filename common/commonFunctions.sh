@@ -77,6 +77,13 @@ function getScriptName
 	echo "${splittedPath[$(($numberItemsPath-1))]}"
 }
 
+function getScriptPath
+{
+	local scriptPath="$1"
+	local scriptName=$( getScriptName "$scriptPath" )
+	echo "${scriptPath/\/$scriptName/}"
+}
+
 ##
 # This funtion prepares main installer script to be executed
 # Creates needed folders and files used by installation script
@@ -145,7 +152,6 @@ function getAppFiles
 ##
 # This function executes a specified subscript during installation process.
 # @since 	v1.3
-# @param String targetFolder	Destination folder where is placed the script [mandatory]
 # @param String script				Name of subscript to be executed [mandatory]
 # @param String message				Message to be showed in box/window [mandatory]
 # @param String arguments			List os arguments separated by | character [optional]
@@ -153,18 +159,17 @@ function getAppFiles
 ##
 function executeScript
 {
-	local targetFolder="$1" script="$2" message="$3" arguments="$4"
+	local script="$1" message="$2" arguments="$3"
 
-
-	if [ -z "$targetFolder" ] || [ -z "$script" ] || [ -z "$message" ]; then
-		echo "false"			# First three parameters are mandatories
+	if [ -z "$script" ] || [ -z "$message" ]; then
+		echo "false"			# First two parameters are mandatories
 	else
-		if [ -f "$targetFolder/$script" ]; then
+		if [ -f "$script" ]; then
 			# Generate commands to execute the script
 			local messageCommands execScriptCommands
 			if [ -n "$DISPLAY" ]; then messageCommands="echo -e \"\n# $  $message\";"; fi
 			messageCommands+="echo \"$  $message\" >> \"$logFile\";"
-			execScriptCommands="bash \"$targetFolder/$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$arguments\" 2>>\"$logFile\";"
+			execScriptCommands="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$arguments\" 2>>\"$logFile\";"
 
 			# Execute commands
 			if [ -z "$DISPLAY" ]; then
@@ -173,8 +178,9 @@ function executeScript
 				sed -i "s/MESSAGE/$message/g" "$homeFolder/.tmux.conf"
 				sudo tmux new-session "$messageCommands $execScriptCommands"
 			else
-				local autoclose="--auto-close"
+				local targetFolder=$( getScriptPath "$script" ) autoclose="--auto-close"
 				local xtermCommand="xterm -T \"$terminalProgress. $applicationLabel: $appName\" -fa 'DejaVu Sans Mono' -fs 11 -geometry 200x15+0-0 -xrm 'XTerm.vt100.allowTitleOps: false' -e \"$execScriptCommands\";"
+
 				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
 				( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
 				| zenity --progress --title="$installingRepoApplications. $total: $totalApps" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
@@ -207,8 +213,7 @@ function execute
 		# Iterate through all subscript files
 		local script scriptName
 		for script in "${scriptList[@]}"; do
-			scriptName=$( getScriptName "$script" )
-			executedScript=$( executeScript "$targetFolder" "$scriptName" "$message" )
+			executedScript=$( executeScript "$script" "$message" )
 			if [ "$executedScript" == "true" ]; then
 				executed="true"
 			fi
@@ -241,21 +246,21 @@ function installRepoApplication
 	local applicationPPAFiles=( $( getAppFiles "$ppaFolder" "$appName" ) )
 	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
 		local ppa=`grep -v '^$\|^\s*\#' ${applicationPPAFiles[0]}`
-		executeScript "$commonFolder" "addPPA.sh" "$addingThirdPartyRepository: $appName" "$ppa"
+		executeScript "$commonFolder/addPPA.sh" "$addingThirdPartyRepository: $appName" "$ppa"
 	fi
 	executed+=$( execute "$preInstallationFolder" "$appName" "$preparingInstallationApp: $appName" )
 	if [ ${#applicationPPAFiles[@]} -gt 0 ] || [ "$executed" == "true" ]; then
 		# STEP 2: Update repositories if required
-		executeScript "$commonFolder" "updateRepositories.sh" "$updatingRepositories"
+		executeScript "$commonFolder/updateRepositories.sh" "$updatingRepositories"
 	fi
 	# STEP 3. Install the application
-	executeScript "$commonFolder" "installapp.sh" "$installingRepoApplication $index|$totalApps: $appName" "$appName"
+	executeScript "$commonFolder/installapp.sh" "$installingRepoApplication $index|$totalApps: $appName" "$appName"
 
 	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
 		# STEP 4. Remove third-party repository
-		executeScript "$commonFolder" "removePPA.sh" "$removingThirdPartyRepository: $appName" "$ppa"
+		executeScript "$commonFolder/removePPA.sh" "$removingThirdPartyRepository: $appName" "$ppa"
 		# STEP 5. Update repositories again
-		executeScript "$commonFolder" "updateRepositories.sh" "$updatingRepositories"
+		executeScript "$commonFolder/updateRepositories.sh" "$updatingRepositories"
 	fi
 	# STEP 6. Setup application
 	execute "$postInstallationFolder" "$appName" "$settingUpApplication: $appName"
@@ -283,7 +288,7 @@ function installNonRepoApplication
 	executed=$( execute "$preInstallationFolder" "$appName" "$preparingInstallationApp: $appName" )
 	if [ "$executed" == "true" ]; then
 		# STEP 2: Update repositories if required
-		executeScript "$commonFolder" "updateRepositories.sh" "$updatingRepositories"
+		executeScript "$commonFolder/updateRepositories.sh" "$updatingRepositories"
 	fi
 	# STEP 3. Install the application
 	execute "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $index|$totalApps: $appName"
@@ -299,9 +304,9 @@ function installNonRepoApplication
 function executeBeginningOperations
 {
 	# sudo remember always password
-	local beginningOperations="cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/;"
+	sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
-	executeScript "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface"
+	executeScript "$commonFolder/setupDebconf.sh" "$settingDebconfInterface"
 }
 
 ##
@@ -310,8 +315,8 @@ function executeBeginningOperations
 ##
 function executeFinalOperations
 {
-	executeScript "$commonFolder" "finalOperations.sh" "$cleaningTempFiles"
-	rm -f /etc/sudoers.d/app-installer-sudo
+	executeScript "$commonFolder/finalOperations.sh" "$cleaningTempFiles"
+	rm -f /etc/sudoers.d/desktop-app-installer-sudo
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
 	showCredentials
