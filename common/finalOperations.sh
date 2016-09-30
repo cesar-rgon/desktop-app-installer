@@ -19,14 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Delete temp files and packages
-commands="apt-get -y install -f; apt-get -y autoremove; apt-get clean; rm -rf \"$tempFolder\""
-
-if [ -z "$DISPLAY" ]; then
-  bash -c "$commands"
-else
-  xterm -T "$terminalProgress. $cleaningTempFiles" \
-    -fa 'DejaVu Sans Mono' -fs 11 \
-    -geometry 200x15+0-0 \
-    -xrm 'XTerm.vt100.allowTitleOps: false' \
-    -e "$commands"
-fi
+apt-get -y install -f
+apt-get -y autoremove
+apt-get clean
+rm -rf "$tempFolder"

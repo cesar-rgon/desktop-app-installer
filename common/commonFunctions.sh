@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-29
+# @version 	1.3, 2016-09-30
 # @license 	MIT
 ##########################################################################
 
@@ -143,43 +143,80 @@ function getAppFiles
 }
 
 ##
-# This function generates bash commands to execute a specified subscript during
-# installation process. The subscript can be referenced by an application name
-# or directly by script-name.sh
+# This function executes a specified subscript during installation process.
 # @since 	v1.3
 # @param String targetFolder	Destination folder where is placed the script [mandatory]
-# @param String name				 	Name of application or subscript to be executed [mandatory]
-#		- if name=identifier is considered as an application name
-#		- if name=identifier.sh is considered as a subscript filename
+# @param String script				Name of subscript to be executed [mandatory]
 # @param String message				Message to be showed in box/window [mandatory]
 # @param String arguments			List os arguments separated by | character [optional]
-# @return String 							list of bash shell commands separated by ;
+# @return String 							"true" if the script has been executed, else "false"
 ##
-function generateCommands
+function executeScript
 {
-	if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
-		echo ""			# First three parameters are mandatories
+	local targetFolder="$1" script="$2" message="$3" arguments="$4"
+
+
+	if [ -z "$targetFolder" ] || [ -z "$script" ] || [ -z "$message" ]; then
+		echo "false"			# First three parameters are mandatories
 	else
-		# Get parameters and initialize variables
-		local targetFolder="$1" message="$3" commands messageCommand arguments appName
-		if [[ "$2" == *.sh ]]; then			# Name is a script filename
-			if [ -f "$targetFolder/$2" ]; then
-				arguments="$4"
-				messageCommand="echo -e \"\n# $  $message\"; echo \"$  $message\" >> \"$logFile\";"
-				commands="bash \"$targetFolder/$2\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$arguments\" 2>>\"$logFile\";"
+		if [ -f "$targetFolder/$script" ]; then
+			# Generate commands to execute the script
+			local messageCommands execScriptCommands
+			if [ -n "$DISPLAY" ]; then messageCommands="echo -e \"\n# $  $message\";"; fi
+			messageCommands+="echo \"$  $message\" >> \"$logFile\";"
+			execScriptCommands="bash \"$targetFolder/$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" \"$arguments\" 2>>\"$logFile\";"
+
+			# Execute commands
+			if [ -z "$DISPLAY" ]; then
+				cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
+				sed -i "s/LEFT-LENGHT/$width/g" "$homeFolder/.tmux.conf"
+				sed -i "s/MESSAGE/$message/g" "$homeFolder/.tmux.conf"
+				sudo tmux new-session "$messageCommands $execScriptCommands"
+			else
+				local autoclose="--auto-close"
+				local xtermCommand="xterm -T \"$terminalProgress. $applicationLabel: $appName\" -fa 'DejaVu Sans Mono' -fs 11 -geometry 200x15+0-0 -xrm 'XTerm.vt100.allowTitleOps: false' -e \"$execScriptCommands\";"
+				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
+				( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
+				| zenity --progress --title="$installingRepoApplications. $total: $totalApps" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 			fi
-		else														# Name is an application name
-			appName="$2"
-			local scriptList=( $( getAppFiles "$targetFolder" "$appName.sh" ) )
-			# Iterate through all subscript files
-			for script in "${scriptList[@]}"; do
-				commands+="bash \"$script\" \"$scriptRootFolder\" \"$username\" \"$homeFolder\" 2>>\"$logFile\";"
-				messageCommand+="echo -e \"\n# $  $message\"; echo \"$  $message\" >> \"$logFile\";"
-			done
+			echo "true"
+		else
+			echo "false"
 		fi
-		if [ -n "$commands" ]; then echo "$messageCommand $commands"; else echo ""; fi
 	fi
 }
+
+##
+# This function executes all the scripts asociated to an application in a targetFolder
+# @since 	v1.3
+# @param String targetFolder	Destination folder where is placed the script [mandatory]
+# @param String appName				Application name [mandatory]
+# @param String message				Message to be showed in box/window [mandatory]
+# @param String arguments			List os arguments separated by | character [optional]
+# @return String 							"true" if at least one script has been executed, else "false"
+##
+function execute
+{
+	local targetFolder="$1" appName="$2" message="$3"
+
+	if [ -z "$targetFolder" ] || [ -z "$appName" ] || [ -z "$message" ]; then
+		echo "false"			# First three parameters are mandatories
+	else
+		local scriptList=( $( getAppFiles "$targetFolder" "$appName.sh" ) )
+		local executedScript executed="false"
+		# Iterate through all subscript files
+		local script scriptName
+		for script in "${scriptList[@]}"; do
+			scriptName=$( getScriptName "$script" )
+			executedScript=$( executeScript "$targetFolder" "$scriptName" "$message" )
+			if [ "$executedScript" == "true" ]; then
+				executed="true"
+			fi
+		done
+		echo "$executed"
+	fi
+}
+
 
 ##
 # This function generates needed commands to prepare, install
@@ -197,45 +234,37 @@ function generateCommands
 ##
 function installRepoApplication
 {
-	local appName="$1" index=$2 totalApps=$3 commands=""
+	local appName="$1" index=$2 totalApps=$3
+	local executed="false"
 
-	# STEP 1: Generate commands to prepare installation of the application
+	# STEP 1: Prepare installation of the application
 	local applicationPPAFiles=( $( getAppFiles "$ppaFolder" "$appName" ) )
 	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
 		local ppa=`grep -v '^$\|^\s*\#' ${applicationPPAFiles[0]}`
-		commands=$( generateCommands "$commonFolder" "addPPA.sh" "$addingThirdPartyRepository" "$appName|$ppa" )
+		executeScript "$commonFolder" "addPPA.sh" "$addingThirdPartyRepository: $appName" "$ppa"
 	fi
-	commands+=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-	if [ -n "$commands" ]; then
-		# STEP 2: Generate commands to update repositories if required
-		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+	executed+=$( execute "$preInstallationFolder" "$appName" "$preparingInstallationApp: $appName" )
+	if [ ${#applicationPPAFiles[@]} -gt 0 ] || [ "$executed" == "true" ]; then
+		# STEP 2: Update repositories if required
+		executeScript "$commonFolder" "updateRepositories.sh" "$updatingRepositories"
 	fi
-	# STEP 3. Generate commands to install the application
-	commands+=$( generateCommands "$commonFolder" "installapp.sh" "$installingRepoApplication $index/$totalApps: $appName" "$appName|$index|$totalApps" )
+	# STEP 3. Install the application
+	executeScript "$commonFolder" "installapp.sh" "$installingRepoApplication $index|$totalApps: $appName" "$appName"
 
 	if [ ${#applicationPPAFiles[@]} -gt 0 ]; then
-		# STEP 4. Generate commands to remove third-party repository
-		commands+=$( generateCommands "$commonFolder" "removePPA.sh" "$removingThirdPartyRepository" "$appName|$ppa" )
-		# STEP 5. Generate commands to update repositories again
-		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+		# STEP 4. Remove third-party repository
+		executeScript "$commonFolder" "removePPA.sh" "$removingThirdPartyRepository: $appName" "$ppa"
+		# STEP 5. Update repositories again
+		executeScript "$commonFolder" "updateRepositories.sh" "$updatingRepositories"
 	fi
-	# STEP 6. Generate commands to setup application
-	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+	# STEP 6. Setup application
+	execute "$postInstallationFolder" "$appName" "$settingUpApplication: $appName"
 	# STEP 7. Generate credentials to authenticate in required applications
 	getAppCredentials "$appName"
-
-	# Install the application with generated commands
-	if [ -n "$commands" ]; then
-		if [ -z "$DISPLAY" ]; then
-				sudo bash -c "$commands"
-		else
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$installingRepoApplications. $total: $totalApps" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
-		fi
-	fi
 }
 
 ##
-# This function generates needed commands to prepare, install
+# This function executes needed commands to prepare, install
 # and setup an application. The source to get the application if external,
 # that means, not from any repository. Steps are:
 #		3a. Download application from source (web page, ftp, etc)
@@ -247,32 +276,21 @@ function installRepoApplication
 ##
 function installNonRepoApplication
 {
-	local appName="$1" index=$2 totalApps=$2 commands=""
+	local appName="$1" index=$2 totalApps=$3
+	local commands="" executed="false"
 
-	# STEP 1: Generate commands to prepare installation of the application
-	commands=$( generateCommands "$preInstallationFolder" "$appName" "$preparingInstallationApp" )
-	if [ -n "$commands" ]; then
-		# STEP 2: Generate commands to update repositories if required
-		commands+=$( generateCommands "$commonFolder" "updateRepositories.sh" "$updatingRepositories" )
+	# STEP 1: Prepare installation of the application
+	executed=$( execute "$preInstallationFolder" "$appName" "$preparingInstallationApp: $appName" )
+	if [ "$executed" == "true" ]; then
+		# STEP 2: Update repositories if required
+		executeScript "$commonFolder" "updateRepositories.sh" "$updatingRepositories"
 	fi
-	# STEP 3. Generate commands to install the application
-	commands+=$( generateCommands "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $index/$totalApps: $appName" )
-	# STEP 4. Generate commands to setup application
-	commands+=$( generateCommands "$postInstallationFolder" "$appName" "$settingUpApplication" )
+	# STEP 3. Install the application
+	execute "$nonRepositoryAppsFolder" "$appName" "$installingNonRepoApplication $index|$totalApps: $appName"
+	# STEP 4. Setup application
+	execute "$postInstallationFolder" "$appName" "$settingUpApplication: $appName"
 	# STEP 7. Generate credentials to authenticate in required applications
 	getAppCredentials "$appName"
-
-	# Install the application with generated commands
-	if [ -n "$commands" ]; then
-		if [ -z "$DISPLAY" ]; then
-			cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
-			sed -i "s/LEFT-LENGHT/$width/g" "$homeFolder/.tmux.conf"
-			sed -i "s/MESSAGE/$installingNonRepoApplication $index\/$totalApps: $appName/g" "$homeFolder/.tmux.conf"
-			sudo tmux new-session "$commands"
-		else
-			( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$commands" ) | zenity --progress --title="$installingNonRepoApplications. $total: $totalApps" --no-cancel --pulsate --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
-		fi
-	fi
 }
 
 ##
@@ -283,12 +301,7 @@ function executeBeginningOperations
 	# sudo remember always password
 	local beginningOperations="cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/;"
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
-	beginningOperations+=$( generateCommands "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface" )
-	if [ -z "$DISPLAY" ]; then
-		clear; sudo bash -c "$beginningOperations"
-	else
-		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$beginningOperations" ) | zenity --progress --title="$installerTitle" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
-	fi
+	executeScript "$commonFolder" "setupDebconf.sh" "$settingDebconfInterface"
 }
 
 ##
@@ -297,13 +310,8 @@ function executeBeginningOperations
 ##
 function executeFinalOperations
 {
-	local finalOperations=$( generateCommands "$commonFolder" "finalOperations.sh" "$cleaningTempFiles" )
-	finalOperations+="rm -f /etc/sudoers.d/app-installer-sudo;"
-	if [ -z "$DISPLAY" ]; then
-		clear; sudo bash -c "$finalOperations" | dialog --title "$cleaningTempFiles" --backtitle "$installerTitle" --progressbox $(($height - 6)) $(($width - 4))
-	else
-		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$finalOperations" ) | zenity --progress --title="$installerTitle" --no-cancel --pulsate --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
-	fi
+	executeScript "$commonFolder" "finalOperations.sh" "$cleaningTempFiles"
+	rm -f /etc/sudoers.d/app-installer-sudo
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
 	showCredentials
@@ -386,20 +394,19 @@ function installAndSetupApplications
 					nonRepoIndex=$(($nonRepoIndex+1))
 				fi
 		done
-
 		# Generate and execute initial commands to proceed with installation proccess
 		executeBeginningOperations
 		# Generate and execute commands to install each repo application
-		repoIndex=1
+		local appCount=1
 		for appName in ${repoAppsToInstall[@]}; do
-			installRepoApplication "$appName" $repoIndex ${#repoAppsToInstall[@]}
-			repoIndex=$(($repoIndex+1))
+			installRepoApplication "$appName" $appCount ${#repoAppsToInstall[@]}
+			appCount=$(($appCount+1))
 		done
 		# Generate and execute commands to install each non-repo application
-		nonRepoIndex=1
+		appCount=1
 		for appName in ${nonRepoAppsToInstall[@]}; do
-			installNonRepoApplication "$appName" $nonRepoIndex ${#nonRepoAppsToInstall[@]}
-			nonRepoIndex=$(($nonRepoIndex+1))
+			installNonRepoApplication "$appName" $appCount ${#nonRepoAppsToInstall[@]}
+			appCount=$(($appCount+1))
 		done
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations

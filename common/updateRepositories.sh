@@ -17,17 +17,5 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
-
 # Update repositories
-if [ -z "$DISPLAY" ]; then
-  cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
-  sed -i "s/LEFT-LENGHT/$width/g" "$homeFolder/.tmux.conf"
-  sed -i "s/MESSAGE/$updatingRepositories/g" "$homeFolder/.tmux.conf"
-  tmux new-session "apt-get update --fix-missing"
-else
-  xterm -T "$terminalProgress. $updatingRepositories" \
-    -fa 'DejaVu Sans Mono' -fs 11 \
-    -geometry 200x15+0-0 \
-    -xrm 'XTerm.vt100.allowTitleOps: false' \
-    -e "apt-get update --fix-missing"
-fi
+apt-get update --fix-missing
