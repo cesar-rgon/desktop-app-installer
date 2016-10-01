@@ -9,7 +9,7 @@
 ##########################################################################
 
 # Basic Variables
-scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
+scriptRootFolder="`pwd`/../.."; username="`whoami`"; homeFolder="$HOME"
 
 # Import common variables and functions
 . ../common/commonVariables.properties
