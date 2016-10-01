@@ -14,7 +14,7 @@ scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
 # Import common variables and functions
 . ../common/commonVariables.properties
 . ../common/commonFunctions.sh
-declare -a appsToInstall=( "Luckybackup" )
+declare -a appsToInstall=( "Mumble_server" )
 
 # Lauch menu and install selected applications
 prepareScript "$0"
