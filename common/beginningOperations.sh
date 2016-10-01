@@ -3,7 +3,7 @@
 # This script setup default Debconf interface to use
 # @author César Rodríguez González
 # @since   1.3, 2016-08-06
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-10-02
 # @license MIT
 ##########################################################################
 #
@@ -20,3 +20,14 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Set default Debconf interface to use
 echo debconf debconf/frontend select $debconfInterface | debconf-set-selections
+
+echo "$distro" > /home/cesar/debug
+# Debian based O.S. patch. Disable "http://security.debian.org/" repositories while installation proccess to avoid package dependecy problems.
+if [ "$distro" == "debian" ] || [ "$distro" == "lmde" ]; then
+	url="http://security.debian.org"
+	securityFileList=( `grep -r "$url" /etc/apt | awk -F : '{print $1}' | uniq` )
+	sed -i "s/deb ${url//\//\\/}/#deb ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
+	sed -i "s/deb-src ${url//\//\\/}/#deb-src ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
+	sudo apt-get update
+fi
+

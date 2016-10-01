@@ -306,7 +306,7 @@ function executeBeginningOperations
 	# sudo remember always password
 	sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
-	executeScript "$commonFolder/setupDebconf.sh" "$settingDebconfInterface"
+	executeScript "$commonFolder/beginningOperations.sh" "$settingDebconfInterface"
 }
 
 ##
@@ -316,7 +316,7 @@ function executeBeginningOperations
 function executeFinalOperations
 {
 	executeScript "$commonFolder/finalOperations.sh" "$cleaningTempFiles"
-	rm -f /etc/sudoers.d/desktop-app-installer-sudo /etc/tmux.conf
+	sudo rm -f /etc/sudoers.d/desktop-app-installer-sudo /etc/tmux.conf
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
 	showCredentials
