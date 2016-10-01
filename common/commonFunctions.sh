@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-09-30
+# @version 	1.3, 2016-10-01
 # @license 	MIT
 ##########################################################################
 
@@ -173,9 +173,9 @@ function executeScript
 
 			# Execute commands
 			if [ -z "$DISPLAY" ]; then
-				cp -f "$scriptRootFolder/etc/tmux.conf" "$homeFolder/.tmux.conf"
-				sed -i "s/LEFT-LENGHT/$width/g" "$homeFolder/.tmux.conf"
-				sed -i "s/MESSAGE/$message/g" "$homeFolder/.tmux.conf"
+				sudo cp -f "$scriptRootFolder/etc/tmux.conf" "/etc"
+				sudo sed -i "s/LEFT-LENGHT/$width/g" "/etc/tmux.conf"
+				sudo sed -i "s/MESSAGE/$message/g" "/etc/tmux.conf"
 				sudo tmux new-session "$messageCommands $execScriptCommands"
 			else
 				local targetFolder=$( getScriptPath "$script" ) autoclose="--auto-close"
@@ -316,7 +316,7 @@ function executeBeginningOperations
 function executeFinalOperations
 {
 	executeScript "$commonFolder/finalOperations.sh" "$cleaningTempFiles"
-	rm -f /etc/sudoers.d/desktop-app-installer-sudo
+	rm -f /etc/sudoers.d/desktop-app-installer-sudo /etc/tmux.conf
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
 	showCredentials
