@@ -56,13 +56,13 @@ Versión:       1.3
 #### 2.1 Método 1. Clonar este repositorio
 ```bash
 $ sudo apt-get install git
-$ git clone https://github.com/cesar-rgon/app-installer.git
+$ git clone https://github.com/cesar-rgon/desktop-app-installer.git
 $ cd app-installer
 ```
 
 #### 2.2 Método 2. Descargar y extraer ficheros
 ```bash
-$ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
+$ wget https://github.com/cesar-rgon/desktop-app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
 $ cd linux-app-installer-master
 ```
