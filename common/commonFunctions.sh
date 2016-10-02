@@ -119,19 +119,18 @@ function getAppFiles
 	if [ -z "$1" ] || [ -z "$2" ]; then
 		echo ""			# All parameters are mandatories
 	else
-		local targetFolder="$1"
-		local fileNameArray filename="" extension=""
-		IFS='.' read -ra fileNameArray <<< "$2"
+		local targetFolder="$1" file="$2"
+		local fileNameArray filename extension
+
+		IFS='.' read -ra fileNameArray <<< "$file"
 		if [ ${#fileNameArray[@]} -gt 1 ]; then
 			# The filename has extension
-			local lastItem="${fileNameArray[((${#fileNameArray[@]}-1))]}"
-			filename="`echo ${fileNameArray[@]//$lastItem/} | tr ' ' '.'`"
-			extension=".$lastItem"
+			filename="${file%.*}" extension=".${file##*.}"
 		else
 			# Filename without extension
-			filename="`echo ${fileNameArray[@]} | tr ' ' '.'`"
+			filename="$file" extension=""
 		fi
-
+	
 		local i386="_i386" x64="_x64" fileList=""
 		# Search subscript that matches all O.S. architecture
 		if [ -f "$targetFolder/$distro/$filename$extension" ]; then fileList+="$targetFolder/$distro/$filename$extension "; fi
@@ -183,7 +182,7 @@ function executeScript
 
 				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
 				( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
-				| zenity --progress --title="$installingApplications. $total: $totalApps" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+				| zenity --progress --title="$installerTitle" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 			fi
 			echo "true"
 		else
@@ -248,7 +247,7 @@ function installRepoApplication
 		local ppa=`grep -v '^$\|^\s*\#' ${applicationPPAFiles[0]}`
 		executeScript "$commonFolder/addPPA.sh" "$addingThirdPartyRepository: $appName" "$ppa"
 	fi
-	executed+=$( execute "$preInstallationFolder" "$appName" "$preparingInstallationApp: $appName" )
+	executed=$( execute "$preInstallationFolder" "$appName" "$preparingInstallationApp: $appName" )
 	if [ ${#applicationPPAFiles[@]} -gt 0 ] || [ "$executed" == "true" ]; then
 		# STEP 2: Update repositories if required
 		executeScript "$commonFolder/updateRepositories.sh" "$updatingRepositories"
@@ -306,7 +305,7 @@ function executeBeginningOperations
 	# sudo remember always password
 	sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
-	executeScript "$commonFolder/beginningOperations.sh" "$settingDebconfInterface"
+	executeScript "$commonFolder/beginningOperations.sh" "$beginningOperations"
 }
 
 ##
@@ -315,7 +314,7 @@ function executeBeginningOperations
 ##
 function executeFinalOperations
 {
-	executeScript "$commonFolder/finalOperations.sh" "$cleaningTempFiles"
+	executeScript "$commonFolder/finalOperations.sh" "$finalOperations"
 	sudo rm -f /etc/sudoers.d/desktop-app-installer-sudo /etc/tmux.conf
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs

@@ -21,9 +21,15 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Set default Debconf interface to use
 echo debconf debconf/frontend select $debconfInterface | debconf-set-selections
 
-echo "$distro" > /home/cesar/debug
-# Debian based O.S. patch. Disable "http://security.debian.org/" repositories while installation proccess to avoid package dependecy problems.
+# For Debian based O.S.
 if [ "$distro" == "debian" ] || [ "$distro" == "lmde" ]; then
+	# Enable contrib and non-free repositories
+	if [ ! -f /etc/apt/sources.list.backup ]; then
+		cp /etc/apt/sources.list /etc/apt/sources.list.backup
+	fi
+	sed -i "s/main.*/main contrib non-free/g" /etc/apt/sources.list
+
+	# Disable "http://security.debian.org/" repositories while installation proccess to avoid package dependecy problems.
 	url="http://security.debian.org"
 	securityFileList=( `grep -r "$url" /etc/apt | awk -F : '{print $1}' | uniq` )
 	sed -i "s/deb ${url//\//\\/}/#deb ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
