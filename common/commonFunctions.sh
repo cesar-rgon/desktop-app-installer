@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-10-01
+# @version 	1.3, 2016-10-02
 # @license 	MIT
 ##########################################################################
 
@@ -183,7 +183,7 @@ function executeScript
 
 				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
 				( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
-				| zenity --progress --title="$installingRepoApplications. $total: $totalApps" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+				| zenity --progress --title="$installingApplications. $total: $totalApps" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
 			fi
 			echo "true"
 		else
