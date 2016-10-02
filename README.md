@@ -53,18 +53,18 @@ Last change: 2016/09/26 (yyyy/mm/dd)
 
 ### 2. Installing this project
 
-#### 2.1 Method 1. Clone this repository
+#### 2.1 Method 1. Clone this repository (recommended)
 ```bash
 $ sudo apt-get install git
-$ git clone https://github.com/cesar-rgon/app-installer.git
-$ cd app-installer
+$ git clone https://github.com/cesar-rgon/desktop-app-installer.git
+$ cd desktop-app-installer
 ```
 
 #### 2.2 Method 2. Download and extract files
 ```bash
-$ wget https://github.com/cesar-rgon/app-installer/archive/master.tar.gz
+$ wget https://github.com/cesar-rgon/desktop-app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
-$ cd linux-app-installer-master
+$ cd desktop-app-installer-master
 ```
 
 ---
