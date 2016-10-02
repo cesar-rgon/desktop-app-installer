@@ -405,12 +405,12 @@ Espero que lo encontréis útil.
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
-[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-01.png
-[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-02.png
-[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-desktop-1.3-03.png
-[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-terminal-1.3-01.png
-[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-terminal-1.3-02.png
-[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/linux-app-installer/images/screenshots/es/screenshot-terminal-1.3-03.png
+[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/screenshot-desktop-1.3-01.png
+[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/screenshot-desktop-1.3-02.png
+[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/screenshot-desktop-1.3-03.png
+[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/screenshot-terminal-1.3-01.png
+[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/screenshot-terminal-1.3-02.png
+[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/screenshot-terminal-1.3-03.png
 [ISO639]:http://es.wikipedia.org/wiki/ISO_639-1
-[tux-shell-terminal-logo]:http://cesar-rgon.github.io/linux-app-installer/images/tux-shell-console-logo.png
+[tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer/images/tux-shell-console-logo.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
