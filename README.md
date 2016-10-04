@@ -402,12 +402,12 @@ I hope you find it useful.
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
-[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/screenshot-desktop-1.3-01.png
-[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/screenshot-desktop-1.3-02.png
-[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/screenshot-desktop-1.3-03.png
-[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/screenshot-terminal-1.3-01.png
-[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/screenshot-terminal-1.3-02.png
-[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/screenshot-terminal-1.3-03.png
+[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-01.png
+[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-01.png
+[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-07.png
+[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-07.png
+[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-13.png
+[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-13.png
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-[tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer/images/tux-shell-console-logo.png
+[tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer/images/logos/desktop-app-installer.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
