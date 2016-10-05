@@ -8,6 +8,8 @@ There are a lot of applications or desktops environments included in the default
 
 > _Spanish version can be found [here][leeme.md] ( Versión española disponible [aquí][leeme.md] )_
 
+> _Script's website can be found [here](http://cesar-rgon.github.io/desktop-app-installer/)_
+
 ##### Index
 > 1. [Features](#1-features)
 > 2. [Installing this project](#2-installing-this-project)  
@@ -32,7 +34,7 @@ There are a lot of applications or desktops environments included in the default
 Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3
-Last change: 2016/09/26 (yyyy/mm/dd)
+Last change: 2016/10/05 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -78,17 +80,23 @@ It shows a menu of applications to be installed which are ordered by categories.
 $ bash installer.sh
 ```
 
-##### Installer main menu (Desktop/Terminal mode)
-> ![Main menu screenshot on desktop mode][screenshot-desktop-mainmenu1]
-> ![Main menu screenshot on terminal mode][screenshot-terminal-mainmenu1]
+##### Main menu. Difference between both modes
+> ![Main menu screenshot desktop|terminal modes][screenshot-monitors]
 
-##### Installer Internet Category (Desktop/Terminal mode)
+##### Internet category (Desktop/Terminal mode)
 > ![Intenet category window screenshot on desktop mode][screenshot-desktop-internetapp]
 > ![Intenet category window screenshot on terminal mode][screenshot-terminal-internetapp]
 
-##### Installer main menu with selected applications (Desktop/Terminal mode)
-> ![Main menu screenshot with selected applications on desktop mode][screenshot-desktop-mainmenu2]
-> ![Main menu screenshot with selected applications on terminal mode][screenshot-terminal-mainmenu2]
+##### Main menu with selected applications (Desktop/Terminal mode)
+> ![Main menu screenshot with selected applications on desktop mode][screenshot-desktop-mainmenu]
+> ![Main menu screenshot with selected applications on terminal mode][screenshot-terminal-mainmenu]
+
+##### Installing applications (Desktop/Terminal mode)
+> ![Screenshot installing an application on desktop mode][screenshot-desktop-installing-app]
+> ![Screenshot installing an application on terminal mode][screenshot-terminal-installing-app]
+
+##### Log
+> ![Screenshot log view on desktop mode][screenshot-desktop-log]
 
 
 #### 3.2 Application script
@@ -402,12 +410,14 @@ I hope you find it useful.
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
-[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-01.png
-[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-01.png
+[screenshot-monitors]:http://cesar-rgon.github.io/desktop-app-installer/images/monitors.png
 [screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-07.png
 [screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-07.png
-[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-13.png
-[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-13.png
+[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-13.png
+[screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-13.png
+[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-15.png
+[screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/dialog-14.png
+[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/en/zenity-16.png
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer/images/logos/desktop-app-installer.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png

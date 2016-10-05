@@ -8,6 +8,8 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 
 > _Versión inglesa disponible [aquí][readme.md] ( English version can be found [here][readme.md] )_
 
+> _La página web del script disponible [aquí](http://cesar-rgon.github.io/desktop-app-installer/)_
+
 ##### Indice
 > 1. [Características](#1-características)
 > 2. [Instalando este proyecto](#2-instalando-este-proyecto)  
@@ -32,7 +34,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3
-Último cambio: 26/09/2016 (dd/mm/yyyy)
+Último cambio: 05/10/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -77,18 +79,23 @@ Muestra un menú de aplicaciones a ser instaladas que están ordenadas por categ
 ```bash
 $ bash installer.sh
 ```
-##### Menú principal del instalador (modo Escritorio/Terminal)
-> ![Captura pantalla menú principal modo escritorio][screenshot-desktop-mainmenu1]
-> ![Captura pantalla menú principal modo terminal][screenshot-terminal-mainmenu1]
+##### Menú principal. Diferencia entre ambos modos
+> ![Captura pantalla de modos escritorio|terminal][screenshot-monitores]
 
 ##### Categoría Internet del instalador (modo Escrotorio/Terminal)
 > ![Captura de pantalla menú categoría internet modo escritorio][screenshot-desktop-internetapp]
 > ![Captura de pantalla menú categoría internet modo terminal][screenshot-terminal-internetapp]
 
-##### Menú principal del instalador tras selección programas (modo Escritorio/Terminal)
-> ![Captura pantalla menú principal con programas seleccionados modo escritorio][screenshot-desktop-mainmenu2]
-> ![Captura pantalla menú principal con programas seleccionados modo terminal][screenshot-terminal-mainmenu2]
+##### Menú principal tras selección programas (modo Escritorio/Terminal)
+> ![Captura pantalla menú principal con programas seleccionados modo escritorio][screenshot-desktop-mainmenu]
+> ![Captura pantalla menú principal con programas seleccionados modo terminal][screenshot-terminal-mainmenu]
 
+##### Instalando aplicaciones (modo Escritorio/Terminal)
+> ![Captura pantalla instalando una aplicación en modo escritorio][screenshot-desktop-installing-app]
+> ![Captura pantalla instalando una aplicación en modo terminal][screenshot-terminal-installing-app]
+
+##### Log
+> ![Captura pantalla visor de log en modo escritorio][screenshot-desktop-log]
 
 #### 3.2 Script de aplicación
 Existe un script individual por cada aplicación, de forma que, puede ser instalada ejecutando dicho script.
@@ -405,12 +412,14 @@ Espero que lo encontréis útil.
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
-[screenshot-desktop-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-01.png
-[screenshot-terminal-mainmenu1]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-01.png
+[screenshot-monitores]:http://cesar-rgon.github.io/desktop-app-installer/images/monitores.png
 [screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-07.png
 [screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-07.png
-[screenshot-desktop-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-13.png
-[screenshot-terminal-mainmenu2]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-13.png
+[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-13.png
+[screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-13.png
+[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-15.png
+[screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-14.png
+[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-16.png
 [ISO639]:http://es.wikipedia.org/wiki/ISO_639-1
 [tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer/images/logos/desktop-app-installer.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
