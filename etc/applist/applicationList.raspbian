@@ -20,46 +20,41 @@
 # Category    Application-Name            Application-packages                                                          #
 #########################################################################################################################
 
-desktop			Xfce				xfce4
-desktop			Lxde				lxde
+desktop				Xfce				xfce4
+desktop				Lxde				lxde
 
-developer_tools       Git                            git
-developer_tools       Git_cola                       git-cola
+audio_server_client		Mumble                         	mumble
+audio_server_client    		Mumble_server                  	mumble-server
 
-internet      Deluge_application             deluge
-internet      Deluge_server                  deluged deluge-webui
-internet      Filezilla                      filezilla
-internet      Mumble                         mumble
-internet      Mumble_server                  mumble-server
-internet      OpenJRE                        default-jre
-internet      Pidgin                         pidgin pidgin-extprefs
-internet      qBittorrent_application        qbittorrent
-internet      qBittorrent_server             qbittorrent-nox
-internet      Transmission_application_Qt    transmission-qt
-internet      Transmission_application_Gtk   transmission-gtk
-internet      Transmission_client            transgui
-internet      Transmission_server            transmission-daemon
+download_server_client	 	Deluge_application             	deluge
+download_server_client       	Deluge_server                  	deluged deluge-webui
+download_server_client      	qBittorrent_server             	qbittorrent-nox
+download_server_client  	Transmission_client            	transgui
+download_server_client      	Transmission_server            	transmission-daemon
 
-office        Abiword                     abiword
-office        Gnumeric                    gnumeric
-office        Libreoffice                 libreoffice
+database_server_client		MySql_client			mysql-client
+database_server_client		MySql_server			mysql-server
+database_server_client		MariaDB_client			mariadb-client-10.0
+database_server_client		MariaDB_server			mariadb-server-10.0
+database_server_client		PostgreSql_client		postgresql-client
+database_server_client		Sqlite_3			sqlite3
 
-sound_video   Audacity                    audacity
-sound_video   Gstreamer                   gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
-sound_video   Mediainfo                   mediainfo
-sound_video   Videolan                    vlc
+dns_server			Bind_9				bind9
 
-system        Bleachbit                   bleachbit
-system        Gdebi                       gdebi
-system        Gparted                     gparted
-system        Hardinfo                    hardinfo
-system        Htop                        htop
-system        Log_viewer                  gnome-system-log
-system        Lxtask                      lxtask
-system        Schedule                    gnome-schedule
-system        Synaptic                    synaptic software-properties-gtk
+ftp_server_client	        Filezilla                      	filezilla
+ftp_server_client		Proftpd				proftpd-basic
 
-utilities    Compressors                 p7zip-full
-utilities    Pyrenamer                   pyrenamer
-utilities    Vim                         vim
+web_server			Apache_2			apache2
+web_server			Tomcat_8			tomcat8
+web_server			Jetty_8				jetty8
 
+remote_conection_server_client	SSH_server			openssh-server
+remote_conection_server_client	VNC_client			realvnc-vnc-viewer
+remote_conection_server_client	VNC_server			realvnc-vnc-server
+remote_conection_server_client	Remmina				remmina
+
+terminal_utilities      	Mplayer_2		      	mplayer2 gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+terminal_utilities      	Htop                        	htop
+terminal_utilities      	Compressors                 	p7zip-full
+terminal_utilities      	Vim                         	vim
+terminal_utilities      	Git                            	git
