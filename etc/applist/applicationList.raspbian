@@ -1,1 +1,65 @@
-applicationList.debian
+#########################################################################################################################
+# Application list used by main menu. It contains repository applications and/or non repository ones.                   #
+#                                                                                                                       #
+# Author: César Rodríguez González                                                                                      #
+# Version: 1.3                                                                                                          #
+# Last modified date (yyyy/mm/dd): 2016/10/08                                                                           #
+# Licence: MIT                                                                                                          #
+#                                                                                                                       #
+# The columns are described below:                                                                                      #
+#                                                                                                                       #
+# Category [mandatory]:         shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
+# Application-Name [mandatory]: shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
+# Application-packages:         For a repository application, this column is mandatory and it must contain whitespace   #
+#                               character between package names.                                                        #
+#                               For a non-repository application, this column must be empty because there isn't any     #
+#                               repository package to be installed.                                                     #
+#                                                                                                                       #
+# Lines begining with comment character "#" or blank ones are ignored                                                   #
+#########################################################################################################################
+# Category    Application-Name            Application-packages                                                          #
+#########################################################################################################################
+
+desktop			Xfce				xfce4
+desktop			Lxde				lxde
+
+developer_tools       Git                            git
+developer_tools       Git_cola                       git-cola
+
+internet      Deluge_application             deluge
+internet      Deluge_server                  deluged deluge-webui
+internet      Filezilla                      filezilla
+internet      Mumble                         mumble
+internet      Mumble_server                  mumble-server
+internet      OpenJRE                        default-jre
+internet      Pidgin                         pidgin pidgin-extprefs
+internet      qBittorrent_application        qbittorrent
+internet      qBittorrent_server             qbittorrent-nox
+internet      Transmission_application_Qt    transmission-qt
+internet      Transmission_application_Gtk   transmission-gtk
+internet      Transmission_client            transgui
+internet      Transmission_server            transmission-daemon
+
+office        Abiword                     abiword
+office        Gnumeric                    gnumeric
+office        Libreoffice                 libreoffice
+
+sound_video   Audacity                    audacity
+sound_video   Gstreamer                   gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+sound_video   Mediainfo                   mediainfo
+sound_video   Videolan                    vlc
+
+system        Bleachbit                   bleachbit
+system        Gdebi                       gdebi
+system        Gparted                     gparted
+system        Hardinfo                    hardinfo
+system        Htop                        htop
+system        Log_viewer                  gnome-system-log
+system        Lxtask                      lxtask
+system        Schedule                    gnome-schedule
+system        Synaptic                    synaptic software-properties-gtk
+
+utilities    Compressors                 p7zip-full
+utilities    Pyrenamer                   pyrenamer
+utilities    Vim                         vim
+

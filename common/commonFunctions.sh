@@ -178,7 +178,7 @@ function executeScript
 				sudo tmux new-session "$messageCommands $execScriptCommands"
 			else
 				local targetFolder=$( getScriptPath "$script" ) autoclose="--auto-close"
-				local xtermCommand="xterm -T \"$terminalProgress. $applicationLabel: $appName\" -fa 'DejaVu Sans Mono' -fs 11 -geometry 200x15+0-0 -xrm 'XTerm.vt100.allowTitleOps: false' -e \"$execScriptCommands\";"
+				local xtermCommand="xterm -T \"$terminalProgress. $applicationLabel: $appName\" -fa 'DejaVu Sans Mono' -fs 11 -geometry 120x15+0-0 -xrm 'XTerm.vt100.allowTitleOps: false' -e \"$execScriptCommands\";"
 
 				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
 				( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
