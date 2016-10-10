@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script install Google Earth application.
+# This script removes Deluge daemon config files and folders
 # @author César Rodríguez González
 # @version 1.3, 2016-10-10
 # @license MIT
@@ -17,9 +17,13 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
-# Commands to setup an installed application
-mkdir /tmp/google_earth_package
-cd /tmp/google_earth_package
-make-googleearth-package --force --quiet 2>/dev/null
-apt-get -y install gdebi
-gdebi --n /tmp/google_earth_package/googleearth*.deb
+### REMOVE CONFIG FILES ##################################################
+rm -f /etc/systemd/system/deluged.service
+rm -f /etc/systemd/system/deluge-web.service
+rm -rf $homeFolder/.config/deluge
+rm -f /etc/init.d/deluge-daemon
+rm -f /etc/default/deluge-daemon
+rm -f /usr/share/applications/deluged-web.desktop
+rm -f /usr/share/applications/deluged-start.desktop
+rm -f /usr/share/applications/deluged-stop.desktop
+rm -f /usr/share/pixmaps/deluge.png

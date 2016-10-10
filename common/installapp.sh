@@ -21,12 +21,10 @@ if [ -n "$4" ]; then
 	# Add common variables
 	. $scriptRootFolder/common/commonVariables.properties
 
-	# Get application packages: Delete blank and comment lines,then filter by application name and take package list (third column forward to the end)
-	packageList=`cat $appListFile | awk -v app=$appName '!/^($|#)/{if ($2 == app) for(i=3;i<=NF;i++)printf "%s",$i (i==NF?ORS:OFS)}'`
+	# Get application packages: Delete blank and comment lines,then filter by application name and take package list (third column)
+	packageList=`cat $appListFile | awk -v app=$appName '!/^($|#)/{ if ($2 == app) print $3; }' | tr '|' ' '`
 
 	if [ -n "$packageList" ]; then
-		totalPackagesToInstall=`echo "$packageList" | wc -w`
-
 		for package in "$packageList"; do
 			# If application has EULA
 			if [ -f "$eulaFolder/$appName" ]; then

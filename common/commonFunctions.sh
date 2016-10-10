@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-10-02
+# @version 	1.3, 2016-10-10
 # @license 	MIT
 ##########################################################################
 
@@ -22,7 +22,7 @@ function credits
 		printf "%.21s%s\n" "$authorLabel:$whiteSpaces" "$author" >> $tempFolder/linux-app-installer.credits
 		dialog --title "$creditsLabel" --backtitle "$installerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
 	else
-			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks" -t 10000
+			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks"
 	fi
 }
 
@@ -130,7 +130,7 @@ function getAppFiles
 			# Filename without extension
 			filename="$file" extension=""
 		fi
-	
+
 		local i386="_i386" x64="_x64" fileList=""
 		# Search subscript that matches all O.S. architecture
 		if [ -f "$targetFolder/$distro/$filename$extension" ]; then fileList+="$targetFolder/$distro/$filename$extension "; fi
@@ -299,6 +299,7 @@ function installNonRepoApplication
 
 ##
 # This function generates and executes commands needed to begin the installation process
+# @since 1.3
 ##
 function executeBeginningOperations
 {
@@ -311,6 +312,7 @@ function executeBeginningOperations
 ##
 # This function generates and executes commands needed to finish the installation proccess
 # Clean packages, remove temp.files, etc
+# @since 1.3
 ##
 function executeFinalOperations
 {
@@ -323,6 +325,7 @@ function executeFinalOperations
 
 ##
 # This function shows logs after installation process
+# @since 1.3
 ##
 function showLogs
 {
@@ -330,7 +333,7 @@ function showLogs
 		dialog --title "$installerLogsLabel" --backtitle "$installerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
 		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
-		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage" -t 10000
+		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage"
 		zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 	chown $username:$username "$logFile"
@@ -338,6 +341,7 @@ function showLogs
 
 ##
 # This function shows credentials needed by some of the selected applications to login
+# @since 1.3
 ##
 function showCredentials
 {
@@ -345,7 +349,7 @@ function showCredentials
 		if [ -z "$DISPLAY" ]; then
 			dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
 		else
-			notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" "" -t 10000
+			notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" ""
 			zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
 		fi
 	fi
@@ -353,6 +357,7 @@ function showCredentials
 
 ##
 # This funtion gets username/password from application credential file
+# @since 1.3
 # @param String appName		Application name
 ##
 function getAppCredentials
@@ -383,7 +388,7 @@ function installAndSetupApplications
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
 		if [ -n "$DISPLAY" ]; then
-			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" "" -t 10000
+			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" ""
 		fi
 
 		# Separates repo/non-repo applications
@@ -400,6 +405,7 @@ function installAndSetupApplications
 		done
 		# Generate and execute initial commands to proceed with installation proccess
 		executeBeginningOperations
+		. $commonFolder/beginningDebianBasedPatch.sh
 		# Generate and execute commands to install each repo application
 		local appCount=1
 		for appName in ${repoAppsToInstall[@]}; do
@@ -414,6 +420,37 @@ function installAndSetupApplications
 		done
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
+		. $commonFolder/finalDebianBasedPatch.sh
 	fi
-	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$authorLabel $author" -t 10000; fi
+	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$authorLabel $author"; fi
+}
+
+##
+# This funtion generates and executes bash commands to uninstall and
+# remove settings of applications
+# @since v1.3.1
+# @param String[] appsToInstall	 List of applications to be installed
+##
+function uninstallAndPurgeApplications
+{
+	local appsToUninstall=("${!1}")
+	if [ ${#appsToUninstall[@]} -gt 0 ]; then
+		if [ -n "$DISPLAY" ]; then
+			notify-send -i "$installerIconFolder/applications-other.svg" "$unInstallingSelectedApplications" ""
+		fi
+		# Generate and execute initial commands to proceed with installation proccess
+		executeBeginningOperations
+		# Generate and execute commands to uninstall and purge each application
+		local appCount=1
+		for appName in ${appsToUninstall[@]}; do
+			# Execute commands to uninstall the application
+			executeScript "$commonFolder/uninstallapp.sh" "$uninstallingApplication $appCount|${#appsToUninstall[@]}: $appName" "$appName"
+			# If exists subscript, execute commands to remove settings of the application
+			execute "$uninstallFolder" "$appName" "$removingSettingsApplication $appCount|${#appsToUninstall[@]}: $appName"
+			appCount=$(($appCount+1))
+		done
+		# Execute final commands to clean packages and remove temporal files/folders
+		executeFinalOperations
+	fi
+	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$authorLabel $author"; fi
 }

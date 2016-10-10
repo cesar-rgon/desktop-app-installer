@@ -1,6 +1,6 @@
 #!/bin/bash
 ##########################################################################
-# This script install Google Earth application.
+# This script removes qBittorrent daemon config files and folders
 # @author César Rodríguez González
 # @version 1.3, 2016-10-10
 # @license MIT
@@ -17,9 +17,14 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
-# Commands to setup an installed application
-mkdir /tmp/google_earth_package
-cd /tmp/google_earth_package
-make-googleearth-package --force --quiet 2>/dev/null
-apt-get -y install gdebi
-gdebi --n /tmp/google_earth_package/googleearth*.deb
+### REMOVE CONFIG FILES ##################################################
+rm -f /etc/systemd/system/qbittorrent-nox.service
+rm -rf $homeFolder/.local/share/data/qBittorrent
+rm -rf $homeFolder/.config/qBittorrent
+rm -f /etc/init.d/qbittorrent-nox-daemon
+rm -f /usr/share/applications/qbittorrent-nox-cli.desktop
+rm -f /usr/share/applications/qbittorrent-nox-start.desktop
+rm -f /usr/share/applications/qbittorrent-nox-stop.desktop
+rm -f /usr/share/pixmaps/qbittorrent.png
+deluser qbtuser
+delgroup qbtuser

@@ -3,7 +3,7 @@
 # This script setup default Debconf interface to use
 # @author César Rodríguez González
 # @since   1.3, 2016-08-06
-# @version 1.3, 2016-10-02
+# @version 1.3, 2016-10-10
 # @license MIT
 ##########################################################################
 #
@@ -28,12 +28,4 @@ if [ "$distro" == "debian" ] || [ "$distro" == "lmde" ]; then
 		cp /etc/apt/sources.list /etc/apt/sources.list.backup
 	fi
 	sed -i "s/main.*/main contrib non-free/g" /etc/apt/sources.list
-
-	# Disable "http://security.debian.org/" repositories while installation proccess to avoid package dependecy problems.
-	url="http://security.debian.org"
-	securityFileList=( `grep -r "$url" /etc/apt | awk -F : '{print $1}' | uniq` )
-	sed -i "s/deb ${url//\//\\/}/#deb ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
-	sed -i "s/deb-src ${url//\//\\/}/#deb-src ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
-	sudo apt-get update
 fi
-

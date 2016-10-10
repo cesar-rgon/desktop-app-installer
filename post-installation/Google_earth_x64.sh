@@ -2,7 +2,7 @@
 ##########################################################################
 # This script install Google Earth application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3, 2016-10-10
 # @license MIT
 ##########################################################################
 
@@ -21,5 +21,6 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 mkdir /tmp/google_earth_package
 cd /tmp/google_earth_package
 dpkg --add-architecture i386
-make-googleearth-package --force --quiet
+make-googleearth-package --force --quiet 2>/dev/null
+apt-get -y install gdebi
 gdebi --n /tmp/google_earth_package/googleearth*.deb

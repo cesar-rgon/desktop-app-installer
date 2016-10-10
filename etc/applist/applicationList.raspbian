@@ -3,17 +3,16 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (yyyy/mm/dd): 2016/10/08                                                                           #
+# Last modified date (yyyy/mm/dd): 2016/10/10                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
 #                                                                                                                       #
 # Category [mandatory]:         shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
 # Application-Name [mandatory]: shall contain only letters, digits and/or underscore '_' and do not begin with a digit. #
-# Application-packages:         For a repository application, this column is mandatory and it must contain whitespace   #
-#                               character between package names.                                                        #
-#                               For a non-repository application, this column must be empty because there isn't any     #
-#                               repository package to be installed.                                                     #
+# Application-packages:         For a repository application, this column is mandatory and it must contain | character  #
+#                               between package names. For a non-repository application, this column must be empty      #
+#                               because there isn't any repository package to be installed.                             #
 #                                                                                                                       #
 # Lines begining with comment character "#" or blank ones are ignored                                                   #
 #########################################################################################################################
@@ -27,7 +26,7 @@ audio_server_client		Mumble                         	mumble
 audio_server_client    		Mumble_server                  	mumble-server
 
 download_server_client	 	Deluge_application             	deluge
-download_server_client       	Deluge_server                  	deluged deluge-webui
+download_server_client       	Deluge_server                  	deluged|deluge-webui
 download_server_client      	qBittorrent_server             	qbittorrent-nox
 download_server_client  	Transmission_client            	transgui
 download_server_client      	Transmission_server            	transmission-daemon
@@ -53,7 +52,7 @@ remote_conection_server_client	VNC_client			realvnc-vnc-viewer
 remote_conection_server_client	VNC_server			realvnc-vnc-server
 remote_conection_server_client	Remmina				remmina
 
-terminal_utilities      	Mplayer_2		      	mplayer2 gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+terminal_utilities      	Mplayer_2		      	mplayer2|gstreamer0.10-plugins-bad|gstreamer0.10-plugins-ugly
 terminal_utilities      	Htop                        	htop
 terminal_utilities      	Compressors                 	p7zip-full
 terminal_utilities      	Vim                         	vim
