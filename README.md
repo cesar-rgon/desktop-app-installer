@@ -31,8 +31,8 @@ There are a lot of applications or desktops environments included in the default
 > 6. [Add new translation file](#6-add-new-translation-file)
 > 7. [Add new subscript to remove config files of an application during uninstallation proccess](#7-add-new-subscript-to-remove-config-files-of-an-application-during-uninstallation-proccess)
 > 8. ANNEX
->   - [Subscript file considerations](#81-subscript-file-considerations)
->   - [Subscript commands considerations](#82-subscript-commands-considerations)
+>   - [Subscript file considerations](#subscript-file-considerations)
+>   - [Subscript commands considerations](#subscript-commands-considerations)
 
 ```
 Tested on:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah, LMDE 2 Betsy and Raspbian Jessie (desktop or server).
@@ -54,12 +54,13 @@ Last change: 2016/10/11 (yyyy/mm/dd)
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
 * Valid for multiple arquitecture systems: x64, i386, arm.
+
 ---
 [Back to index](#index)
 
 ### 2. Installing this project
 
-#### 2.1 Method 1. Clone this repository (recommended)
+#### 2.1 Method 1. Clone this repository
 ```bash
 $ sudo apt-get install git
 $ git clone https://github.com/cesar-rgon/desktop-app-installer.git
@@ -385,6 +386,7 @@ To add a new language file just follow next steps:
 2. Translate values of all variables to the specific language.  
   Considerations:
   * The variable names must not be changed at all.
+
 ---
 [Back to index](#index)
 
@@ -395,6 +397,7 @@ To define a subscript that remove settings of an installed repo application, jus
 2. Add neccessary commands at the end of the file to remove settings of the application during uninstallation proccess following next [considerations](#subscript-commands-considerations).
 3. No need to define commands to uninstall the application, just to remove config settings. Main script will uninstall the application automatically.
 4. Only is valid for repo-applications, that means, not valid for non-repo applications.
+
 ---
 [Back to index](#index)
 
