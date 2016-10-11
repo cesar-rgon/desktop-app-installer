@@ -63,7 +63,7 @@ function getApplicationList
 	# Delete blank and comment lines,then filter by category name and take application list (second column)
 	local applicationList=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
 
-	if [ "$2" == "only-show-installed-repo-apps" ]; then
+	if [ "$2" == "--only-show-installed-repo-apps" ]; then
 		local installedAppList=""
 		for application in "${applicationList[@]}"; do
 			# Delete blank and comment lines,then filter by application name and take package list (third column)
