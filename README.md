@@ -29,12 +29,16 @@ There are a lot of applications or desktops environments included in the default
 >   - [Add new subscript to setup an application](#57-add-new-subscript-to-setup-an-application)  
 >   - [Add new subscript to setup EULA support](#58-add-new-subscript-to-setup-eula-support)
 > 6. [Add new translation file](#6-add-new-translation-file)
+> 7. [Add new subscript to remove config files of an application during uninstallation proccess](#7-add-new-subscript-to-remove-config-files-of-an-application-during-uninstallation-proccess)
+> 8. ANNEX
+>   - [Subscript file considerations](#81-subscript-file-considerations)
+>   - [Subscript commands considerations](#82-subscript-commands-considerations)
 
 ```
-Valid for:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (desktop or server).
+Tested on:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah, LMDE 2 Betsy and Raspbian Jessie (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
-Version:     1.3
-Last change: 2016/10/05 (yyyy/mm/dd)
+Version:     1.3.1
+Last change: 2016/10/11 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -49,7 +53,7 @@ Last change: 2016/10/05 (yyyy/mm/dd)
 * The script runs with an interface adapted to the detected environment: Dialog for terminal. Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
-
+* Valid for multiple arquitecture systems: x64, i386, arm.
 ---
 [Back to index](#index)
 
@@ -160,6 +164,7 @@ Tree of folders and some files:
 │   │   ├── applicationList.debian
 │   │   ├── applicationList.linuxmint
 │   │   ├── applicationList.lmde
+│   │   ├── applicationList.raspbian
 │   │   └── applicationList.ubuntu
 │   │
 │   ├── credentials         It contains a file per application with username/password needed for authentication
@@ -195,6 +200,7 @@ Tree of folders and some files:
 │   ├── debian/*.sh         Subscripts only used on a Debian system
 │   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
 │   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   ├── raspbian/*.sh       Subscripts only used on a Raspbian system
 │   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 │
 ├── menu                    It contains functions used by main script menu (Terminal / Desktop)
@@ -209,15 +215,28 @@ Tree of folders and some files:
 │   ├── debian/*.sh         Subscripts only used on a Debian system
 │   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
 │   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   ├── raspbian/*.sh       Subscripts only used on a Raspbian system
 │   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
 │
-└── pre-installation        It contains subscripts to add third-party repositories and/or prepare the installation of apps
-    ├── template-pre-installation.sh
-    ├── *.sh                Subscripts used on any linux system
-    ├── debian/*.sh         Subscripts only used on a Debian system
-    ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
-    ├── lmde/*.sh           Subscripts only used on a LMDE system
-    └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
+├── pre-installation        It contains subscripts to add third-party repositories and/or prepare the installation of apps
+│   ├── template-pre-installation.sh
+│   ├── *.sh                Subscripts used on any linux system
+│   ├── debian/*.sh         Subscripts only used on a Debian system
+│   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
+│   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   ├── raspbian/*.sh       Subscripts only used on a Raspbian system
+│   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
+│
+├── uninstall               It contains subscripts to remove application config files
+│   ├── template-uninstall.sh
+│   ├── *.sh                Subscripts used on any linux system
+│   ├── debian/*.sh         Subscripts only used on a Debian system
+│   ├── linuxmint/*.sh      Subscripts only used on a Linux Mint system
+│   ├── lmde/*.sh           Subscripts only used on a LMDE system
+│   ├── raspbian/*.sh       Subscripts only used on a Raspbian system
+│   └── ubuntu/*.sh         Subscripts only used on an Ubuntu system
+│
+└── uninstaller.sh          File to start main uninstallation script
 ```
 
 | Some important files                                           | Description                                                                                   |
@@ -232,6 +251,7 @@ Tree of folders and some files:
 | [applicationList.debian][applicationList.debian]               | It defines categories, applications and related packages for a Debian system                  |
 | [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and related packages for a Linux Mint system              |
 | [applicationList.lmde][applicationList.lmde]                   | It defines categories, applications and related packages for a LMDE system                    |
+| [applicationList.raspbian][applicationList.raspbian]               | It defines categories, applications and related packages for a Raspbian system                    |
 | [applicationList.ubuntu][applicationList.ubuntu]               | It defines categories, applications and related packages for an Ubuntu system                 |
 | [installer.sh][installer.sh]                                   | Main script file                                                                              |
 | [en.properties][en.properties]                                 | English translation file                                                                      |
@@ -241,7 +261,7 @@ Tree of folders and some files:
 | [template-eula][template-eula]                                 | Template file to help to create a new subscript to setup EULA support for an application           |
 | [template-non-repo-app.sh][template-non-repo-app.sh]           | Template file to help to create a new subscript to install a non-repository application       |
 | [template-post-installation.sh][template-post-installation.sh] | Template file to help to create a new application subscript to run post-installation commands |
-
+| [template-uninstall.sh][template-uninstall.sh] | Template file to help toremove application config files. No need to define commands to uninstall the application |
 ---
 
 [Back to index](#index)
@@ -249,11 +269,11 @@ Tree of folders and some files:
 #### 5.2 Add new application to a category. Modify or delete an existing one
 To add an application to be installed follow next steps:
 
-1. Edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and add a new line with the next syntax:
+1. Edit applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file and add a new line with the next syntax:
 
-| 1st column - Category (*)  | 2nd column - Application Name (*) | Other columns (Packages) |
-| -------------------------- | --------------------------------- | ------------------------ |
-| CategoryName               | ApplicationName                   | repository package(s)    |
+| 1st column - Category (*)  | 2nd column - Application Name (*) | 3rd column (Packages)   |
+| -------------------------- | --------------------------------- | ------------------------|
+| CategoryName               | ApplicationName                   | package1|package2|...   |
 
   Considerations:
   * Blank or comment lines are ignored in this file.
@@ -267,7 +287,7 @@ To add an application to be installed follow next steps:
   * The application source can be official repositories, third-party repositories even other sources (non-repositories).
   * The order in which applications are listed in the menu script is the same as set in this config file.
   * Third column - Packages: is mandatory only if the application belongs to a repository.
-  * Package names must be separated by whitespaces.
+  * Package names must be separated by | character.
   * Non-repository applications must leave this field empty.
 
 2. Edit [en.properties][en.properties] file and add a description for categories (if it's a new one) and applications with the next syntax:
@@ -275,14 +295,14 @@ To add an application to be installed follow next steps:
   ApplicationNameDescription=Here goes the application name description that is used by the main menu
 
   Considerations:
-  * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the category name word.
+  * CategoryNameDescription is composed by _CategoryName_ word: must be identical (case-sensitive) to the category name defined in applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file. _Description_ word: must always follow the category name word.
   * To be intuitive, is recommended that CategoryNameDescription is defined in the 'CATEGORIES' section of the file.
-  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file. _Description_ word: must always follow the application name word.
+  * ApplicationNameDescription is composed by: _ApplicationName_ word: must be identical (case-sensitive) to the application name defined in applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file. _Description_ word: must always follow the application name word.
   * To be intuitive, is recommended that ApplicationNameDescription is defined in the 'APPLICATIONS' section of the file.
   * It's recommended, but not mandatory, to add those descriptions to other translation files.
   * You can create a new translation file in your native language to be easier for your understanding. See chapter [Add new translation file](#6-add-new-translation-file) for more information.
 
-To modify or delete an application or category just edit [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file and change/delete the corresponding lines.
+To modify or delete an application or category just edit applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file and change/delete the corresponding lines.
 
 ---
 [Back to index](#index)
@@ -300,7 +320,7 @@ To add a new subscript that prepares the installation of an application before t
 To add a new file that defines PPA to be used to add a third-party repository for an application just follow next steps:
 1. Create a new file './etc/ppa/applicationName'
   Considerations:
-  * The filename must be identically (case-sensitive) to the related application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+  * The filename must be identically (case-sensitive) to the related application name defined in applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file.
   * The filename must not have extension at all.
 2. The file must contain one and only one PPA. It can contains:
   * Blanck lines [optional]
@@ -317,7 +337,7 @@ To add a new installation script for an application follow next steps:
 
 2. Modify content to asign values to variables: _appName_ and _logFile_  
   Considerations:
-  * appName value must be identically (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+  * appName value must be identically (case-sensitive) to the application name defined in applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file.
   * logFile value is used to create the log file ~/logs/logFile.
 
 ---
@@ -348,7 +368,7 @@ To add a new subscript to setup EULA support for an application just follow next
 
 1. Create a new file './eula/applicationName' taking, as base, next commands from [template-eula][template-eula] file.
   Considerations:
-  * The filename must be identically (case-sensitive) to the related application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
+  * The filename must be identically (case-sensitive) to the related application name defined in applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file.
 
 2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
 
@@ -365,7 +385,16 @@ To add a new language file just follow next steps:
 2. Translate values of all variables to the specific language.  
   Considerations:
   * The variable names must not be changed at all.
+---
+[Back to index](#index)
 
+### 7. Add new subscript to remove config files of an application during uninstallation proccess
+To define a subscript that remove settings of an installed repo application, just follow next steps:
+
+1. Create a new file taking, as base, the [template-uninstall.sh][template-uninstall.sh] file following next [considerations](#subscript-file-considerations).
+2. Add neccessary commands at the end of the file to remove settings of the application during uninstallation proccess following next [considerations](#subscript-commands-considerations).
+3. No need to define commands to uninstall the application, just to remove config settings. Main script will uninstall the application automatically.
+4. Only is valid for repo-applications, that means, not valid for non-repo applications.
 ---
 [Back to index](#index)
 
@@ -373,12 +402,12 @@ To add a new language file just follow next steps:
 
 #####  Subscript file considerations:
   * The filename must follow next pattern: ApplicationName[_i386/_x64].sh
-    - ApplicationName: must be identical (case-sensitive) to the application name defined in [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] file.
-    - _i386 / _x64: Optional if neccessary. Script to be executed only if match corresponding O.S. architecture (that means, i386 for 32 bits O.S.; x64 for 64 bits O.S.).
+    - ApplicationName: must be identical (case-sensitive) to the application name defined in applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] file.
+    - _i386 / _x64 / _arm: Optional if neccessary. Script to be executed only if match corresponding O.S. architecture (that means, i386 for 32 bits O.S.; x64 for 64 bits O.S.; arm for ARM O.S.).
     - The extension must be always '.sh'
-  * The script must be ubicated in _./third-party-repo_ folder if it's valid for all supported linux distros. We call general subscript.
-  * The script must be ubicated in _./third-party-repo/ubuntu_, _./third-party-repo/debian_, _./third-party-repo/linuxmint_, _./third-party-repo/lmde_ folder if it's valid only for a specific supported linux distro. We call specific subscript.
-  * Is possible to create specific and general subscripts for a same thrid-party repository. Both will be executed.
+  * The script must be ubicated in _pre-installation|post-installation|install-non-repo-apps|uninstall_ folder if it's valid for all supported linux distros. We call general subscript and <target-folder>
+  * The script must be ubicated in _<target-folder>/ubuntu_, _<target-folder>/debian_, _<target-folder>/linuxmint_, _<target-folder>/lmde_, _<target-folder>/raspbian_ folder if it's valid only for a specific supported linux distro. We call specific subscript.
+  * Is possible to create a specific and a general subscripts for the same application. Both will be executed.
 
 #####  Subscript commands considerations:
   * No need to use 'sudo' in commands because the subscript will be executed as root user.
@@ -402,11 +431,13 @@ I hope you find it useful.
 [applicationList.linuxmint]:./etc/applist/applicationList.linuxmint
 [applicationList.lmde]:./etc/applist/applicationList.lmde
 [applicationList.ubuntu]:./etc/applist/applicationList.ubuntu
+[applicationList.raspbian]:./etc/applist/applicationList.raspbian
 [installer.sh]:./installer.sh
 [en.properties]:./etc/languages/en.properties
 [es.properties]:./etc/languages/es.properties
 [template-pre-installation.sh]:./pre-installation/template-pre-installation.sh
 [template-post-installation.sh]:./post-installation/template-post-installation.sh
+[template-uninstall.sh]:./uninstall/template-uninstall.sh
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh

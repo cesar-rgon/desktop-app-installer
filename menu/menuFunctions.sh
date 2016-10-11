@@ -3,7 +3,7 @@
 # This script contains menu functions used only by main script.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-07-31
-# @version 	1.3, 2016-10-10
+# @version 	1.3, 2016-10-11
 # @license 	MIT
 ##########################################################################
 
@@ -63,8 +63,7 @@ function getApplicationList
 	# Delete blank and comment lines,then filter by category name and take application list (second column)
 	local applicationList=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
 
-	# If uninstall applications, filter only thouse that are installed
-	if [ "$2" == "--uninstall" ]; then
+	if [ "$2" == "only-show-installed-repo-apps" ]; then
 		local installedAppList=""
 		for application in "${applicationList[@]}"; do
 			# Delete blank and comment lines,then filter by application name and take package list (third column)

@@ -29,12 +29,16 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 >   - [Añadir nuevo subscript para configurar una aplicación](#57-añadir-nuevo-subscript-para-configurar-una-aplicación)  
 >   - [Añadir nuevo subscript para configurar el soporte EULA](#58-añadir-nuevo-subscript-para-configurar-el-soporte-eula)
 > 6. [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción)
+> 7. [Añadir nuevo subscript para eliminar ficheros de configuración de una aplicación durante el proceso de desinstalación](#7-añadir-nuevo-subscript-para-eliminar-ficheros-de-configuración-de-una-aplicación-durante-el-proceso-de-desinstalación)
+> 8. ANNEX
+>   - [Consideraciones del fichero subscript](#81-consideraciones-del-fichero-subscript)
+>   - [Consideraciones de comandos en fichero subscript](#Consideraciones-de-comandos-en-fichero-subscript)
 
 ```
-Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah and LMDE 2 Betsy (escritorio o servidor).
+Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah, LMDE 2 Betsy o Raspbian Jessie (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
-Versión:       1.3
-Último cambio: 05/10/2016 (dd/mm/yyyy)
+Versión:       1.3.1
+Último cambio: 11/10/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -49,7 +53,7 @@ Versión:       1.3
 * El script se ejecuta con una interfaz adaptada al entorno detectado: Dialog para terminal. Zenity para escritorio o emulador de terminal.
 * Fichero de log que muestra los pasos de instalación y posibles errores si ocurrieran.
 * Soporte multilenguaje. Es sencillo añadir un nuevo idioma. Por el momento están incluidos Inglés y Español. El script detecta el idioma del sistema y usa la traducción apropiada.
-
+* Válido para multiples arquitecturas: x64, i386, arm.
 ---
 [Regresar al índice](#indice)
 
@@ -158,6 +162,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   │   ├── applicationList.debian
 │   │   ├── applicationList.linuxmint
 │   │   ├── applicationList.lmde
+│   │   ├── applicationList.raspbian
 │   │   └── applicationList.ubuntu
 │   │
 │   ├── credentials         Contiene un fichero por aplicacion con nombre-usuario/contraseña requerido para autenticación
@@ -193,6 +198,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
 │   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
 │   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+│   ├── raspbian/*.sh       Subscripts usados sólamente en sistemas Raspbian
 │   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 ├── menu                    Contiene funciones usados por el menú del script principal (Terminal / Escritorio)
@@ -208,6 +214,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
 │   ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
 │   ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+│   ├── raspbian/*.sh       Subscripts usados sólamente en sistemas Raspbian
 │   └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 │
 └── pre-installation        Contiene subscripts para añadir repositorio de tercero y/o preparar instalación de aplicaciones
@@ -216,6 +223,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
     ├── debian/*.sh         Subscripts usados sólamente en sistemas Debian
     ├── linuxmint/*.sh      Subscripts usados sólamente en sistemas Linux Mint
     ├── lmde/*.sh           Subscripts usados sólamente en sistemas LMDE
+    ├── raspbian/*.sh       Subscripts usados sólamente en sistemas Raspbian
     └── ubuntu/*.sh         Subscripts usados sólamente en sistemas Ubuntu
 ```
 
@@ -231,6 +239,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 | [applicationList.debian][applicationList.debian]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Debian               |
 | [applicationList.linuxmint][applicationList.linuxmint]         | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Linux Mint           |
 | [applicationList.lmde][applicationList.lmde]                   | Define categorías, aplicaciones y los paquetes correspondientes para un sistema LMDE                 |
+| [applicationList.raspbian][applicationList.raspbian]           | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Raspbian             |
 | [applicationList.ubuntu][applicationList.ubuntu]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Ubuntu               |
 | [installer.sh][installer.sh]                                   | Fichero del script principal                                                                         |
 | [en.properties][en.properties]                                 | Fichero de idioma inglés                                                                             |
@@ -248,11 +257,11 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 #### 5.2 Añadir nueva aplicación a una categoría. Modificar o borrar una existente
 Para añadir una nueva aplicación a ser instalada, siga los siguientes pasos:
 
-1. Editar fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde] y añadir una nueva línea con la siguiente sintaxis:
+1. Editar fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] y añadir una nueva línea con la siguiente sintaxis:
 
-| 1ra columna - Categoría (*) | 2da columna - Aplicación (*) | Othas columnas - Paquetes |
+| 1ra columna - Categoría (*) | 2da columna - Aplicación (*) | 3ra columna - Paquetes    |
 | ----------------------------| ---------------------------- | ------------------------- |
-| NombreCategoria             | NombreAplicacion             | paquete(s) de repositorio |
+| NombreCategoria             | NombreAplicacion             | paquete1|paquete2|...     |
 
   Consideraciones:
   * Las líneas en blanco o de comentarios son ignoradas por el script.
@@ -265,8 +274,8 @@ Para añadir una nueva aplicación a ser instalada, siga los siguientes pasos:
   * El nombre de aplicación debe contener sólo letras, dígitos y/o guión bajo '_' y no puede comenzar con un dígito.
   * La fuente de la aplicación puede venir de repositorios oficiales, de terceros o incluso otras (sin repositorios).
   * El orden en la que se listan las aplicaciones en el menú es la misma que el especificado en este fichero.
-  * Tercera columna en adelante - Paquetes: es obligatoria sólo si la aplicación proviene de un repositorio.
-  * Los paquetes deben estar separados por espacios en blanco.
+  * La tercera columna - Paquetes: es obligatoria sólo si la aplicación proviene de un repositorio.
+  * Los paquetes deben estar separados por el caracter |.
   * Las aplicaciones sin repositorio no deben especificar paquete alguno.
 
 2. Editar fichero [es.properties][es.properties] y añadir una descripción para categorías (si hay nuevas) y aplicaciones con la siguiente sintaxis:
@@ -274,14 +283,14 @@ Para añadir una nueva aplicación a ser instalada, siga los siguientes pasos:
   NombreAplicacionDescription=Aquí va la descripción de la aplicación tal y como se verá en el menú principal
 
   Consideraciones:
-  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de categoría.
+  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian]. La palabra _Description_: debe continuar al nombre de categoría.
   * Para que sea intuitivo, es recomendable definir NombreCategoriaDescription en la sección 'CATEGORIAS' de este fichero.
-  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde]. La palabra _Description_: debe continuar al nombre de aplicación.
+  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian]. La palabra _Description_: debe continuar al nombre de aplicación.
   * Para que sea intuitivo, es recomendable definir NombreAplicacionDescription en la sección 'APLICACIONES' de este fichero.
   * Es recomendado, pero no obligatorio, añadir estas descripciones a otros ficheros de traducción.  
   * Puedes crear un nuevo fichero de traducción en tu idioma nativo para facilitar la comprensión. Vea el capítulo [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción) para más información.
 
-Para modificar o eliminar una aplicación o categoría, debe editar el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde] y cambiar/borrar las líneas correspondientes.
+Para modificar o eliminar una aplicación o categoría, debe editar el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] y cambiar/borrar las líneas correspondientes.
 
 ---
 [Regresar al índice](#indice)
@@ -299,7 +308,7 @@ Para añadir un nuevo subscript que prepare una aplicación antes de que comienc
 Para añadir un fichero que define PPA a ser usado para agregar repositorio de tercero para una aplicación siga los siguientes pasos:
 1. Crear un nuevo fichero './etc/ppa/applicationName'
   Considerationes:
-  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian].
   * El nombre de fichero no debe tener extensión.
 2. El fichero debe contener sólamente uno y solo un PPA. Puede estar formado por:
   * Líneas en blanco [opcional]
@@ -316,7 +325,7 @@ Para añadir un nuevo script de instalación de una aplicación siga los siguien
 
 2. Modificar contenido para asignar valores a las variables: _appName_ y _logFile_  
   Consideraciones:
-  * el valor de _appName_ debe ser idéntico (sensible a mayúsculas) al definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] o [applicationList.lmde][applicationList.lmde].
+  * el valor de _appName_ debe ser idéntico (sensible a mayúsculas) al definido en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian].
   * el valor de _logFile_ es usado para crear el fichero ~/logs/logFile.
 
 ---
@@ -345,7 +354,7 @@ Para añadir un nuevo subscript que configure el soporte EULA para una aplicaci�
 
 1. Crear un nuevo fichero './eula/nombreAplicacion' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
   Consideraciones:
-  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde].
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian].
 
 2. Añadir parámetros al final del fichero con la sintaxis indicada en la plantilla para evitar las preguntas EULA durante el proceso de instalación.
 
@@ -366,13 +375,22 @@ Para añadir un nuevo fichero de idioma, siga los siguientes pasos:
 ---
 [Regresar al índice](#indice)
 
+### 7. Añadir nuevo subscript para eliminar ficheros de configuración de una aplicación durante el proceso de desinstalación
+Para definir un subscript que elimine la configuración de una aplicación instalada. siga los siguientes pasos:
+
+1. Crear un nuevo fichero tomando, como base, el fichero [template-uninstall.sh][template-uninstall.sh] siguiendo las siguientes [consideraciones](#consideraciones-del-fichero-subscript).
+2. Añadir comandos necesarios al final del fichero para eliminar ficheros de configuracion de la aplicación durante el proceso de desinstalación teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
+3. No hay necesidad de definir comandos para desinstalar la aplicación, sólo basta con eliminar configuración. El script principal la desinstalará automáticamente.
+4. Sólo es válido para aplicaciones de repositorios, esto es, no es válido para aplicaciones de fuentes externas.
+---
+[Regresar al índice](#index)
 
 ### ANEXO
 
 ##### Consideraciones del fichero subscript
   * El nombre de fichero debe seguir el siguiente patrón: NombreAplicacion[_i386/_x64]
-    - NombreAplicacion: debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero [applicationList.ubuntu][applicationList.ubuntu], [applicationList.debian][applicationList.debian], [applicationList.linuxmint][applicationList.linuxmint] or [applicationList.lmde][applicationList.lmde]
-	  - _i386 / _x64: Opcional si fuera necesario. Script que sólo debe ser ejecutado en la arquitectura correspondiente del S.O. (i386 para 32 bits; x64: para 64 bits).
+    - NombreAplicacion: debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian]
+	  - _i386 / _x64 / arm: Opcional si fuera necesario. Script que sólo debe ser ejecutado en la arquitectura correspondiente del S.O. (i386 para 32 bits; x64: para 64 bits; arm: para sistemas ARM).
     - La extensión debe ser siempre '.sh'
   * El subscript debe estar ubicado en la carpeta _./third-party-repo_ si es válido para todas las distros linux soportadas. Lo denominamos subscript general.
   * El subscript debe estar ubicado en la carpeta _./third-party-repo/ubuntu_, _./third-party-repo/debian_, _./third-party-repo/linuxmint_, _./third-party-repo/lmde_ si es válido sólo para una distro linux soportada. Lo denominamos subscript específico.
@@ -404,6 +422,7 @@ Espero que lo encontréis útil.
 [applicationList.linuxmint]:./etc/applist/applicationList.linuxmint
 [applicationList.lmde]:./etc/applist/applicationList.lmde
 [applicationList.ubuntu]:./etc/applist/applicationList.ubuntu
+[applicationList.raspbian]:./etc/applist/applicationList.raspbian
 [installer.sh]:./installer.sh
 [en.properties]:./etc/languages/en.properties
 [es.properties]:./etc/languages/es.properties

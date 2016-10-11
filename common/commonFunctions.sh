@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-10-10
+# @version 	1.3, 2016-10-11
 # @license 	MIT
 ##########################################################################
 
@@ -105,8 +105,8 @@ function prepareScript
 
 ##
 # This function gets all existing files that matches following requisites:
-# 1. Pattern filename: appName* / appName_x64* / appName_i386*
-# 2. Filename must match O.S. arquitecture (*_i386 32bits / *_x64 64bits / other all)
+# 1. Pattern filename: appName* / appName_x64* / appName_i386* / appName_arm*
+# 2. Filename must match O.S. arquitecture (*_i386 32bits / *_x64 64bits / *_arm for arm / * for all of them)
 # 3. Must be placed in targetFolder or the subfolder that matchs your linux distro
 # @since 	v1.3
 # @param 	String targetFolder		Root scripts folder
@@ -131,18 +131,17 @@ function getAppFiles
 			filename="$file" extension=""
 		fi
 
-		local i386="_i386" x64="_x64" fileList=""
+		local arquitecture="" fileList=""
 		# Search subscript that matches all O.S. architecture
 		if [ -f "$targetFolder/$distro/$filename$extension" ]; then fileList+="$targetFolder/$distro/$filename$extension "; fi
 		if [ -f "$targetFolder/$filename$extension" ]; then fileList+="$targetFolder/$filename$extension "; fi
-		if [ `uname -m` == "x86_64" ]; then
-			# Search subscript that matches 64 bits O.S. architecture
-			if [ -f "$targetFolder/$distro/$filename$x64$extension" ]; then fileList+="$targetFolder/$distro/$filename$x64$extension "; fi
-			if [ -f "$targetFolder/$filename$x64$extension" ]; then fileList+="$targetFolder/$filename$x64$extension "; fi
-		else
-			# Search subscript that matches 32 bits O.S. architecture
-			if [ -f "$targetFolder/$distro/$filename$i386$extension" ]; then fileList+="$targetFolder/$distro/$filename$i386$extension "; fi
-			if [ -f "$targetFolder/$filename$i386$extension" ]; then fileList+="$targetFolder/$filename$i386$extension "; fi
+		# Search subscript that matches 64 bits, 32bits or arm architecture
+		if [ `uname -m` == "x86_64" ]; then	arquitecture="_x64"
+		else if [ `uname -m` == "i386" ]; then	arquitecture="_i386"
+		else if [[ `uname -m` == arm* ]]; then arquitecture="_arm"; fi; fi; fi
+		if [ -n "$arquitecture" ]; then
+			if [ -f "$targetFolder/$distro/$filename$arquitecture$extension" ]; then fileList+="$targetFolder/$distro/$filename$arquitecture$extension "; fi
+			if [ -f "$targetFolder/$filename$arquitecture$extension" ]; then fileList+="$targetFolder/$filename$arquitecture$extension "; fi
 		fi
 		echo "$fileList"
 	fi

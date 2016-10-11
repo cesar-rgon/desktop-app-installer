@@ -6,7 +6,7 @@
 # a log file which contains reported steps and posible errors.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-10-10
-# @version 	1.3, 2016-10-10
+# @version 	1.3, 2016-10-11
 # @license 	MIT
 ##########################################################################
 
@@ -20,5 +20,5 @@ scriptRootFolder="`pwd`"; username="`whoami`"; homeFolder="$HOME"
 
 # Lauch menu and uninstall selected applications
 prepareScript "$0"
-declare -a appsToUninstall=( $(menu --uninstall) )
+declare -a appsToUninstall=( $(menu --only-show-installed-repo-apps) )
 uninstallAndPurgeApplications appsToUninstall[@]
