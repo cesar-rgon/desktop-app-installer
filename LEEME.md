@@ -30,7 +30,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 >   - [Añadir nuevo subscript para configurar el soporte EULA](#58-añadir-nuevo-subscript-para-configurar-el-soporte-eula)
 > 6. [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción)
 > 7. [Añadir nuevo subscript para eliminar ficheros de configuración de una aplicación durante el proceso de desinstalación](#7-añadir-nuevo-subscript-para-eliminar-ficheros-de-configuración-de-una-aplicación-durante-el-proceso-de-desinstalación)
-> 8. ANNEX
+> 8. ANEXO
 >   - [Consideraciones del fichero subscript](#consideraciones-del-fichero-subscript)
 >   - [Consideraciones de comandos en fichero subscript](#consideraciones-de-comandos-en-fichero-subscript)
 
