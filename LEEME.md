@@ -250,7 +250,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 | [template-eula][template-eula]                                 | Plantilla para ayudar a crear un nuevo subscript para configurar soporte EULA para una aplicación        |
 | [template-non-repo-app.sh][template-non-repo-app.sh]           | Plantilla para ayudar a crear un nuevo subscript para instalar una aplicación externa a repositorios |
 | [template-post-installation.sh][template-post-installation.sh] | Plantilla para ayudar a crear un nuevo subscript con comandos de post-instalación de una aplicación  |
-
+| [template-uninstall.sh][template-uninstall.sh]	         | Plantilla para ayudar a crear un nuevo subscript que elimine ficheros de configuración de una applicación   |
 ---
 
 [Regresar al índice](#indice)
@@ -430,6 +430,7 @@ Espero que lo encontréis útil.
 [es.properties]:./etc/languages/es.properties
 [template-pre-installation.sh]:./pre-installation/template-pre-installation.sh
 [template-post-installation.sh]:./post-installation/template-post-installation.sh
+[template-uninstall.sh]:./uninstall/template-uninstall.sh
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
