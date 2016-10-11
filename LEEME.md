@@ -31,8 +31,8 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 > 6. [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción)
 > 7. [Añadir nuevo subscript para eliminar ficheros de configuración de una aplicación durante el proceso de desinstalación](#7-añadir-nuevo-subscript-para-eliminar-ficheros-de-configuración-de-una-aplicación-durante-el-proceso-de-desinstalación)
 > 8. ANNEX
->   - [Consideraciones del fichero subscript](#81-consideraciones-del-fichero-subscript)
->   - [Consideraciones de comandos en fichero subscript](#Consideraciones-de-comandos-en-fichero-subscript)
+>   - [Consideraciones del fichero subscript](#consideraciones-del-fichero-subscript)
+>   - [Consideraciones de comandos en fichero subscript](#consideraciones-de-comandos-en-fichero-subscript)
 
 ```
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah, LMDE 2 Betsy o Raspbian Jessie (escritorio o servidor).
@@ -54,6 +54,7 @@ Versión:       1.3.1
 * Fichero de log que muestra los pasos de instalación y posibles errores si ocurrieran.
 * Soporte multilenguaje. Es sencillo añadir un nuevo idioma. Por el momento están incluidos Inglés y Español. El script detecta el idioma del sistema y usa la traducción apropiada.
 * Válido para multiples arquitecturas: x64, i386, arm.
+
 ---
 [Regresar al índice](#indice)
 
@@ -382,8 +383,9 @@ Para definir un subscript que elimine la configuración de una aplicación insta
 2. Añadir comandos necesarios al final del fichero para eliminar ficheros de configuracion de la aplicación durante el proceso de desinstalación teniendo en cuenta estas [consideraciones](#consideraciones-de-comandos-en-fichero-subscript).
 3. No hay necesidad de definir comandos para desinstalar la aplicación, sólo basta con eliminar configuración. El script principal la desinstalará automáticamente.
 4. Sólo es válido para aplicaciones de repositorios, esto es, no es válido para aplicaciones de fuentes externas.
+
 ---
-[Regresar al índice](#index)
+[Regresar al índice](#indice)
 
 ### ANEXO
 
