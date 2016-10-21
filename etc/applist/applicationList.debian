@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (yyyy/mm/dd): 2016/10/10                                                                           #
+# Last modified date (yyyy/mm/dd): 2016/10/21                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -24,7 +24,7 @@ desktop			KDE				kde-plasma-desktop
 desktop			Cinnamon			cinnamon
 desktop			Mate				mate-desktop-environment
 desktop			Xfce				xfce4
-desktop			Lxde				lxde
+desktop			Lxde				lxde xinit lxsession-logout xfce4-notifyd
 
 developer_tools       Bluefish                       bluefish
 developer_tools       Eclipse                        eclipse

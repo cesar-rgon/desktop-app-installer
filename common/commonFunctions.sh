@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-10-11
+# @version 	1.3, 2016-10-21
 # @license 	MIT
 ##########################################################################
 
@@ -33,33 +33,38 @@ function credits
 ##
 function installNeededPackages
 {
-	local neededPackages
+	local neededPackages=()
 	if [ -z "$DISPLAY" ]; then
-		neededPackages=( dialog tmux )
+		neededPackages=( dialog software-properties-common tmux )
 	else
-		neededPackages=( zenity libnotify-bin xterm )
+		neededPackages=( libnotify-bin software-properties-common xterm zenity )
 		if [ "$KDE_FULL_SESSION" != "true" ]; then
-			neededPackages+=( gksu );
+			neededPackages+=( gksu )
 		else
-			neededPackages+=( kdesudo );
+			neededPackages+=( kdesudo )
 			if [ "$distro" == "ubuntu" ]; then neededPackages+=( libqtgui4-perl ); fi
 		fi
 	fi
 
+	local packagesToInstall=()
 	for package in "${neededPackages[@]}"; do
 		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
-			echo "$installingRepoApplication $package"
-			if [ -z "$DISPLAY" ]; then
-				sudo apt-get -y install $package --fix-missing
-			else
-				if [ "$KDE_FULL_SESSION" != "true" ]; then
-					`gksudo -S "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
-				else
-					`kdesudo -c "apt-get -y install $package" 1>/dev/null 2>>"$logFile"`
-				fi
-			fi
+			packagesToInstall+=( $package )
 		fi
 	done
+
+	if [ ${#packagesToInstall[@]} -gt 0 ]; then
+		echo "$installingRepoApplications: ${packagesToInstall[@]}"
+		if [ -z "$DISPLAY" ]; then
+			sudo apt-get -y install ${packagesToInstall[@]} --fix-missing
+		else
+			if [ "$KDE_FULL_SESSION" != "true" ]; then
+				`gksudo -S "apt-get -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
+			else
+				`kdesudo -c "apt-get -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
+			fi
+		fi
+	fi
 }
 
 ##
