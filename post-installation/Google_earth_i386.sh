@@ -21,5 +21,5 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 mkdir /tmp/google_earth_package
 cd /tmp/google_earth_package
 make-googleearth-package --force --quiet 2>/dev/null
-apt-get -y install gdebi
+apt -y install gdebi
 gdebi --n /tmp/google_earth_package/googleearth*.deb

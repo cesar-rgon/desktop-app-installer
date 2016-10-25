@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 2016/10/22                                                                           #
+# Last modified date (dd/mm/yyyy): 2016/10/25                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -22,7 +22,7 @@
 desktop               Ubuntu                         ubuntu-desktop
 desktop               Kubuntu                        kubuntu-desktop
 desktop               Xubuntu                 	     xubuntu-desktop
-desktop               Lubuntu             	         lubuntu-desktop
+desktop               Lubuntu             	         lubuntu-desktop|pavucontrol
 desktop               Edubuntu                       edubuntu-desktop
 desktop               Gnome_shell                    gnome-shell
 desktop               Cinnamon                       cinnamon
@@ -121,6 +121,7 @@ science_engineering   Geogebra                       geogebra
 science_engineering   Kalzium                        kalzium
 science_engineering   Stellarium                     stellarium
 
+sound_video           Amarok                         amarok
 sound_video           Audacity                       audacity
 sound_video           Clementine                     clementine
 sound_video	          Cinelerra		     	             cinelerra-cv
@@ -129,7 +130,7 @@ sound_video           Guvcview                       guvcview
 sound_video           Kodi                           kodi
 sound_video           Mediainfo                      mediainfo
 sound_video           MkvToolNix                     mkvtoolnix-gui
-sound_video	           OpenShot		                   openshot
+sound_video	          OpenShot		                   openshot
 sound_video           Puddletag                      puddletag
 sound_video           Smplayer                       smplayer
 sound_video           SubDownloader                  subdownloader

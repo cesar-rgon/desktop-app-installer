@@ -40,12 +40,12 @@ if [ -n "$4" ]; then
 				bash -c "$debconfCommands"
 			fi
 
-			apt-get -y install $package --fix-missing;
+			apt -y install $package --fix-missing;
 			if [ $? -ne 0 ]; then
 					echo -e \"$packageInstallFailed ...\" 1>&2
 					rm /var/lib/dpkg/info/$package.pre* 2>/dev/null
 					rm /var/lib/dpkg/info/$package.post* 2>/dev/null
-					apt-get -y install -f >/dev/null
+					apt -y install -f >/dev/null
 			fi
 		done
 	fi

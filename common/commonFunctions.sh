@@ -56,12 +56,12 @@ function installNeededPackages
 	if [ ${#packagesToInstall[@]} -gt 0 ]; then
 		echo "$installingRepoApplications: ${packagesToInstall[@]}"
 		if [ -z "$DISPLAY" ]; then
-			sudo apt-get -y install ${packagesToInstall[@]} --fix-missing
+			sudo apt -y install ${packagesToInstall[@]} --fix-missing
 		else
 			if [ "$KDE_FULL_SESSION" != "true" ]; then
-				`gksudo -S "apt-get -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
+				`gksudo -S "apt -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
 			else
-				`kdesudo -c "apt-get -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
+				`kdesudo -c "apt -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
 			fi
 		fi
 	fi

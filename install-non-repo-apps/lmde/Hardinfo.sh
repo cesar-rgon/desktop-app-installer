@@ -28,4 +28,4 @@ fi
 hardinfoURL="http://ftp.debian.org/debian/pool/main/h/hardinfo/$hardinfoFile"
 wget -P /var/cache/apt/archives $hardinfoURL 2>&1
 dpkg -i /var/cache/apt/archives/$hardinfoFile
-apt-get -y install -f
+apt -y install -f
