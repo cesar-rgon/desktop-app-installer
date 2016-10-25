@@ -8,7 +8,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 
 > _Versión inglesa disponible [aquí][readme.md] ( English version can be found [here][readme.md] )_
 
-> _La página web del script disponible [aquí](http://cesar-rgon.github.io/desktop-app-installer/)_
+> _La página web del script disponible [aquí](http://cesar-rgon.github.io/desktop-app-installer-website/)_
 
 ##### Indice
 > 1. [Características](#1-características)
@@ -38,7 +38,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 Válido para:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18 Sarah, LMDE 2 Betsy o Raspbian Jessie (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3.1
-Último cambio: 11/10/2016 (dd/mm/yyyy)
+Último cambio: 25/10/2016 (dd/mm/yyyy)
 ```
 
 ### 1. Características
@@ -434,14 +434,14 @@ Espero que lo encontréis útil.
 [template-eula]:./etc/eula/template-eula
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
-[screenshot-monitores]:http://cesar-rgon.github.io/desktop-app-installer/images/monitores.png
-[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-07.png
-[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-07.png
-[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-13.png
-[screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-13.png
-[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-15.png
-[screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/dialog-14.png
-[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer/images/screenshots/es/zenity-16.png
+[screenshot-monitores]:http://cesar-rgon.github.io/desktop-app-installer-website/images/monitores.png
+[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/zenity-07.png
+[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/dialog-07.png
+[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/zenity-13.png
+[screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/dialog-13.png
+[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/zenity-15.png
+[screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/dialog-14.png
+[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/es/zenity-16.png
 [ISO639]:http://es.wikipedia.org/wiki/ISO_639-1
-[tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer/images/logos/desktop-app-installer.png
+[tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer-website/images/logos/desktop-app-installer.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
