@@ -14,5 +14,5 @@ if [ "$distro" == "debian" ] || [ "$distro" == "lmde" ]; then
 	securityFileList=( `grep -r "$url" /etc/apt | awk -F : '{print $1}' | uniq` )
 	sed -i "s/#deb ${url//\//\\/}/deb ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
 	sed -i "s/#deb-src ${url//\//\\/}/deb-src ${url//\//\\/}/g" ${securityFileList[@]} 2>/dev/null
-	sudo apt-get update
+	sudo apt update
 fi

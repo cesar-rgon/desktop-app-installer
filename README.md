@@ -62,7 +62,7 @@ Last change: 2016/10/11 (yyyy/mm/dd)
 
 #### 2.1 Method 1. Clone this repository
 ```bash
-$ sudo apt-get install git
+$ sudo apt install git
 $ git clone https://github.com/cesar-rgon/desktop-app-installer.git
 $ cd desktop-app-installer
 ```

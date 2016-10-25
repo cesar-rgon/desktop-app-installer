@@ -19,7 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Delete temp files and packages
-apt-get -y install -f
-apt-get -y autoremove
-apt-get clean
+apt -y install -f
+apt -y autoremove
+apt clean
 rm -rf "$tempFolder"

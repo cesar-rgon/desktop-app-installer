@@ -18,4 +18,4 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 # Update repositories
-apt-get update --fix-missing
+apt update --fix-missing

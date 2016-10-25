@@ -16,11 +16,11 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 #########################################################################################
 # CONSIDERATIONS									#
 # - No need to use 'sudo' because this script must be executed as root user.		#
-# - No need to execute 'apt-get update' because main script will execute it.		#
+# - No need to execute 'apt update' because main script will execute it.		#
 # - This script must be non-interactive, this means, no interaction with user at all:	#
 # 	* No echo to standard output (monitor)						#
 #	* No read from standard input (keyboard)					#
-#	* Use auto-confirm for commands. Example: apt-get -y install <package>		#
+#	* Use auto-confirm for commands. Example: apt -y install <package>		#
 #	* etc.										#
 #########################################################################################
 

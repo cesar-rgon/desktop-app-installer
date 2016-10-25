@@ -23,4 +23,4 @@ repositoryFilename="google-chrome.list"
 
 # Commands to add third-party repository of the application.
 rm -f "/etc/apt/sources.list.d/$repositoryFilename"
-apt-get update
+apt update

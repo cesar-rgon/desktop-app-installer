@@ -23,7 +23,7 @@ teamviewerFile="teamviewer_linux.deb"
 teamviewerURL="http://download.teamviewer.com/download/teamviewer_i386.deb"
 wget -O /tmp/$teamviewerFile $teamviewerURL 2>&1
 gdebi --n /tmp/$teamviewerFile
-apt-get -y install -f
+apt -y install -f
 
 # Extract teamviewer icons
 tar -C /usr/share/ -xvf "$scriptRootFolder/icons/teamviewer.tar.gz"

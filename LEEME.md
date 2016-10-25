@@ -62,7 +62,7 @@ Versión:       1.3.1
 
 #### 2.1 Método 1. Clonar este repositorio
 ```bash
-$ sudo apt-get install git
+$ sudo apt install git
 $ git clone https://github.com/cesar-rgon/desktop-app-installer.git
 $ cd app-installer
 ```
