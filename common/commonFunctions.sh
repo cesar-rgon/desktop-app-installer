@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-10-21
+# @version 	1.3, 2016-10-26
 # @license 	MIT
 ##########################################################################
 
@@ -33,11 +33,11 @@ function credits
 ##
 function installNeededPackages
 {
-	local neededPackages=()
+	local neededPackages=( gdebi-core software-properties-common )
 	if [ -z "$DISPLAY" ]; then
-		neededPackages=( dialog software-properties-common tmux )
+		neededPackages+=( dialog tmux )
 	else
-		neededPackages=( libnotify-bin software-properties-common xterm zenity )
+		neededPackages+=( libnotify-bin xterm zenity )
 		if [ "$KDE_FULL_SESSION" != "true" ]; then
 			neededPackages+=( gksu )
 		else
@@ -308,7 +308,11 @@ function installNonRepoApplication
 function executeBeginningOperations
 {
 	# sudo remember always password
-	sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
+	if [ -z "$DISPLAY" ]; then
+		sudo cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/
+	else
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A cp -f "$etcFolder/desktop-app-installer-sudo" /etc/sudoers.d/ )
+	fi
 	# Setup debconf interface. Needed to show EULA box for terminal mode or EULA window for desktop mode
 	executeScript "$commonFolder/beginningOperations.sh" "$beginningOperations"
 }
@@ -321,7 +325,11 @@ function executeBeginningOperations
 function executeFinalOperations
 {
 	executeScript "$commonFolder/finalOperations.sh" "$finalOperations"
-	sudo rm -f /etc/sudoers.d/desktop-app-installer-sudo /etc/tmux.conf
+	if [ -z "$DISPLAY" ]; then
+		sudo rm -f /etc/sudoers.d/desktop-app-installer-sudo /etc/tmux.conf
+	else
+		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A rm -f /etc/sudoers.d/desktop-app-installer-sudo )
+	fi
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
 	showCredentials
