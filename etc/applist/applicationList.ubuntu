@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 2016/10/25                                                                           #
+# Last modified date (dd/mm/yyyy): 2016/11/04                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -138,6 +138,7 @@ sound_video           Videolan                       vlc
 sound_video           Flash_plugin                   flashplugin-installer
 
 system                Bleachbit                      bleachbit
+system                Boot_repair                    boot-repair
 system                Compiz                         compiz|compizconfig-settings-manager|fusion-icon
 system                Gdebi                          gdebi
 system                Gmount_iso                     gmountiso
