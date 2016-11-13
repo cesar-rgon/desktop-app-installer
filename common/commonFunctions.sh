@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-10-26
+# @version 	1.3, 2016-11-13
 # @license 	MIT
 ##########################################################################
 
@@ -22,7 +22,7 @@ function credits
 		printf "%.21s%s\n" "$authorLabel:$whiteSpaces" "$author" >> $tempFolder/linux-app-installer.credits
 		dialog --title "$creditsLabel" --backtitle "$installerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
 	else
-			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle" "$scriptDescription\n$testedOnLabel\n$testedOnDistrosLinks"
+			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle"
 	fi
 }
 
@@ -55,15 +55,7 @@ function installNeededPackages
 
 	if [ ${#packagesToInstall[@]} -gt 0 ]; then
 		echo "$installingRepoApplications: ${packagesToInstall[@]}"
-		if [ -z "$DISPLAY" ]; then
-			sudo apt -y install ${packagesToInstall[@]} --fix-missing
-		else
-			if [ "$KDE_FULL_SESSION" != "true" ]; then
-				`gksudo -S "apt -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
-			else
-				`kdesudo -c "apt -y install ${packagesToInstall[@]}" 1>/dev/null 2>>"$logFile"`
-			fi
-		fi
+		sudo apt -y install ${packagesToInstall[@]} --fix-missing
 	fi
 }
 
@@ -344,8 +336,7 @@ function showLogs
 	if [ -z "$DISPLAY" ]; then
 		dialog --title "$installerLogsLabel" --backtitle "$installerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
-		local logMessage="$folder\n<a href='$logsFolder'>$logsFolder</a>\n$file\n<a href='$logFile'>$logFilename</a>"
-		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification" "$logMessage"
+		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification"
 		zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
 	fi
 	chown $username:$username "$logFile"
@@ -434,7 +425,7 @@ function installAndSetupApplications
 		executeFinalOperations
 		. $commonFolder/finalDebianBasedPatch.sh
 	fi
-	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$authorLabel $author"; fi
+	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel: $author"; fi
 }
 
 ##
@@ -464,5 +455,5 @@ function uninstallAndPurgeApplications
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
 	fi
-	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$githubProjectLink\n$authorLabel $author"; fi
+	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel $author"; fi
 }

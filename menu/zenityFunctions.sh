@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-08-15
+# @version 	1.3, 2016-11-13
 # @license 	MIT
 ##########################################################################
 
@@ -64,7 +64,10 @@ function getCategoriesWindow
 	local totalCategoriesNumber=$((${#categoryArray[@]}+1))
 	local rows window text="$selectCategories" height=$( getHeight $totalCategoriesNumber)
 	local hideColumns="--hide-column=2" zenityWidth=0
-	local formattedText="<span font='$fontFamilyText $fontSizeCategory'>$text</span>"
+	local formattedText="$scriptDescription. $testedOnLabel:\n$testedOnDistrosLinks\n\n"
+	formattedText+="$githubProject: $githubProjectLink\n"
+	formattedText+="$documentationLabel: $githubProjectDocLink\n\n"
+	formattedText+="<span font='$fontFamilyText $fontSizeCategory'>$text</span>"
 
 	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
 		text+="\n$noSelectCategories"
@@ -75,7 +78,7 @@ function getCategoriesWindow
 	# Set rest of rows. One per category
 	rows+=$( getCategoryOptions categoryArray[@] )
 	# Create zenity window (desktop mode)
-	window="zenity --title=\"$installerTitle\" --text \"$formattedText\" --list --checklist --width=$zenityWidth --height=$height --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows $hideColumns --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
+	window="zenity --title=\"$installerTitle\" --text \"$formattedText\" --list --checklist --width=$zenityWidth --height=$((height+25)) --column \"\" --column \"$categoryLabel\" --column \"$categoryLabel\" --column \"$selecteAppsLabel\" $rows $hideColumns --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
 	echo "$window"
 }
 
