@@ -8,6 +8,8 @@
 # @license 	MIT
 ##########################################################################
 
+# Associate map wich gets selected applications from a category name
+declare -A selectedAppsMap
 
 ###
 # This function get the height of a Zenity window
@@ -67,7 +69,7 @@ function getCategoriesWindow
 	local formattedText="$scriptDescription. $testedOnLabel:\n$testedOnDistrosLinks\n\n"
 	formattedText+="$githubProject: $githubProjectLink\n"
 	formattedText+="$documentationLabel: $githubProjectDocLink\n\n"
-	formattedText+="<span font='$fontFamilyText $fontSizeCategory'>$text</span>"
+	formattedText+="<span font='$fontFamilyText $fontSmallSize'>$text</span>"
 
 	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
 		text+="\n$noSelectCategories"
@@ -163,7 +165,7 @@ function getApplicationsWindow
 	local totalApplicationNumber=$((${#applicationArray[@]}+1))
 	local height=$( getHeight $totalApplicationNumber ) appRows
 	local checklistText="$categoryLabel $categoryNumber/$totalSelectedCategories: $categoryDescription"
- 	local formattedText="<span font='$fontFamilyText $fontSizeApps'>$checklistText</span>"
+ 	local formattedText="<span font='$fontFamilyText $fontBigSize'>$checklistText</span>"
 
 	# Set first row: ALL applications
 	appRows+="false \"[$all]\" \"\" \"\" "
@@ -172,4 +174,63 @@ function getApplicationsWindow
 	# Create zenity window (desktop mode)
 	window="zenity --title=\"$installerTitle\" --text \"$formattedText\" --list --checklist --width=$width --height=$height --column \"\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $appRows --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
  	echo "$window"
+}
+
+##
+# This function calls other functions to show category box and all others
+# application boxes to let the user selects applications to install.
+# @since 	v1.3
+# @return String 										Selected app.list with '.' separator
+##
+function menu
+{
+	# Array of selected Categories
+	local firstTime="true" selcat selectedCategories
+
+	# Repeat select categories and applications windows until not selected categories
+	while [ "$selcat" != "" ] || [ "$firstTime" == "true" ]; do
+		# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
+		local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`)
+		local categoryNumber=1
+
+		selcat="$( selectCategoriesToBrowse categoryArray[@] $firstTime )"
+		if [ "$selcat" == "$CANCEL_CODE" ]; then exit 0; fi
+		if [ -z "$selcat" ]; then break; fi
+
+		IFS='|' read -ra selectedCategories <<< "$selcat"
+		if [ ${#selectedCategories[@]} -gt 0 ]; then
+			local totalSelectedCat=${#selectedCategories[@]} categoryName
+
+			for categoryName in "${selectedCategories[@]}"; do
+				# Backup of selected applications of the category
+				local oldSelectedApps=`echo ${selectedAppsMap[$categoryName]}`
+
+				# Each category has it's own screen
+				local categoryDescription
+				eval categoryDescription=\$$categoryName"Description"
+
+				local applicationArray=$( getApplicationList "$categoryName" "$1" )
+				selectedAppsMap[$categoryName]=$( selectAppsToInstallByCategory applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCat" )
+
+				if [ "${selectedAppsMap[$categoryName]}" == "$CANCEL_CODE" ]; then
+					# Restore old selected applications of the category
+					selectedAppsMap[$categoryName]=`echo $oldSelectedApps`
+					break
+				fi
+				categoryNumber=$(($categoryNumber+1))
+			done
+		fi
+		firstTime="false"
+	done
+	# Return selected applications
+	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
+		local seledtedAppsFormatted
+
+		for categoryName in "${!selectedAppsMap[@]}"; do
+			seledtedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
+		done
+		echo "$seledtedAppsFormatted"
+	else
+		echo ""
+	fi
 }

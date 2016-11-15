@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-11-13
+# @version 	1.3, 2016-11-15
 # @license 	MIT
 ##########################################################################
 
@@ -391,7 +391,7 @@ function installAndSetupApplications
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
 		if [ -n "$DISPLAY" ]; then
-			notify-send -i "$installerIconFolder/applications-other.svg" "$installingSelectedApplications" ""
+			notify-send -i "$installerIconFolder/installing.png" "$installingSelectedApplications" ""
 		fi
 
 		# Separates repo/non-repo applications
@@ -439,7 +439,7 @@ function uninstallAndPurgeApplications
 	local appsToUninstall=("${!1}")
 	if [ ${#appsToUninstall[@]} -gt 0 ]; then
 		if [ -n "$DISPLAY" ]; then
-			notify-send -i "$installerIconFolder/applications-other.svg" "$unInstallingSelectedApplications" ""
+			notify-send -i "$installerIconFolder/installing.png" "$unInstallingSelectedApplications" ""
 		fi
 		# Generate and execute initial commands to proceed with installation proccess
 		executeBeginningOperations
