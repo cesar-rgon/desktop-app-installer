@@ -12,8 +12,7 @@
 scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
 
 # Import common variables and functions
-. ../common/commonVariables.properties
-. ../common/commonFunctions.sh
+. $scriptRootFolder/common/commonFunctions.sh
 declare -a appsToInstall=( "Hugin_panorama_photo_stitcher" )
 
 # Lauch menu and install selected applications

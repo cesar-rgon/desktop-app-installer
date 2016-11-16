@@ -17,12 +17,8 @@
 function getHeight
 {
 	local rowsNumber=$1
-
-	if [ $rowsNumber -gt 2 ]; then
-		height=$(($baseHeight+$(($(($rowsNumber-2))*$rowHeight))))
-	else
-		height=$baseHeight
-	fi
+	local baseHeight=352
+	height=$(($baseHeight+$(($(($rowsNumber))*$rowHeight))))
 	if [ $height -gt $maxHeight ]; then
 		height=$maxHeight
 	fi
@@ -70,10 +66,7 @@ function getApplicationOptions
 function getApplicationsWindow
 {
 	local applicationArray=(${!1}) categoryName="$2" key=$3 categoryNumber=$4
-	local totalApplicationNumber=$((${#applicationArray[@]}+1))
-	local height=$( getHeight $totalApplicationNumber )
-	local checklistText="Seleccione las aplicaciones a instalar en esta categoria"
- 	local formattedText="<span font='$fontFamilyText $fontSmallSize'>$checklistText</span>"
+ 	local formattedText="<span font='$fontFamilyText $fontSmallSize'>Seleccione las aplicaciones a instalar de esta categoria</span>"
 	# Set first row: ALL applications
 	local appRows="false \"[$all]\" \"\" \"\" "
 	# Set rest of rows. One per aplication
@@ -82,6 +75,40 @@ function getApplicationsWindow
 	window="yad --plug=$key --tabnum=$categoryNumber --text \"$formattedText\" --list --checklist --column \"\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $appRows"
  	echo "$window"
 }
+
+
+##
+# This function filters applicaction list of a specific category.
+# If uninstall process, then, filter thouse apps of a category that
+# have been installed.
+# @since 	v1.3
+# @param String categoryName						Name of the category
+# @param String uninstalled							If uninstall proccess
+# @return String 												List of apps
+##
+function getApplicationList
+{
+	local categoryName="$1"
+
+	# Delete blank and comment lines,then filter by category name and take application list (second column)
+	local applicationList=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
+
+	if [ "$2" == "--only-show-installed-repo-apps" ]; then
+		local installedAppList=""
+		for application in "${applicationList[@]}"; do
+			# Delete blank and comment lines,then filter by application name and take package list (third column)
+			local packageList="`cat "$appListFile" | awk -v app=$application '!/^($|#)/{ if ($2 == app) print $3; }' | tr '|' ' '`"
+			if [ -n "`dpkg -s $packageList 2>&1 | grep "Status: install ok installed"`" ]; then
+				# The application is installed
+				installedAppList+="$application "
+			fi
+		done
+		echo "$installedAppList"
+	else
+		echo "${applicationList[@]}"
+	fi
+}
+
 
 ##
 # This function calls other functions to show category box and all others
@@ -92,33 +119,39 @@ function getApplicationsWindow
 
 function menu
 {
-
 	# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
 	local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`) categoryNumber=1
 	local categoryNumber=1 key=$RANDOM
 
 	local formattedText="<span font='$fontFamilyText $fontBigSize'>Linux App Installer v1.3.2</span>"
-	formattedText+="\n<span font='$fontFamilyText $fontSmallSize'>Script instalador y configurador de aplicaciones y escritorios</span>"
+	formattedText+="\n\n<span font='$fontFamilyText $fontSmallSize'>Script instalador y configurador de aplicaciones y escritorios</span>"
 
 	local window="yad --notebook --key=$key --title=\"Linux App Installer v1.3.2\" --text=\"$formattedText\""
 	window+=" --image=\"$installerIconFolder/tux-shell-console96.png\" --image-on-top"
 	window+=" --button=\"!/$installerIconFolder/www32.png:3\" --button=\"!/$installerIconFolder/octocat32.png:2\" --button=\"!/$installerIconFolder/door32.png:1\" --button=\"!/$installerIconFolder/next32.png:0\""
-	window+=" --width=600 --height=200"
 	window+=" --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
 
+	local maxApplicationNumber=0 categoryDescription applicationArray totalApplicationNumber
 	for categoryName in "${categoryArray[@]}"; do
-		local categoryDescription
 		eval categoryDescription=\$$categoryName"Description"
 
 		# Applications for the category
-		local applicationArray=$( getApplicationList "$categoryName" "$1" )
+		applicationArray=( $( getApplicationList "$categoryName" "$1" ) )
+		totalApplicationNumber=$((${#applicationArray[@]}+1))
+		if [ $totalApplicationNumber -gt $maxApplicationNumber ]; then
+				maxApplicationNumber=$totalApplicationNumber
+		fi
 		`eval $( getApplicationsWindow applicationArray[@] "$categoryName" $key $categoryNumber )` &
 
 		#selectedAppsMap[$categoryName]=$( selectAppsToInstallByCategory applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "${#categoryArray[@]}" )
 		window+=" --tab=\"$categoryDescription\""
 		categoryNumber=$(($categoryNumber+1))
 	done
+
+	local height=$( getHeight $maxApplicationNumber )
+	window+=" --width=$width --height=$height"
 	eval "$window"
+	
 	# Return selected applications
 	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
 		local seledtedAppsFormatted

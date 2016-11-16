@@ -6,19 +6,17 @@
 # installation steps and posible errors.
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-04-29
-# @version 	1.3, 2016-08-12
+# @version 	1.3, 2016-11-16
 # @license 	MIT
 ##########################################################################
 
 # Basic Variables
 scriptRootFolder="`pwd`"; username="`whoami`"; homeFolder="$HOME"
 
-# Import common variables and functions
-. ./common/commonVariables.properties
-. ./common/commonFunctions.sh
-. ./menu/menuFunctions.sh
+. $scriptRootFolder/common/commonFunctions.sh
+prepareScript "$0"
+. $scriptRootFolder/menu/menuFunctions.sh
 
 # Lauch menu and install selected applications
-prepareScript "$0"
 declare -a appsToInstall=( $(menu) )
 installAndSetupApplications appsToInstall[@]

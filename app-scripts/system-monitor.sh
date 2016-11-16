@@ -12,8 +12,8 @@
 scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
 
 # Import common variables and functions
-. ../common/commonVariables.properties
-. ../common/commonFunctions.sh
+
+. $scriptRootFolder/common/commonFunctions.sh
 declare -a appsToInstall=( "System_monitor" )
 
 # Lauch menu and install selected applications

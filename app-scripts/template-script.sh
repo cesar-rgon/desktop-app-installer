@@ -5,8 +5,8 @@
 scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
 
 # Import common variables and functions
-. ../common/commonVariables.properties
-. ../common/commonFunctions.sh
+
+. $scriptRootFolder/common/commonFunctions.sh
 # Here goes application name. It must be identically (case-sensitive) to the application name defined in ../etc/applist/applicationList.(ubuntu/debian/linuxmint/lmde) file.
 declare -a appsToInstall=( "applicationName" )
 

@@ -3,28 +3,11 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-11-15
+# @version 	1.3, 2016-11-16
 # @license 	MIT
 ##########################################################################
 
-##
-# This function show a initial credits dialog box or popup message
-# @since 	v1.3
-##
-function credits
-{
-	if [ -z "$DISPLAY" ]; then
-		local whiteSpaces="                  "
-		printf "\n%.21s%s\n" "$scriptNameLabel:$whiteSpaces" "$installerTitle" > $tempFolder/linux-app-installer.credits
-		printf "%.21s%s\n" "$scriptDescriptionLabel:$whiteSpaces" "$scriptDescription" >> $tempFolder/linux-app-installer.credits
-		printf "%.21s%s\n" "$testedOnLabel:$whiteSpaces" "$testedOnDistros" >> $tempFolder/linux-app-installer.credits
-		printf "%.21s%s\n" "$githubProjectLabel:$whiteSpaces" "$githubProjectUrl" >> $tempFolder/linux-app-installer.credits
-		printf "%.21s%s\n" "$authorLabel:$whiteSpaces" "$author" >> $tempFolder/linux-app-installer.credits
-		dialog --title "$creditsLabel" --backtitle "$installerTitle" --stdout --textbox $tempFolder/linux-app-installer.credits 11 100
-	else
-			notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle"
-	fi
-}
+. $scriptRootFolder/common/commonVariables.properties
 
 ##
 # This funtion installs dialog or zenity packages, if not installed yet,
@@ -97,7 +80,6 @@ function prepareScript
 	rm -f "$tempFolder/credentials"
 	installNeededPackages
 	echo -e "$logFile\n$boxSeparator" > "$logFile"
-	credits
 }
 
 ##
