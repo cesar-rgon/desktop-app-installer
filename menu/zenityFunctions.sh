@@ -8,9 +8,6 @@
 # @license 	MIT
 ##########################################################################
 
-# Associate map wich gets selected applications from a category name
-declare -A selectedAppsMap
-
 ##
 # This function show a initial credits dialog box or popup message
 # @since 	v1.3
