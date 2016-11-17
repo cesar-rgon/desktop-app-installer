@@ -6,7 +6,7 @@
 # installation steps and posible errors.
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-04-29
-# @version 	1.3, 2016-11-16
+# @version 	1.3, 2016-11-17
 # @license 	MIT
 ##########################################################################
 
@@ -18,5 +18,6 @@ prepareScript "$0"
 . $scriptRootFolder/menu/menuFunctions.sh
 
 # Lauch menu and install selected applications
-declare -a appsToInstall=( $(menu) )
+menu
+declare -a appsToInstall=(`cat "$tempFolder/selectedAppsFile"`)
 installAndSetupApplications appsToInstall[@]

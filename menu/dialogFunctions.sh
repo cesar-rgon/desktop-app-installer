@@ -4,7 +4,7 @@
 # Terminal Mode. The application to manage windows is Dialog.
 # @author 	César Rodríguez González
 # @since 	1.3, 2016-08-01
-# @version 	1.3, 2016-08-15
+# @version 	1.3, 2016-11-17
 # @license 	MIT
 ##########################################################################
 
@@ -310,8 +310,8 @@ function menu
 		for categoryName in "${!selectedAppsMap[@]}"; do
 			seledtedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
 		done
-		echo "$seledtedAppsFormatted"
+		echo "$seledtedAppsFormatted" > "$tempFolder/selectedAppsFile"
 	else
-		echo ""
+		rm -f "$tempFolder/selectedAppsFile"
 	fi
 }

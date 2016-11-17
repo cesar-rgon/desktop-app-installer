@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Yad.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-11-14
-# @version 	1.3, 2016-11-14
+# @version 	1.3, 2016-11-17
 # @license 	MIT
 ##########################################################################
 
@@ -173,7 +173,7 @@ function getSummaryWindow
 			fi
  	 	fi
 	done
-	echo "$selectedApplications" > $tempFolder/yadSelectedApps
+	echo "$selectedApplications" > $tempFolder/selectedAppsFile
 	echo "yad --title=\"Resumen\" --text \"$formattedText\" --list --width=$width --height=$height --column \"$categoryLabel\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $rows --window-icon=\"$installerIconFolder/tux-shell-console32.png\" --button=\"!/$installerIconFolder/back32.png:1\" --button=\"!/$installerIconFolder/installing32.png:0\" --image=\"$installerIconFolder/summary96.png\" --image-on-top"
 }
 
@@ -191,8 +191,10 @@ function menu
 	local formattedText="<span font='$fontFamilyText $fontBigSize'>$installerTitle</span>"
 	formattedText+="\n\n<span font='$fontFamilyText $fontSmallSize'>Script instalador y configurador de aplicaciones y escritorios</span>"
 
-	local salida="false" selectedApplications
+	local salida="false"
 	while [ "$salida" == "false" ]; do
+		# Kill all yad proccesses to free memory
+		pkill yad*
 		local categoryNumber=1 key=$RANDOM
 		local window="yad --notebook --key=$key --title=\"$installerTitle\" --text=\"$formattedText\""
 		window+=" --image=\"$installerIconFolder/tux-shell-console96.png\" --image-on-top"
@@ -215,23 +217,21 @@ function menu
 		done
 		local height=$( getHeight $maxApplicationNumber )
 		window+=" --width=$width --height=$height"
-		eval "$window"
 
+		eval "$window"
 		case $? in
-				0) local summaryWindow=$( getSummaryWindow categoryArray[@] )
+				0) pkill yad*
+				   local summaryWindow=$( getSummaryWindow categoryArray[@] )
 					 eval "$summaryWindow"
 					 case $? in
-						 0) selectedApplications=`cat $tempFolder/yadSelectedApps`; salida="true" ;;
+						 0) salida="true" ;;
 						 1) salida="false" ;;
-						 *) selectedApplications=""; salida="true" ;;
-					 esac
-					 if [ $? -ne 1 ]; then salida="true"; fi ;;
-				1) selectedApplications=""; salida="true" ;;
-				2) xdg-open 'https://github.com/cesar-rgon/desktop-app-installer'; selectedApplications=""; salida="true" ;;
-				3) xdg-open 'https://cesar-rgon.github.io/desktop-app-installer-website'; selectedApplications=""; salida="true" ;;
-				*) selectedApplications=""; salida="true" ;;
+						 *) salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
+					 esac ;;
+				1) salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
+				2) xdg-open 'https://github.com/cesar-rgon/desktop-app-installer'; salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
+				3) xdg-open 'https://cesar-rgon.github.io/desktop-app-installer-website'; salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
+				*) salida="true"; echo "" ;;
 		esac
-		notify-send "debug" "selectedApplications: $selectedApplications"
 	done
-  echo "$selectedApplications"
 }

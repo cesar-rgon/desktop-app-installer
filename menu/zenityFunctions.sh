@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-11-13
+# @version 	1.3, 2016-11-17
 # @license 	MIT
 ##########################################################################
 
@@ -309,8 +309,8 @@ function menu
 		for categoryName in "${!selectedAppsMap[@]}"; do
 			selectedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
 		done
-		echo "$selectedAppsFormatted"
+		echo "$selectedAppsFormatted" > "$tempFolder/selectedAppsFile"
 	else
-		echo ""
+		rm -f "$tempFolder/selectedAppsFile"
 	fi
 }
