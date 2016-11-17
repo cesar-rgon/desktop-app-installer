@@ -8,6 +8,9 @@
 # @license 	MIT
 ##########################################################################
 
+# Associate map wich gets selected applications from a category name
+declare -A selectedAppsMap
+
 ##
 # This function show a initial credits dialog box or popup message
 # @since 	v1.3
@@ -301,12 +304,12 @@ function menu
 	done
 	# Return selected applications
 	if [ ${#selectedAppsMap[@]} -gt 0 ]; then
-		local seledtedAppsFormatted
+		local selectedAppsFormatted
 
 		for categoryName in "${!selectedAppsMap[@]}"; do
-			seledtedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
+			selectedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
 		done
-		echo "$seledtedAppsFormatted"
+		echo "$selectedAppsFormatted"
 	else
 		echo ""
 	fi

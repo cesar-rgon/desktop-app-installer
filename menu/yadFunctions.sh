@@ -26,6 +26,35 @@ function getHeight
 }
 
 ##
+# This function returns the selected application list of a especific category
+# @param String 	categoryName	Name of the categoryName
+# @since 1.3.2
+# @return String 								List os selected applications of the category
+##
+function getSelectedAppsFromCategory
+{
+	categoryName="$1"
+
+	if [ -f "$tempFolder/yad$categoryName" ]; then
+		local selection=`cat "$tempFolder/yad$categoryName" | awk -F '|' '{print $2}' | tr '\n' '|'`
+		if [ -n "$selection" ]; then
+			IFS='|' read -ra selectionArray <<< "$selection"
+			local selectedApps
+			if [ "${selectionArray[0]}" == "[$all]" ]; then
+				echo "$( getApplicationList "$categoryName" )"
+			else
+				echo "`echo "${selection// /_}" | tr '|' ' '`"
+			fi
+		else
+			echo ""
+		fi
+  else
+		echo ""
+	fi
+}
+
+
+##
 # This function gets option parameters of each row of Yad window.
 # One row per application of a specified category
 # @since 	v1.3
@@ -36,16 +65,17 @@ function getHeight
 function getApplicationOptions
 {
 	local applicationArray=(${!1}) categoryName="$2"
-	local selectedApps=${selectedAppsMap[$categoryName]} appName appDescription appObservation options="" appNameForMenu  enabled
+	local selectedApps=$( getSelectedAppsFromCategory $categoryName )
+
+	local appName appDescription appObservation options="" appNameForMenu  enabled
 
 	for appName in "${applicationArray[@]}"; do
 		# application name without '_' character as showed in window
 		appNameForMenu="`echo $appName | tr '_' ' '`"
 		eval appDescription=\$$appName"Description"
-		eval appObservation=\$$appName"Observation"
 
-		local isSelected="`echo $selectedApps | grep -w "$appNameForMenu"`"
-		if [ -z "$isSelected" ]; then enabled="false"; else enabled="true"; fi
+		local isSelected="`echo $selectedApps | grep -w "$appName"`"
+		if [ -z "$isSelected" ]; then enabled="FALSE"; else enabled="TRUE"; fi
 		options+="$enabled \"$appNameForMenu\" \"$appDescription\" \"$appObservation\" "
 	done
 	echo "$options"
@@ -113,41 +143,38 @@ function getApplicationList
 ##
 # This functions shows a summary of selected applications to be installed
 # @param	String[] categoryArray	List of categories
-# @param 	String[]	applicationArray 	List of category applications
 # @since 1.3.2
 # @return String
 ##
-function getSelectedAppsShowSummaryWindow
+function getSummaryWindow
 {
 	local categoryArray=(${!1})
-	local applicationArray=( $( getApplicationList "$categoryName" ) )
 	local totalCategoriesNumber=$((${#categoryArray[@]}+1))
 	local rows height=$( getHeight $totalCategoriesNumber)
-	local formattedText+="<span font='$fontFamilyText $fontSmallSize'>Aplicaciones a instalar</span>"
+	local formattedText+="<span font='$fontFamilyText $fontBigSize'>Lista de aplicaciones a instalar</span>"
 
-	local categoryName selectionArray
+	local categoryName selectionArray selectedApplications
 	for categoryName in "${categoryArray[@]}"; do
 		if [ -f "$tempFolder/yad$categoryName" ]; then
 			local selection=`cat "$tempFolder/yad$categoryName" | awk -F '|' '{print $2}' | tr '\n' '|'`
 			if [ -n "$selection" ]; then
 			 	IFS='|' read -ra selectionArray <<< "$selection"
-
-				if [ "${selectionArray[0]}" == "[$all]" ]; then
-					local allApps="${applicationArray[@]}"
-					selectedAppsMap[$categoryName]=`echo ${allApps// /. } | tr '_' ' '`
-				else
-					selectedAppsMap[$categoryName]=${selection//|/. }
-				fi
+				local selectedAppsFromCategory=$( getSelectedAppsFromCategory $categoryName )
 
 				eval categoryDescription=\$$categoryName"Description"
-				rows+="\"$categoryDescription\" \"${selectedAppsMap[$categoryName]}\" "
-				seledtedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
+				local appNameForMenu appDescription appObservation
+				for appName in $selectedAppsFromCategory; do
+					appNameForMenu="`echo $appName | tr '_' ' '`"
+					eval appDescription=\$$appName"Description"
+					eval appObservation=\$$appName"Observation"
+					rows+="\"$categoryDescription\" \"$appNameForMenu\" \"$appDescription\" \"$appObservation\" "
+				done
+				selectedApplications+="$selectedAppsFromCategory "
 			fi
  	 	fi
 	done
-	# Create zenity window (desktop mode)
-	yad --title="Resumen" --text "$formattedText" --list --width=$width --height=$height --column "$categoryLabel" --column "$selecteAppsLabel" $rows --window-icon="$installerIconFolder/tux-shell-console32.png"
-	echo "$seledtedAppsFormatted"
+	echo "$selectedApplications" > $tempFolder/yadSelectedApps
+	echo "yad --title=\"Resumen\" --text \"$formattedText\" --list --width=$width --height=$height --column \"$categoryLabel\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $rows --window-icon=\"$installerIconFolder/tux-shell-console32.png\" --button=\"!/$installerIconFolder/back32.png:1\" --button=\"!/$installerIconFolder/installing32.png:0\" --image=\"$installerIconFolder/summary96.png\" --image-on-top"
 }
 
 
@@ -161,41 +188,50 @@ function menu
 {
 	# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
 	local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`) categoryNumber=1
-	local categoryNumber=1 key=$RANDOM
-
 	local formattedText="<span font='$fontFamilyText $fontBigSize'>$installerTitle</span>"
 	formattedText+="\n\n<span font='$fontFamilyText $fontSmallSize'>Script instalador y configurador de aplicaciones y escritorios</span>"
 
-	local window="yad --notebook --key=$key --title=\"$installerTitle\" --text=\"$formattedText\""
-	window+=" --image=\"$installerIconFolder/tux-shell-console96.png\" --image-on-top"
-	window+=" --button=\"!/$installerIconFolder/www32.png:3\" --button=\"!/$installerIconFolder/octocat32.png:2\" --button=\"!/$installerIconFolder/door32.png:1\" --button=\"!/$installerIconFolder/next32.png:0\""
-	window+=" --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
+	local salida="false" selectedApplications
+	while [ "$salida" == "false" ]; do
+		local categoryNumber=1 key=$RANDOM
+		local window="yad --notebook --key=$key --title=\"$installerTitle\" --text=\"$formattedText\""
+		window+=" --image=\"$installerIconFolder/tux-shell-console96.png\" --image-on-top"
+		window+=" --button=\"!/$installerIconFolder/www32.png:3\" --button=\"!/$installerIconFolder/octocat32.png:2\" --button=\"!/$installerIconFolder/door32.png:1\" --button=\"!/$installerIconFolder/next32.png:0\""
+		window+=" --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
 
-	local maxApplicationNumber=0 categoryDescription applicationArray totalApplicationNumber
-	for categoryName in "${categoryArray[@]}"; do
-		eval categoryDescription=\$$categoryName"Description"
+		local maxApplicationNumber=0 categoryDescription applicationArray totalApplicationNumber
+		for categoryName in "${categoryArray[@]}"; do
+			eval categoryDescription=\$$categoryName"Description"
 
-		# Applications for the category
-		applicationArray=( $( getApplicationList "$categoryName" ) )
-		totalApplicationNumber=$((${#applicationArray[@]}+1))
-		if [ $totalApplicationNumber -gt $maxApplicationNumber ]; then
-				maxApplicationNumber=$totalApplicationNumber
-		fi
-		eval $( getApplicationsWindow applicationArray[@] "$categoryName" $key $categoryNumber ) > "$tempFolder/yad$categoryName" &
-		window+=" --tab=\"$categoryDescription\""
-		categoryNumber=$(($categoryNumber+1))
+			# Applications for the category
+			applicationArray=( $( getApplicationList "$categoryName" ) )
+			totalApplicationNumber=$((${#applicationArray[@]}+1))
+			if [ $totalApplicationNumber -gt $maxApplicationNumber ]; then
+					maxApplicationNumber=$totalApplicationNumber
+			fi
+			eval $( getApplicationsWindow applicationArray[@] "$categoryName" $key $categoryNumber ) > "$tempFolder/yad$categoryName" &
+			window+=" --tab=\"$categoryDescription\""
+			categoryNumber=$(($categoryNumber+1))
+		done
+		local height=$( getHeight $maxApplicationNumber )
+		window+=" --width=$width --height=$height"
+		eval "$window"
+
+		case $? in
+				0) local summaryWindow=$( getSummaryWindow categoryArray[@] )
+					 eval "$summaryWindow"
+					 case $? in
+						 0) selectedApplications=`cat $tempFolder/yadSelectedApps`; salida="true" ;;
+						 1) salida="false" ;;
+						 *) selectedApplications=""; salida="true" ;;
+					 esac
+					 if [ $? -ne 1 ]; then salida="true"; fi ;;
+				1) selectedApplications=""; salida="true" ;;
+				2) xdg-open 'https://github.com/cesar-rgon/desktop-app-installer'; selectedApplications=""; salida="true" ;;
+				3) xdg-open 'https://cesar-rgon.github.io/desktop-app-installer-website'; selectedApplications=""; salida="true" ;;
+				*) selectedApplications=""; salida="true" ;;
+		esac
+		notify-send "debug" "selectedApplications: $selectedApplications"
 	done
-
-	local height=$( getHeight $maxApplicationNumber )
-	window+=" --width=$width --height=$height"
-	eval "$window"
-
-	case $? in
-			0) local seledtedAppsFormatted=$( getSelectedAppsShowSummaryWindow categoryArray[@] )
-				 echo "$seledtedAppsFormatted" ;;
-			1) exit 0 ;;
-			2) xdg-open 'https://github.com/cesar-rgon/desktop-app-installer' ;;
-			3) xdg-open 'https://cesar-rgon.github.io/desktop-app-installer-website' ;;
-			*) exit 1 ;;
-	esac
+  echo "$selectedApplications"
 }
