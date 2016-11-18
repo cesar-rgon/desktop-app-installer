@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-11-16
+# @version 	1.3, 2016-11-18
 # @license 	MIT
 ##########################################################################
 
@@ -159,8 +159,14 @@ function executeScript
 				local xtermCommand="xterm -T \"$terminalProgress. $applicationLabel: $appName\" -fa 'DejaVu Sans Mono' -fs 11 -geometry 120x15+0-0 -xrm 'XTerm.vt100.allowTitleOps: false' -e \"$execScriptCommands\";"
 
 				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
-				( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
-				| zenity --progress --title="$installerTitle" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+
+				if [ "$yadInstalled" == "true" ]; then
+						( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
+					| yad --progress --title="$installerTitle" --text "\n\n<span font='$fontFamilyText $fontSmallSize'>$installingSelectedApplications</span>" --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/installing-yad.png" --button="!/$installerIconFolder/next32.png:0"
+				else
+					( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
+					| zenity --progress --title="$installerTitle" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
+				fi
 			fi
 			echo "true"
 		else
@@ -318,8 +324,12 @@ function showLogs
 	if [ -z "$DISPLAY" ]; then
 		dialog --title "$installerLogsLabel" --backtitle "$installerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
-		notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification"
-		zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+		if [ "$yadInstalled" == "true" ]; then
+			yad --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/logviewer-yad.png" --button="!/$installerIconFolder/door32.png:0"
+		else
+			notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification"
+			zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+		fi
 	fi
 	chown $username:$username "$logFile"
 }
@@ -334,8 +344,12 @@ function showCredentials
 		if [ -z "$DISPLAY" ]; then
 			dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
 		else
-			notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" ""
-			zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+			if [ "$yadInstalled" == "true" ]; then
+				yad --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/login-credentials-yad.png" --button="!/$installerIconFolder/door32.png:0"
+			else
+				notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" ""
+				zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+			fi
 		fi
 	fi
 }
@@ -372,10 +386,6 @@ function installAndSetupApplications
 	local appsToInstall=("${!1}")
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
-		if [ -n "$DISPLAY" ]; then
-			notify-send -i "$installerIconFolder/installing.png" "$installingSelectedApplications" ""
-		fi
-
 		# Separates repo/non-repo applications
 		local repoAppsToInstall=() nonRepoAppsToInstall=() repoIndex=0 nonRepoIndex=0 appName=""
 		for appName in ${appsToInstall[@]}; do
@@ -407,7 +417,6 @@ function installAndSetupApplications
 		executeFinalOperations
 		. $commonFolder/finalDebianBasedPatch.sh
 	fi
-	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel: $author"; fi
 }
 
 ##
@@ -421,7 +430,7 @@ function uninstallAndPurgeApplications
 	local appsToUninstall=("${!1}")
 	if [ ${#appsToUninstall[@]} -gt 0 ]; then
 		if [ -n "$DISPLAY" ]; then
-			notify-send -i "$installerIconFolder/installing.png" "$unInstallingSelectedApplications" ""
+			notify-send -i "$installerIconFolder/installing.png-notification" "$unInstallingSelectedApplications" ""
 		fi
 		# Generate and execute initial commands to proceed with installation proccess
 		executeBeginningOperations

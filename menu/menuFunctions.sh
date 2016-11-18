@@ -11,7 +11,7 @@
 if [ -z "$DISPLAY" ]; then
 	. $scriptRootFolder/menu/dialogFunctions.sh
 else
-	if [ -n "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
+	if [ "$yadInstalled" == "true" ]; then
 		. $scriptRootFolder/menu/yadFunctions.sh
 	else
 		. $scriptRootFolder/menu/zenityFunctions.sh

@@ -17,7 +17,7 @@ declare -A selectedAppsMap
 ##
 function credits
 {
-	notify-send -i "$installerIconFolder/tux-shell-console96.png" "$installerTitle"
+	notify-send -i "$installerIconFolder/zenity-tux-shell-console96.png" "$installerTitle"
 }
 
 

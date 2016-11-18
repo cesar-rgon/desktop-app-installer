@@ -26,5 +26,5 @@ fi
 
 echo "$message" 1>&2
 if [ -n "$DISPLAY" ]; then
-	notify-send -i "$installerIconFolder/installing.png" "ERROR" "$message"
+	notify-send -i "$installerIconFolder/installing-notification.png" "ERROR" "$message"
 fi

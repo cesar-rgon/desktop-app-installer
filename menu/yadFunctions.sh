@@ -197,7 +197,7 @@ function menu
 		pkill yad*
 		local categoryNumber=1 key=$RANDOM
 		local window="yad --notebook --key=$key --title=\"$installerTitle\" --text=\"$formattedText\""
-		window+=" --image=\"$installerIconFolder/tux-shell-console96.png\" --image-on-top"
+		window+=" --image=\"$installerIconFolder/yad-tux-shell-console96.png\" --image-on-top"
 		window+=" --button=\"!/$installerIconFolder/www32.png:3\" --button=\"!/$installerIconFolder/octocat32.png:2\" --button=\"!/$installerIconFolder/door32.png:1\" --button=\"!/$installerIconFolder/next32.png:0\""
 		window+=" --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
 

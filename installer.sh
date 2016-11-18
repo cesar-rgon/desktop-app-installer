@@ -19,5 +19,5 @@ prepareScript "$0"
 
 # Lauch menu and install selected applications
 menu
-declare -a appsToInstall=(`cat "$tempFolder/selectedAppsFile"`)
+declare -a appsToInstall=(`cat "$tempFolder/selectedAppsFile" 2>/dev/null`)
 installAndSetupApplications appsToInstall[@]
