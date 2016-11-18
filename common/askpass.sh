@@ -10,5 +10,5 @@
 if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
   zenity --password --title "sudo"
 else
-  yad --title="sudo" --image="icons/installer/unlock.png" --entry --hide-text
+  yad --title="sudo" --image="icons/installer/unlock.png" --entry --hide-text --button="!icons/installer/next32.png:0" --center
 fi

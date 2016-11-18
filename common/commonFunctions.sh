@@ -10,6 +10,34 @@
 . $scriptRootFolder/common/commonVariables.properties
 
 ##
+# This functions tries to install yad package
+##
+function tryToInstallYadPackage
+{
+	# Step 1. Check if yad is already installed
+	if [ "$yadInstalled" == "false" ]; then
+		# Step 2. Try to install yad utility from official repositories (since ubuntu 16.10)
+		echo "*** $installingRepoApplications: yad"
+		sudo apt -y install yad --fix-missing
+		if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
+					# Step 3. If error, add third-party repository
+					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
+					sudo apt update
+					# Step 4. Try to install yad again
+					sudo apt -y install yad --fix-missing 2>"$tempFolder/tryingToInstallYad"
+					if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
+						# If error. Remove third-party repository
+						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager
+					else
+						yadInstalled="true"
+					fi
+		else
+			yadInstalled="true"
+		fi
+	fi
+}
+
+##
 # This funtion installs dialog or zenity packages, if not installed yet,
 # according to detected enviroment: desktop or terminal
 # @since v1.0
@@ -20,12 +48,10 @@ function installNeededPackages
 	if [ -z "$DISPLAY" ]; then
 		neededPackages+=( dialog tmux )
 	else
-		neededPackages+=( libnotify-bin xterm zenity )
-		if [ "$KDE_FULL_SESSION" != "true" ]; then
-			neededPackages+=( gksu )
-		else
-			neededPackages+=( kdesudo )
-			if [ "$distro" == "ubuntu" ]; then neededPackages+=( libqtgui4-perl ); fi
+		neededPackages+=( libnotify-bin xterm )
+		tryToInstallYadPackage
+		if [ "$yadInstalled" == "false" ]; then
+			neededPackages+=( zenity )
 		fi
 	fi
 
@@ -37,7 +63,7 @@ function installNeededPackages
 	done
 
 	if [ ${#packagesToInstall[@]} -gt 0 ]; then
-		echo "$installingRepoApplications: ${packagesToInstall[@]}"
+		echo "*** $installingRepoApplications: ${packagesToInstall[@]}"
 		sudo apt -y install ${packagesToInstall[@]} --fix-missing
 	fi
 }
@@ -162,7 +188,7 @@ function executeScript
 
 				if [ "$yadInstalled" == "true" ]; then
 						( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
-					| yad --progress --title="$installerTitle" --text "\n\n<span font='$fontFamilyText $fontSmallSize'>$installingSelectedApplications</span>" --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/installing-yad.png" --button="!/$installerIconFolder/next32.png:0"
+					| yad --progress --title="$installerTitle" --text "\n\n<span font='$fontFamilyText $fontSmallSize'>$installingSelectedApplications</span>" --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/installing-yad.png" --no-buttons --center
 				else
 					( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
 					| zenity --progress --title="$installerTitle" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
@@ -325,7 +351,7 @@ function showLogs
 		dialog --title "$installerLogsLabel" --backtitle "$installerTitle" --textbox "$logFile" $(($height - 6)) $(($width - 4))
 	else
 		if [ "$yadInstalled" == "true" ]; then
-			yad --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/logviewer-yad.png" --button="!/$installerIconFolder/door32.png:0"
+			yad --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/logviewer-yad.png" --button="!/$installerIconFolder/door32.png:0" --center
 		else
 			notify-send -i "$installerIconFolder/logviewer.svg" "$logNotification"
 			zenity --text-info --title="$installerTitle Log" --filename="$logFile" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
@@ -345,7 +371,7 @@ function showCredentials
 			dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
 		else
 			if [ "$yadInstalled" == "true" ]; then
-				yad --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/login-credentials-yad.png" --button="!/$installerIconFolder/door32.png:0"
+				yad --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/login-credentials-yad.png" --button="!/$installerIconFolder/door32.png:0" --center
 			else
 				notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" ""
 				zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
