@@ -3,11 +3,11 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-11-18
+# @version 	1.3, 2016-11-19
 # @license 	MIT
 ##########################################################################
 
-. $scriptRootFolder/common/commonVariables.properties
+. $scriptRootFolder/common/commonVariables.properties "$1"
 
 ##
 # This functions tries to install yad package
@@ -187,8 +187,16 @@ function executeScript
 				if [ "$targetFolder" == "$nonRepositoryAppsFolder" ]; then autoclose=""; fi
 
 				if [ "$yadInstalled" == "true" ]; then
-						( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
-					| yad --progress --title="$installerTitle" --text "\n\n<span font='$fontFamilyText $fontSmallSize'>$installingSelectedApplications</span>" --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/installing-yad.png" --no-buttons --center
+					local customIcon text
+					if [ "$uninstaller" == "false" ]; then
+						text="$installingSelectedApplications"
+						customIcon="installing-yad.png"
+					else
+						text="$unInstallingSelectedApplications"
+						customIcon="uninstalling-yad.png"
+					fi
+					( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
+					| yad --progress --title="$installerTitle" --text "\n\n<span font='$fontFamilyText $fontSmallSize'>$text</span>" --auto-close --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/$customIcon" --no-buttons --center --pulsate
 				else
 					( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A bash -c "$messageCommands $xtermCommand" ) \
 					| zenity --progress --title="$installerTitle" --no-cancel --pulsate $autoclose --width=$width --window-icon="$installerIconFolder/tux-shell-console32.png"
@@ -412,6 +420,8 @@ function installAndSetupApplications
 	local appsToInstall=("${!1}")
 
 	if [ ${#appsToInstall[@]} -gt 0 ]; then
+		if [ -n "$DISPLAY" ] && [ "$yadInstalled" == "false" ]; then notify-send -i "$installerIconFolder/installing-notification.png" "$installingSelectedApplications"; fi
+
 		# Separates repo/non-repo applications
 		local repoAppsToInstall=() nonRepoAppsToInstall=() repoIndex=0 nonRepoIndex=0 appName=""
 		for appName in ${appsToInstall[@]}; do
@@ -443,6 +453,7 @@ function installAndSetupApplications
 		executeFinalOperations
 		. $commonFolder/finalDebianBasedPatch.sh
 	fi
+	if [ -n "$DISPLAY" ] && [ "$yadInstalled" == "false" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel $author"; fi
 }
 
 ##
@@ -455,9 +466,7 @@ function uninstallAndPurgeApplications
 {
 	local appsToUninstall=("${!1}")
 	if [ ${#appsToUninstall[@]} -gt 0 ]; then
-		if [ -n "$DISPLAY" ]; then
-			notify-send -i "$installerIconFolder/installing.png-notification" "$unInstallingSelectedApplications" ""
-		fi
+		if [ -n "$DISPLAY" ] && [ "$yadInstalled" == "false" ]; then notify-send -i "$installerIconFolder/uninstalling96.png" "$unInstallingSelectedApplications"; fi
 		# Generate and execute initial commands to proceed with installation proccess
 		executeBeginningOperations
 		# Generate and execute commands to uninstall and purge each application
@@ -472,5 +481,5 @@ function uninstallAndPurgeApplications
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
 	fi
-	if [ -n "$DISPLAY" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel $author"; fi
+	if [ -n "$DISPLAY" ] && [ "$yadInstalled" == "false" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel $author"; fi
 }

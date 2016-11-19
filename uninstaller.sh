@@ -14,10 +14,11 @@
 scriptRootFolder="`pwd`"; username="`whoami`"; homeFolder="$HOME"
 
 # Import common variables and functions
-. $scriptRootFolder/common/commonFunctions.sh
+. $scriptRootFolder/common/commonFunctions.sh --uninstaller
 prepareScript "$0"
 . $scriptRootFolder/menu/menuFunctions.sh
 
 # Lauch menu and uninstall selected applications
-declare -a appsToUninstall=( $(menu --only-show-installed-repo-apps) )
+menu
+declare -a appsToUninstall=(`cat "$tempFolder/selectedAppsFile" 2>/dev/null`)
 uninstallAndPurgeApplications appsToUninstall[@]

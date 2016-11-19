@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Yad.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-11-14
-# @version 	1.3, 2016-11-18
+# @version 	1.3, 2016-11-19
 # @license 	MIT
 ##########################################################################
 
@@ -121,7 +121,7 @@ function getApplicationList
 	# Delete blank and comment lines,then filter by category name and take application list (second column)
 	local applicationList=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
 
-	if [ "$2" == "--only-show-installed-repo-apps" ]; then
+	if [ "$uninstaller" == "true" ]; then
 		local installedAppList=""
 		for application in "${applicationList[@]}"; do
 			# Delete blank and comment lines,then filter by application name and take package list (third column)
@@ -172,7 +172,9 @@ function getSummaryWindow
  	 	fi
 	done
 	echo "$selectedApplications" > $tempFolder/selectedAppsFile
-	echo "yad --title=\"$installerTitle\" --text \"$formattedText\" --list --width=$width --height=500 --column \"$categoryLabel\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $rows --window-icon=\"$installerIconFolder/tux-shell-console32.png\" --button=\"!/$installerIconFolder/back32.png:1\" --button=\"!/$installerIconFolder/installing32.png:0\" --image=\"$installerIconFolder/summary96.png\" --image-on-top --center"
+	local customIcon
+	if [ "$uninstaller" == "true" ]; then customIcon="trash32.png"; else	customIcon="installing32.png"; fi
+	echo "yad --title=\"$installerTitle\" --text \"$formattedText\" --list --width=$width --height=500 --column \"$categoryLabel\" --column \"$nameLabel\" --column \"$descriptionLabel\" --column \"$observationLabel\" $rows --window-icon=\"$installerIconFolder/tux-shell-console32.png\" --button=\"!/$installerIconFolder/back32.png:1\" --button=\"!/$installerIconFolder/$customIcon:0\" --image=\"$installerIconFolder/summary96.png\" --image-on-top --center"
 }
 
 
@@ -191,9 +193,7 @@ function menu
 
 	local salida="false"
 	while [ "$salida" == "false" ]; do
-		# Kill all yad proccesses to free memory
 		pkill yad*
-
 		local categoryNumber=1 key=$RANDOM maxApplicationNumber=0 categoryDescription applicationArray totalApplicationNumber
 		local window="yad --notebook --key=$key --title=\"$installerTitle\" --text=\"$formattedText\""
 		window+=" --image=\"$installerIconFolder/yad-tux-shell-console96.png\" --image-on-top"
@@ -216,9 +216,10 @@ function menu
 		window+=" --width=$width --height=$height --center"
 
 		eval "$window"
-		case $? in
-				0) pkill yad*
-				   local summaryWindow=$( getSummaryWindow categoryArray[@] )
+		local resultCode=$?
+		pkill yad*
+		case $resultCode in
+				0) local summaryWindow=$( getSummaryWindow categoryArray[@] )
 					 eval "$summaryWindow"
 					 case $? in
 						 0) salida="true" ;;

@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-11-17
+# @version 	1.3, 2016-11-19
 # @license 	MIT
 ##########################################################################
 
@@ -238,7 +238,7 @@ function getApplicationList
 	# Delete blank and comment lines,then filter by category name and take application list (second column)
 	local applicationList=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
 
-	if [ "$2" == "--only-show-installed-repo-apps" ]; then
+	if [ "$uninstaller" == "true" ]; then
 		local installedAppList=""
 		for application in "${applicationList[@]}"; do
 			# Delete blank and comment lines,then filter by application name and take package list (third column)
@@ -289,7 +289,7 @@ function menu
 				local categoryDescription
 				eval categoryDescription=\$$categoryName"Description"
 
-				local applicationArray=$( getApplicationList "$categoryName" "$1" )
+				local applicationArray=$( getApplicationList "$categoryName" )
 				selectedAppsMap[$categoryName]=$( selectAppsToInstallByCategory applicationArray[@] "$categoryName" "$categoryDescription" "$categoryNumber" "$totalSelectedCat" )
 
 				if [ "${selectedAppsMap[$categoryName]}" == "$CANCEL_CODE" ]; then
