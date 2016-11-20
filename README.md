@@ -50,7 +50,7 @@ Last change: 2016/10/25 (yyyy/mm/dd)
 * Customize your own application list to be installed and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
 * Third-party repositories added by some applications will be disabled automatically after the installation of those applications.
 * EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
-* The script runs with an interface adapted to the detected environment: Dialog for terminal. Zenity for desktop or terminal emulator.
+* The script runs with an interface adapted to the detected environment: Dialog for terminal. Yad or Zenity for desktop or terminal emulator.
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
 * Valid for multiple arquitecture systems: x64, i386, arm.
@@ -208,6 +208,7 @@ Tree of folders and some files:
 │   ├── dialogFuntions.sh
 │   ├── menuFunctions.sh
 │   ├── menuVariables.properties
+│   ├── yadFunctions.sh
 │   └── zenityFunctions.sh
 │
 ├── post-installation       It contains subscripts to setup applications after installation
@@ -248,6 +249,7 @@ Tree of folders and some files:
 | [dialogFunctions.sh][dialogFunctions.sh]                       | It contains menu functions for Dialog box (terminal mode). Used only by main script           |
 | [menuFunctions.sh][menuFunctions.sh]                           | It contains menu functions. Used only by main script                                          |
 | [menuVariables.properties][menuVariables.properties]           | It contains menu global variables available only for main script                              |
+| [yadFunctions.sh][yadFunctions.sh]                             | It contains menu functions for Yad windows (desktop mode). Used only by main script        |
 | [zenityFunctions.sh][zenityFunctions.sh]                       | It contains menu functions for Zenity windows (desktop mode). Used only by main script        |
 | [applicationList.debian][applicationList.debian]               | It defines categories, applications and related packages for a Debian system                  |
 | [applicationList.linuxmint][applicationList.linuxmint]         | It defines categories, applications and related packages for a Linux Mint system              |
@@ -429,6 +431,7 @@ I hope you find it useful.
 [dialogFunctions.sh]:./menu/dialogFunctions.sh
 [menuFunctions.sh]:./menu/menuFunctions.sh
 [menuVariables.properties]:./menu/menuVariables.properties
+[yadFunctions.sh]:./menu/yadFunctions.sh
 [zenityFunctions.sh]:./menu/zenityFunctions.sh
 [applicationList.debian]:./etc/applist/applicationList.debian
 [applicationList.linuxmint]:./etc/applist/applicationList.linuxmint
@@ -445,13 +448,13 @@ I hope you find it useful.
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
 [screenshot-monitors]:http://cesar-rgon.github.io/desktop-app-installer-website/images/monitors.png
-[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/zenity-07.png
+[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-06.png
 [screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-07.png
-[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/zenity-13.png
+[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-12.png
 [screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-13.png
-[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/zenity-15.png
+[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-13.png
 [screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-14.png
-[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/zenity-16.png
+[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-15.png
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer-website/images/logos/desktop-app-installer.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
