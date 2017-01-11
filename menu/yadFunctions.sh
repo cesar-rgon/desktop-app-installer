@@ -197,7 +197,7 @@ function menu
 		local categoryNumber=1 key=$RANDOM maxApplicationNumber=0 categoryDescription applicationArray totalApplicationNumber
 		local window="yad --notebook --key=$key --title=\"$installerTitle\" --text=\"$formattedText\""
 		window+=" --image=\"$installerIconFolder/yad-tux-shell-console96.png\" --image-on-top"
-		window+=" --button=\"!/$installerIconFolder/www32.png:3\" --button=\"!/$installerIconFolder/octocat32.png:2\" --button=\"!/$installerIconFolder/door32.png:1\" --button=\"!/$installerIconFolder/next32.png:0\""
+		window+=" --button=\"!/$installerIconFolder/facebook32.png:4\" --button=\"!/$installerIconFolder/www32.png:3\" --button=\"!/$installerIconFolder/octocat32.png:2\" --button=\"!/$installerIconFolder/door32.png:1\" --button=\"!/$installerIconFolder/next32.png:0\""
 		window+=" --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
 
 		for categoryName in "${categoryArray[@]}"; do
@@ -229,6 +229,7 @@ function menu
 				1) salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
 				2) xdg-open 'https://github.com/cesar-rgon/desktop-app-installer'; salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
 				3) xdg-open 'https://cesar-rgon.github.io/desktop-app-installer-website'; salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
+				4) xdg-open 'https://www.facebook.com/desktopAppInstaller'; salida="true"; rm -f "$tempFolder/selectedAppsFile" ;;
 				*) salida="true"; echo "" ;;
 		esac
 	done

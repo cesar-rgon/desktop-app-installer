@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.3                                                                                                          #
-# Last modified date (yyyy/mm/dd): 2016/10/25                                                                           #
+# Version: 1.3.1                                                                                                        #
+# Last modified date (yyyy/mm/dd): 2017/01/11                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -32,10 +32,12 @@ developer_tools       Emacs                          emacs
 developer_tools       Geany                          geany
 developer_tools       Git                            git
 developer_tools       Git_cola                       git-cola
+developer_tools		    MariaDB_client			           mariadb-client-10.0
 developer_tools       Meld                           meld
 developer_tools       MySQL_workbench                mysql-workbench
 developer_tools       OpenJdk                        default-jdk
 developer_tools       Pgadmin_iii                    pgadmin3
+developer_tools		    PostgreSql_client		           postgresql-client
 developer_tools       Qt_creator                     qtcreator
 developer_tools       SQLite_database_browser        sqlitebrowser
 
@@ -66,7 +68,6 @@ graphics              Shutter                        shutter
 internet      Chrome                         google-chrome-stable
 internet      Chromium                       chromium
 internet      Deluge_application             deluge
-internet      Deluge_server                  deluged|deluge-webui
 internet      Dropbox                        nautilus-dropbox
 internet      Evolution                      evolution
 internet      Filezilla                      filezilla
@@ -77,11 +78,9 @@ internet      jDownloader2_beta
 internet      Kget                           kget
 internet      Liferea                        liferea
 internet      Mumble                         mumble
-internet      Mumble_server                  mumble-server
 internet      OpenJRE                        default-jre
 internet      Pidgin                         pidgin|pidgin-extprefs
 internet      qBittorrent_application        qbittorrent
-internet      qBittorrent_server             qbittorrent-nox
 internet      Remmina                        remmina
 internet      Skype
 internet      Teamviewer_full
@@ -89,8 +88,8 @@ internet      Teamviewer_quick_support
 internet      Transmission_application_Qt    transmission-qt
 internet      Transmission_application_Gtk   transmission-gtk
 internet      Transmission_client            transgui
-internet      Transmission_server            transmission-daemon
 internet      Uget                           uget
+internet    	VNC_client			               realvnc-vnc-viewer
 internet      Xchat                          xchat
 
 office        Abiword                     abiword
@@ -109,6 +108,21 @@ science       gElemental                     gelemental
 science       Geogebra                       geogebra
 science       Kalzium                        kalzium
 science       Stellarium                     stellarium
+
+server			  Apache_2			                 apache2
+server        Aria_2_server                  aria2
+server			  Bind_9                         bind9
+server        Deluge_server                  deluged|deluge-webui
+server			  Jetty_8				                 jetty8
+server    		MariaDB_server			           mariadb-server-10.0
+server        Mumble_server                  mumble-server
+server    		MySql_server		               mysql-server
+server    		Proftpd				                 proftpd-basic
+server        qBittorrent_server             qbittorrent-nox
+server	      SSH_server                     openssh-server
+server			  Tomcat_8			                 tomcat8
+server        Transmission_server            transmission-daemon
+server	      VNC_server			               realvnc-vnc-server
 
 sound_video   Amarok                         amarok
 sound_video   Audacity                       audacity

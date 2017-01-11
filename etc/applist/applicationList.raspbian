@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.3                                                                                                          #
-# Last modified date (yyyy/mm/dd): 2016/10/10                                                                           #
+# Version: 1.3.1                                                                                                        #
+# Last modified date (yyyy/mm/dd): 2017/01/11                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -22,14 +22,15 @@
 desktop				Xfce				xfce4
 desktop				Lxde				lxde
 
-audio_server_client		Mumble                         	mumble
+audio_server_client	    	Mumble                         	mumble
 audio_server_client    		Mumble_server                  	mumble-server
 
+download_server_client    Aria_2_server                   aria2
 download_server_client	 	Deluge_application             	deluge
-download_server_client       	Deluge_server                  	deluged|deluge-webui
-download_server_client      	qBittorrent_server             	qbittorrent-nox
+download_server_client    Deluge_server                  	deluged|deluge-webui
+download_server_client    qBittorrent_server             	qbittorrent-nox
 download_server_client  	Transmission_client            	transgui
-download_server_client      	Transmission_server            	transmission-daemon
+download_server_client    Transmission_server            	transmission-daemon
 
 database_server_client		MySql_client			mysql-client
 database_server_client		MySql_server			mysql-server

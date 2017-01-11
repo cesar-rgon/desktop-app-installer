@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.3                                                                                                          #
-# Last modified date (dd/mm/yyyy): 2016/11/04                                                                           #
+# Version: 1.3.1                                                                                                        #
+# Last modified date (dd/mm/yyyy): 2017/01/11                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -37,11 +37,13 @@ developer_tools       Emacs                          emacs
 developer_tools       Geany                          geany
 developer_tools       Git                            git
 developer_tools       Git_cola                       git-cola
+developer_tools   		MariaDB_client			           mariadb-client-10.0
 developer_tools       Meld                           meld
 developer_tools       MySQL_workbench                mysql-workbench
 developer_tools       Netbeans                       netbeans
-developer_tools       OpenJdk			     default-jdk
+developer_tools       OpenJdk			                   default-jdk
 developer_tools       Pgadmin_iii                    pgadmin3
+developer_tools	  	  PostgreSql_client		           postgresql-client
 developer_tools       Qt_creator                     qtcreator
 developer_tools       SQLite_database_browser        sqlitebrowser
 developer_tools       Sublime_text                   sublime-text-installer
@@ -73,11 +75,9 @@ graphics              Xnconvert
 
 internet              aMule_application              amule
 internet              aMule_client                   amule-utils-gui
-internet              aMule_server                   amule-daemon
 internet              Chrome                         google-chrome-stable
 internet              Chromium                       chromium-browser
 internet              Deluge_application             deluge
-internet              Deluge_server                  deluged|deluge-webui
 internet              Dropbox                        nautilus-dropbox
 internet              Filezilla                      filezilla
 internet              Firefox                        firefox
@@ -87,11 +87,9 @@ internet              jDownloader2_beta
 internet              Kget                           kget
 internet              Liferea                        liferea
 internet              Mumble                         mumble
-internet              Mumble_server                  mumble-server
 internet              OpenJRE              	         default-jre
 internet              Pidgin                         pidgin|pidgin-extprefs
 internet              qBittorrent_application        qbittorrent
-internet              qBittorrent_server             qbittorrent-nox
 internet              Remmina                        remmina
 internet              Skype
 internet              Teamviewer_full
@@ -100,7 +98,6 @@ internet              Thunderbird                    thunderbird
 internet              Transmission_application_Qt    transmission-qt
 internet              Transmission_application_Gtk   transmission-gtk
 internet              Transmission_client            transgui
-internet              Transmission_server            transmission-daemon
 internet              Uget                           uget
 internet              Xchat                          xchat-gnome
 
@@ -120,6 +117,22 @@ science               gElemental                     gelemental
 science               Geogebra                       geogebra
 science               Kalzium                        kalzium
 science               Stellarium                     stellarium
+
+server              aMule_server                   amule-daemon
+server			        Apache_2			                 apache2
+server              Aria_2_server                  aria2
+server			        Bind_9                         bind9
+server              Deluge_server                  deluged|deluge-webui
+server		          Jetty_8				                 jetty8
+server    		      MariaDB_server			           mariadb-server-10.0
+server              Mumble_server                  mumble-server
+server    		      MySql_server		               mysql-server-5.7
+server    		      Proftpd				                 proftpd-basic
+server              qBittorrent_server             qbittorrent-nox
+server	            SSH_server                     openssh-server
+server			        Tomcat_8			                 tomcat8
+server              Transmission_server            transmission-daemon
+server	            VNC_server			               vnc4server
 
 sound_video           Amarok                         amarok
 sound_video           Audacity                       audacity
