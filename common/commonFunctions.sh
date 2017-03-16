@@ -3,38 +3,36 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since 		1.0, 2014-05-10
-# @version 	1.3, 2016-11-19
+# @version 	1.3.2, 2017-03-16
 # @license 	MIT
 ##########################################################################
-
-. $scriptRootFolder/common/commonVariables.properties "$1"
 
 ##
 # This functions tries to install yad package
 ##
 function tryToInstallYadPackage
 {
-	# Step 1. Check if yad is already installed
-	if [ "$yadInstalled" == "false" ]; then
+	yadInstalled="true"
+	# Step 1. Check if yad is NOT installed
+	if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 		# Step 2. Try to install yad utility from official repositories (since ubuntu 16.10)
-		echo "*** $installingRepoApplications: yad"
-		sudo apt -y install yad --fix-missing
+		clear
+		echo "*** INSTALLING NEEDED PACKAGES: yad"
+		sudo apt -y install yad --fix-missing 1>/dev/null
 		if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 					# Step 3. If error, add third-party repository
-					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
-					sudo apt update
+					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager 1>/dev/null
+					sudo apt update 1>/dev/null
 					# Step 4. Try to install yad again
-					sudo apt -y install yad --fix-missing 2>"$tempFolder/tryingToInstallYad"
+					sudo apt -y install yad --fix-missing 1>/dev/null
 					if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 						# If error. Remove third-party repository
-						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager
-					else
-						yadInstalled="true"
+						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager 1>/dev/null
+						yadInstalled="false"
 					fi
-		else
-			yadInstalled="true"
 		fi
 	fi
+	echo "$yadInstalled" > "/tmp/_yadInstalled_"
 }
 
 ##
@@ -44,29 +42,32 @@ function tryToInstallYadPackage
 ##
 function installNeededPackages
 {
-	local neededPackages=( gdebi-core software-properties-common )
+	local neededPackages=( lsb-release gdebi-core software-properties-common )
 	if [ -z "$DISPLAY" ]; then
 		neededPackages+=( dialog tmux )
 	else
 		neededPackages+=( libnotify-bin xterm )
-		tryToInstallYadPackage
+		if [ -f "/tmp/_yadInstalled_" ]; then
+			yadInstalled=`cat /tmp/_yadInstalled_`
+		else
+			tryToInstallYadPackage
+		fi
 		if [ "$yadInstalled" == "false" ]; then
 			neededPackages+=( zenity )
 		fi
 	fi
 
-	local packagesToInstall=()
 	for package in "${neededPackages[@]}"; do
 		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
-			packagesToInstall+=( $package )
+			clear
+			echo "*** INSTALLING NEEDED PACKAGES: $package"
+			sudo apt -y install $package --fix-missing 1>/dev/null
 		fi
 	done
-
-	if [ ${#packagesToInstall[@]} -gt 0 ]; then
-		echo "*** $installingRepoApplications: ${packagesToInstall[@]}"
-		sudo apt -y install ${packagesToInstall[@]} --fix-missing
-	fi
 }
+
+installNeededPackages
+. $scriptRootFolder/common/commonVariables.properties "$1"
 
 ##
 # This funtion get Script Name executed
@@ -104,7 +105,6 @@ function prepareScript
 	mkdir -p "$tempFolder" "$logsFolder"
 	rm -f "$logFile"
 	rm -f "$tempFolder/credentials"
-	installNeededPackages
 	echo -e "$logFile\n$boxSeparator" > "$logFile"
 }
 

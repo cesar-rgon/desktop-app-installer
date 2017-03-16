@@ -3,7 +3,7 @@
 # This script setup default Debconf interface to use
 # @author César Rodríguez González
 # @since   1.3, 2016-08-06
-# @version 1.3, 2016-10-10
+# @version 1.3.2, 2017-03-16
 # @license MIT
 ##########################################################################
 #
@@ -20,6 +20,6 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Delete temp files and packages
 apt -y install -f
-apt -y autoremove
-apt clean
+apt-get -y autoremove
+apt-get clean
 rm -rf "$tempFolder"
