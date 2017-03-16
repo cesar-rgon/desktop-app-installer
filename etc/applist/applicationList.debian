@@ -2,8 +2,8 @@
 # Application list used by main menu. It contains repository applications and/or non repository ones.                   #
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
-# Version: 1.3.1                                                                                                        #
-# Last modified date (yyyy/mm/dd): 2017/01/11                                                                           #
+# Version: 1.3.2                                                                                                        #
+# Last modified date (yyyy/mm/dd): 2017/03/16                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -21,9 +21,9 @@
 
 desktop			Gnome_shell			gnome-shell
 desktop			KDE				kde-plasma-desktop
-desktop			Cinnamon			cinnamon
-desktop			Mate				mate-desktop-environment
-desktop			Xfce				xfce4
+desktop			Cinnamon			cinnamon|lightdm
+desktop			Mate				mate-desktop-environment|lightdm
+desktop			Xfce				xfce4|lightdm
 desktop			Lxde				lxde|xinit|lxsession-logout|xfce4-notifyd
 
 developer_tools       Bluefish                       bluefish
