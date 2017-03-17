@@ -42,10 +42,16 @@ if [ -n "$4" ]; then
 
 			apt -y install $package --fix-missing;
 			if [ $? -ne 0 ]; then
+					# Try to repair the package installation
 					echo -e \"$packageInstallFailed ...\" 1>&2
 					rm /var/lib/dpkg/info/$package.pre* 2>/dev/null
 					rm /var/lib/dpkg/info/$package.post* 2>/dev/null
 					apt -y install -f >/dev/null
+			fi
+			# If package is NOT installed, remove it to avoid broken dependencies
+			if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
+				apt -y remove $package >/dev/null
+				apt-get -y autoremove
 			fi
 		done
 	fi
