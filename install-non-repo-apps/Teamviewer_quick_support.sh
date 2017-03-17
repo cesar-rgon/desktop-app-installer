@@ -2,11 +2,11 @@
 ##########################################################################
 # This script installs Teamviewer quick support application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3.2, 2017-03-17
 # @license MIT
 ##########################################################################
 
-# Check if the script is being running by a root or sudoer user
+# Check i f the script is being running by a root or sudoer user
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
 # Parameters
@@ -18,10 +18,19 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # Commands to download, extract and install a non-repository application.
+# Get Teamviewer Quick Support URL from web site
+if [ "$language" == "es" ]; then
+  urlWebsite="https://www.teamviewer.com/es/download/linux/"
+else
+  urlWebsite="https://www.teamviewer.com/en/download/linux/"
+fi
+# Get Teamviwer Quick Support URL
+wget -O $tempFolder/teamviewer_qs_index.html $urlWebsite 2>&1
+tvqsURL=`cat $tempFolder/teamviewer_qs_index.html | grep "teamviewer_qs.tar.gz" | awk -F ">" {'print $1}' | awk -F "\"" {'print $2'}`
 # Download Teamviewer quick support
-wget -O /tmp/teamviewer_qs.tar.gz http://download.teamviewer.com/download/teamviewer_qs.tar.gz 2>&1
+wget -O $tempFolder/teamviewer_qs.tar.gz $tvqsURL 2>&1
 # Install application
-tar -C $homeFolder -xvf /tmp/teamviewer_qs.tar.gz
+tar -C $homeFolder -xvf $tempFolder/teamviewer_qs.tar.gz
 mv $homeFolder/teamviewer*qs $homeFolder/.teamviewerqs
 chown -R $username:$username $homeFolder/.teamviewerqs
 

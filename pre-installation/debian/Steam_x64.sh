@@ -18,5 +18,8 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
-# We must add 32 bits architecture to be able to install Teamviewer 32 bits in 64 bits OS
+# We must add a non-free repository to be able to install Steam
+echo "deb http://httpredir.debian.org/debian/ jessie main contrib non-free" > /etc/apt/sources.list.d/steam.list
+
+# We must add 32 bits architecture to be able to install Steam 32 bits in 64 bits OS
 dpkg --add-architecture i386
