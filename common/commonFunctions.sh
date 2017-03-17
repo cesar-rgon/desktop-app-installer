@@ -436,7 +436,6 @@ function installAndSetupApplications
 		done
 		# Generate and execute initial commands to proceed with installation proccess
 		executeBeginningOperations
-		. $commonFolder/beginningDebianBasedPatch.sh
 		# Generate and execute commands to install each repo application
 		local appCount=1
 		for appName in ${repoAppsToInstall[@]}; do
@@ -451,7 +450,6 @@ function installAndSetupApplications
 		done
 		# Execute final commands to clean packages and remove temporal files/folders
 		executeFinalOperations
-		. $commonFolder/finalDebianBasedPatch.sh
 	fi
 	if [ -n "$DISPLAY" ] && [ "$yadInstalled" == "false" ]; then notify-send -i "$installerIconFolder/octocat96.png" "$githubProject" "$authorLabel $author"; fi
 }
