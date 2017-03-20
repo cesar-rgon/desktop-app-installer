@@ -19,13 +19,13 @@ function tryToInstallYadPackage
 		clear
 		echo "*** INSTALLING NEEDED PACKAGES: yad"
         echo ""
-		sudo apt install yad --fix-missing
+		sudo apt -y install yad --fix-missing
 		if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 					# Step 3. If error, add third-party repository
 					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
 					sudo apt update 1>/dev/null
 					# Step 4. Try to install yad again
-					sudo apt install yad --fix-missing 1>/dev/null
+					sudo apt -y install yad --fix-missing
 					if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 						# If error. Remove third-party repository
 						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager
@@ -57,7 +57,7 @@ function installNeededPackages
 		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
 			clear
 			echo "*** INSTALLING NEEDED PACKAGES: $package"
-			sudo apt install $package --fix-missing 1>/dev/null
+			sudo apt -y install $package --fix-missing 1>/dev/null
 		fi
 	done
 }

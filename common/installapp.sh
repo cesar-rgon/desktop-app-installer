@@ -40,7 +40,7 @@ if [ -n "$4" ]; then
 				bash -c "$debconfCommands"
 			fi
 
-			apt install $package --fix-missing;
+			apt -y install $package --fix-missing;
 			if [ $? -ne 0 ]; then
 					# Try to repair the package installation
 					echo -e \"$packageInstallFailed ...\" 1>&2
