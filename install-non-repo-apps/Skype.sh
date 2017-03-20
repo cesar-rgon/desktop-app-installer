@@ -21,4 +21,4 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 skypeURL="http://www.skype.com/go/getskype-linux-deb"
 wget -O /var/cache/apt/archives/skype.deb $skypeURL 2>&1
 gdebi --n /var/cache/apt/archives/skype.deb
-apt -y install -f
+apt install -f

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #########################################################################################
-# Check if the script is being running by a root or sudoer user				#
+# Check if the script is being running by a root or sudoer user				            #
 #########################################################################################
 if [ "$(id -u)" != "0" ]; then echo ""; echo "This script must be executed by a root or sudoer user"; echo ""; exit 1; fi
 
@@ -14,14 +14,14 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 #########################################################################################
-# CONSIDERATIONS									#
-# - No need to use 'sudo' because this script must be executed as root user.		#
-# - No need to execute 'apt update' because main script will execute it.		#
+# CONSIDERATIONS									                                    #
+# - No need to use 'sudo' because this script must be executed as root user.		    #
+# - No need to execute 'apt update' because main script will execute it.		        #
 # - This script must be non-interactive, this means, no interaction with user at all:	#
-# 	* No echo to standard output (monitor)						#
-#	* No read from standard input (keyboard)					#
-#	* Use auto-confirm for commands. Example: apt -y install <package>		#
-#	* etc.										#
+# 	* No echo to standard output (monitor)						                        #
+#	* No read from standard input (keyboard)					                        #
+#	* Use auto-confirm for commands. Example: apt install <package>		                #
+#	* etc.										                                        #
 #########################################################################################
 
 ### Commands to add a third party repository if required

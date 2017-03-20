@@ -18,21 +18,21 @@ function tryToInstallYadPackage
 		# Step 2. Try to install yad utility from official repositories (since ubuntu 16.10)
 		clear
 		echo "*** INSTALLING NEEDED PACKAGES: yad"
-		sudo apt -y install yad --fix-missing 1>/dev/null
+        echo ""
+		sudo apt install yad --fix-missing
 		if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 					# Step 3. If error, add third-party repository
-					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager 1>/dev/null
+					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
 					sudo apt update 1>/dev/null
 					# Step 4. Try to install yad again
-					sudo apt -y install yad --fix-missing 1>/dev/null
+					sudo apt install yad --fix-missing 1>/dev/null
 					if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
 						# If error. Remove third-party repository
-						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager 1>/dev/null
+						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager
 						yadInstalled="false"
 					fi
 		fi
 	fi
-	echo "$yadInstalled" > "/tmp/_yadInstalled_"
 }
 
 ##
@@ -47,11 +47,7 @@ function installNeededPackages
 		neededPackages+=( dialog tmux )
 	else
 		neededPackages+=( libnotify-bin xterm )
-		if [ -f "/tmp/_yadInstalled_" ]; then
-			yadInstalled=`cat /tmp/_yadInstalled_`
-		else
-			tryToInstallYadPackage
-		fi
+		tryToInstallYadPackage
 		if [ "$yadInstalled" == "false" ]; then
 			neededPackages+=( zenity )
 		fi
@@ -61,7 +57,7 @@ function installNeededPackages
 		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
 			clear
 			echo "*** INSTALLING NEEDED PACKAGES: $package"
-			sudo apt -y install $package --fix-missing 1>/dev/null
+			sudo apt install $package --fix-missing 1>/dev/null
 		fi
 	done
 }

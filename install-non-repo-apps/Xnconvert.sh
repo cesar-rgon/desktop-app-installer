@@ -26,4 +26,4 @@ fi
 
 wget -P /var/cache/apt/archives http://download.xnview.com/$package 2>&1
 dpkg -i /var/cache/apt/archives/$package
-apt -y install -f
+apt install -f
