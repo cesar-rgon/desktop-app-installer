@@ -20,12 +20,13 @@
 #########################################################################################################################
 
 desktop			Gnome_shell			gnome-shell|lightdm
-desktop			KDE				kde-plasma-desktop|lightdm
+desktop			KDE				    kde-plasma-desktop|lightdm
 desktop			Cinnamon			cinnamon|lightdm
 desktop			Mate				mate-desktop-environment|lightdm
 desktop			Xfce				xfce4|lightdm
 desktop			Lxde				lxde|xinit|lxsession-logout|xfce4-notifyd
 
+developer_tools       Atom
 developer_tools       Bluefish                       bluefish
 developer_tools       Eclipse                        eclipse
 developer_tools       Emacs                          emacs

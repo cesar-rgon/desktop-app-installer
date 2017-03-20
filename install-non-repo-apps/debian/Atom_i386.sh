@@ -1,9 +1,9 @@
 #!/bin/bash
 ##########################################################################
-# This script sends a warning message. It's not possible to install
-# Google Chrome application on 32 bits operating systems.
+# This script sends a warning message. It's not possible to install Atom
+# application on 32 bits operating systems.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-20
+# @version 1.3.3, 2017-03-20
 # @license MIT
 ##########################################################################
 
@@ -19,9 +19,9 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 if [ "$language" == "es" ]; then
-	message="Google Chrome no está soportado para sistemas Linux 32 bits. La aplicación no puede ser instalada"
+	message="Atom no está soportado para sistemas Linux 32 bits. La aplicación no puede ser instalada"
 else
-	message="Google Chrome is deprecated for linux 32 bits. The application can't be installed"
+	message="Atom is deprecated for linux 32 bits. The application can't be installed"
 fi
 
 echo "$message" 1>&2
