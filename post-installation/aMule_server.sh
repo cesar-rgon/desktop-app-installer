@@ -1,11 +1,6 @@
 #!/bin/bash
 ##########################################################################
 # This script configures aMule daemon to be ready to use.
-# This one was compatible for both linux OS: Ubuntu and Debian.
-# Debian 8 has removed amule package from stable repository.
-# In a future version, if aMule come back to stable repository, this
-# script will back to parent directory, it means, available for both
-# linux OS.
 # @author César Rodríguez González
 # @version 1.3, 2016-08-19
 # @license MIT

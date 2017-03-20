@@ -1,13 +1,8 @@
 #!/bin/bash
 ##########################################################################
-# This script configures aMule application to be ready to use.
-# This one was compatible for both linux OS: Ubuntu and Debian.
-# Debian 8 has removed amule package from stable repository.
-# In a future version, if aMule come back to stable repository, this
-# script will back to parent directory, it means, available for both
-# linux OS.
+# This script prepares Skype application to be installed
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3.3, 2017-03-19
 # @license MIT
 ##########################################################################
 
@@ -22,7 +17,6 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
-# Extract amule icons
-tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
-mkdir -p /usr/share/amule/skins
-cp $scriptRootFolder/icons/aMule-faenza-theme.zip /usr/share/amule/skins
+# Download and install needed dependency
+wget -O libssl1.0.0_i386.deb http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_i386.deb
+gdebi --n libssl1.0.0_i386.deb
