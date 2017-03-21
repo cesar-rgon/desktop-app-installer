@@ -22,6 +22,6 @@ if [ -n "$4" ]; then
 	# Get application packages: Delete blank and comment lines,then filter by application name and take package list (third column)
 	packageList=`cat $appListFile | awk -v app=$appName '!/^($|#)/{ if ($2 == app) print $3; }' | tr '|' ' '`
 	if [ -n "$packageList" ]; then
-		apt -y purge $packageList;
+		apt purge -y $packageList;
 	fi
 fi

@@ -19,7 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Commands to download, extract and install a non-repository application ...
 # Pre-requisite
-apt -y install unzip
+apt install -y unzip
 # Get Xonotic latest version from web site
 wget -O $tempFolder/xonotic_index.html http://www.xonotic.org/ 2>&1
 xonoticURL=`cat $tempFolder/xonotic_index.html | grep "http://dl.xonotic.org" | awk -F ">" {'print $1}' | awk -F "\"" {'print $2'}`

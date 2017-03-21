@@ -27,7 +27,7 @@ TRANSMISSION_DAEMON_TCP_PORT="51413"
 TRANSMISSION_DAEMON_FILE="/etc/init.d/transmission-daemon"
 
 # Install Transmission daemon
-apt -y install transmission-daemon
+apt install -y transmission-daemon
 
 # Backup of transmission daemon config file
 cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info/settings.json.backup

@@ -19,7 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Commands to download, extract and install a non-repository application.
 # Pre-requisite
-apt -y install default-jre
+apt install -y default-jre
 
 # Commands to download, extract and install a non-repository application.
 jDownloaderFile="jd_unix_0_9.sh"

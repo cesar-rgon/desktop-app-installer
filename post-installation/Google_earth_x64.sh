@@ -22,5 +22,5 @@ mkdir /tmp/google_earth_package
 cd /tmp/google_earth_package
 dpkg --add-architecture i386
 make-googleearth-package --force --quiet 2>/dev/null
-apt -y install gdebi
+apt install -y gdebi
 gdebi --n /tmp/google_earth_package/googleearth*.deb

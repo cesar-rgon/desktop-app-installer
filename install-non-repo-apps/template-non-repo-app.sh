@@ -19,7 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # - This script must be non-interactive, this means, no interaction with user at all:	#
 # 	* No echo to standard output (monitor)						                        #
 #	* No read from standard input (keyboard)					                        #
-#	* Use auto-confirm for commands. Example: apt -y install <package>		            #
+#	* Use auto-confirm for commands. Example: apt install -y <package>		            #
 #	* etc.										                                        #
 #########################################################################################
 
