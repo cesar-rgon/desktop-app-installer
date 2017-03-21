@@ -20,6 +20,6 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 # Delete temp files and packages
 apt install -f
-apt autoremove
+apt -y autoremove
 apt clean
 rm -rf "$tempFolder"

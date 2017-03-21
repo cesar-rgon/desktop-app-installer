@@ -51,7 +51,7 @@ if [ -n "$4" ]; then
 			# If package is NOT installed, remove it to avoid broken dependencies
 			if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
 				apt -y remove $package >/dev/null
-				apt autoremove
+				apt -y autoremove
 			fi
 		done
 	fi
