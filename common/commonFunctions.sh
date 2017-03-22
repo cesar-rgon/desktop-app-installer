@@ -343,6 +343,7 @@ function executeFinalOperations
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
 	showLogs
 	showCredentials
+    rm -rf "$tempFolder"
 }
 
 ##

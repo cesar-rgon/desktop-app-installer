@@ -3,7 +3,7 @@
 # This script opens a Zenity window to ask admin password
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-05
-# @version 	1.3, 2016-11-20
+# @version 	1.3.3, 2017-03-22
 # @license 	MIT
 ##########################################################################
 
@@ -13,5 +13,8 @@ else
   iconsFolder="."
   if [ -d "icons/installer" ]; then iconsFolder="icons/installer"; else if [ -d "../icons/installer" ]; then iconsFolder="../icons/installer"; fi
   fi
-  yad --title="sudo" --image="$iconsFolder/unlock.png" --entry --hide-text --button="!$iconsFolder/next32.png:0" --center
+  yad --title="sudo" --image="$iconsFolder/unlock.png" --entry --hide-text --button="!$iconsFolder/next32.png:0" --center --window-icon="$iconsFolder/tux-shell-console32.png"
 fi
+
+
+

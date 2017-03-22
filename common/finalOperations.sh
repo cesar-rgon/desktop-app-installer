@@ -22,4 +22,3 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 apt install -f
 apt autoremove -y
 apt clean
-rm -rf "$tempFolder"
