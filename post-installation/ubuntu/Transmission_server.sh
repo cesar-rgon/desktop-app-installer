@@ -18,6 +18,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
 . $credentialFolder/Transmission_server.properties
+service transmission-daemon stop 2>/dev/null
 
 ### VARIABLES ############################################################
 TRANSMISSION_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/Transmission"
@@ -114,7 +115,6 @@ find $homeFolder/.config/transmission-daemon/* -type d -print0 2>/dev/null | xar
 
 
 ### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
-service transmission-daemon stop 2>/dev/null
 systemctl enable /etc/systemd/system/transmission-daemon.service
 systemctl daemon-reload
 systemctl start transmission-daemon

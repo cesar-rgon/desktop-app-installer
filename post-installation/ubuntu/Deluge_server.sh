@@ -18,6 +18,8 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
 . $credentialFolder/Deluge_server.properties
+systemctl stop deluged 2>/dev/null
+systemctl stop deluge-web 2>/dev/null
 
 ### VARIABLES ############################################################
 DELUGE_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/deluge"
@@ -112,8 +114,6 @@ Comment=Stop Deluge server" > /usr/share/applications/deluged-stop.desktop
 
 
 ### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
-systemctl stop deluged 2>/dev/null
-systemctl stop deluge-web 2>/dev/null
 systemctl enable /etc/systemd/system/deluged.service
 systemctl enable /etc/systemd/system/deluge-web.service
 systemctl daemon-reload

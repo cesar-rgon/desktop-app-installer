@@ -18,6 +18,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 # Add credentials for authentication
 . $credentialFolder/qBittorrent_server.properties
+systemctl stop qbittorrent-nox 2>/dev/null
 
 ### VARIABLES ############################################################
 QBITTORRENT_DAEMON_DOWNLOAD_FOLDER="$homeDownloadFolder/qBittorrent"
@@ -109,7 +110,6 @@ find $homeFolder/.local/share/data/* -type f -print0 2>/dev/null | xargs -0 chmo
 find $homeFolder/.local/share/data -type d -print0 2>/dev/null | xargs -0 chmod 770 2>/dev/null
 
 ### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
-systemctl stop qbittorrent-nox 2>/dev/null
 systemctl enable /etc/systemd/system/qbittorrent-nox.service
 systemctl daemon-reload
 systemctl start qbittorrent-nox

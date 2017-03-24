@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since	1.0, 2014-05-10
-# @version 	1.3.2, 2017-03-17
+# @version 	1.3.3, 2017-03-23
 # @license 	MIT
 ##########################################################################
 
@@ -341,9 +341,9 @@ function executeFinalOperations
 		( SUDO_ASKPASS="$commonFolder/askpass.sh" sudo -A rm -f /etc/sudoers.d/desktop-app-installer-sudo )
 	fi
 	echo -e "\n# $installationFinished"; echo -e "\n$installationFinished\n$boxSeparator" >> "$logFile"
-	showLogs
 	showCredentials
-    rm -rf "$tempFolder"
+	showLogs
+  rm -rf "$tempFolder"
 }
 
 ##
@@ -373,13 +373,13 @@ function showCredentials
 {
 	if [ -f "$tempFolder/credentials" ]; then
 		if [ -z "$DISPLAY" ]; then
-			dialog --title "$credentialNotification" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
+			dialog --title "$credentialsLabel" --backtitle "$installerTitle" --textbox "$tempFolder/credentials" $(($height - 6)) $(($width - 4))
 		else
 			if [ "$yadInstalled" == "true" ]; then
-				yad --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/login-credentials-yad.png" --button="!/$installerIconFolder/door32.png:0" --center
+				yad --text-info --title="$credentialsLabel" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png" --image="$installerIconFolder/login-credentials-yad.png" --button="!/$installerIconFolder/next32.png:0" --center
 			else
-				notify-send -i "$installerIconFolder/login-credentials.png" "$credentialNotification" ""
-				zenity --text-info --title="$credentialNotification" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
+				notify-send -i "$installerIconFolder/login-credentials.png" "$credentialsLabel" ""
+				zenity --text-info --title="$credentialsLabel" --filename="$tempFolder/credentials" --width=$width --height=$height --window-icon="$installerIconFolder/tux-shell-console32.png"
 			fi
 		fi
 	fi
