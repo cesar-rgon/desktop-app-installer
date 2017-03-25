@@ -47,8 +47,7 @@ function installNeededPackages
 		neededPackages+=( dialog tmux )
 	else
 		neededPackages+=( libnotify-bin xterm )
-		yadInstalled="false"
-		#tryToInstallYadPackage
+		tryToInstallYadPackage
 		if [ "$yadInstalled" == "false" ]; then
 			neededPackages+=( zenity )
 		fi
