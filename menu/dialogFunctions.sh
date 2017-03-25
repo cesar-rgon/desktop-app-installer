@@ -4,7 +4,7 @@
 # Terminal Mode. The application to manage windows is Dialog.
 # @author 	César Rodríguez González
 # @since 	1.3, 2016-08-01
-# @version 	1.3, 2016-11-19
+# @version 	1.3.3, 2017-03-25
 # @license 	MIT
 ##########################################################################
 
@@ -111,7 +111,7 @@ function selectCategoriesToBrowse
 	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
-		if [ ! -z "$selection" ]; then
+		if [ -n "$selection" ]; then
 			local selectionArray
 			IFS='|' read -ra selectionArray <<< "$selection"
 
@@ -207,7 +207,7 @@ function selectAppsToInstallByCategory
 	if [[ $? -ne 0 ]]; then
 		echo "$CANCEL_CODE"
 	else
-		if [ ! -z "$selection" ]; then
+		if [ -n "$selection" ]; then
 			local selectionArray
 			IFS='|' read -ra selectionArray <<< "$selection"
 			if [ "${selectionArray[0]}" == "[$all]" ]; then
@@ -255,6 +255,72 @@ function getApplicationList
 	fi
 }
 
+##
+# This function creates a window to allow change username/password of
+# thouse applications which need credentials to authenticate
+# @since 	v1.3.3
+# @return String credential window
+##
+function getCredentialsWindow
+{
+	# Set first row: Continue installation
+ 	local appRows="\"[$continue]\" \"$proceedToInstall\" on "
+	# Array of applications which requires authentication
+	local credentialArray=(`ls $credentialFolder/`) credentialFile totalApplicationNumber=1
+	for credentialFile in "${credentialArray[@]}"; do
+		if [[ $credentialFile != template* ]] && [ -f $credentialFolder/$credentialFile ]; then
+			local appName="${credentialFile%.*}"
+			local appNameForMenu="`echo $appName | tr '_' ' '`"
+			. $credentialFolder/$appName.properties
+			appRows+="\"$appNameForMenu\" \"$usernameLabel: $appUsername / $passwordLabel: $appPassword\" off "
+			totalApplicationNumber=$(($totalApplicationNumber+1))
+		fi
+	done
+	local height=$( getHeight $totalApplicationNumber)
+	window="dialog --title \"$credentialsTitle\" --backtitle \"$installerTitle\" --stdout --no-cancel --radiolist \"$credentiaSelection\" $height $(($width - 4)) $totalApplicationNumber $appRows"
+	echo "$window"
+}
+
+##
+#
+##
+function selectCredentialApplication
+{
+	local selection=""
+	while [ "$selection" != "[$continue]" ] ; do
+		selection=`eval $( getCredentialsWindow )`
+		if [ "$selection" != "[$continue]" ]; then
+			local appName="`echo $selection | tr ' ' '_'`" usernameLong passwordLong
+			. $credentialFolder/$appName.properties
+			if [ "$usernameCanBeEdited" == "true" ]; then usernameLong=25; else usernameLong=0; fi
+			if [ "$passwordCanBeEdited" == "true" ]; then passwordLong=25; else passwordLong=0; fi
+
+			newCredentials=`dialog --title "$appCredentials $selection" --backtitle "$installerTitle" --stdout --output-separator "|" \
+			--form "$credentialWarning" 13 $(($width - 4)) 5 \
+			"$usernameLabel" 2 $(($(($width/2))-25)) "$appUsername" 2 $(($width/2)) $usernameLong 25 \
+			"$passwordLabel" 4 $(($(($width/2))-25)) "$appPassword" 4 $(($width/2)) $passwordLong 25`
+
+			if [[ $? -eq 0 ]] && [ -n "$newCredentials" ]; then
+				local credentialsArray newUsername="" newPassword="" index=0
+				IFS='|' read -ra credentialsArray <<< "$newCredentials"
+				if [ "$usernameCanBeEdited" == "true" ]; then
+					newUsername=${credentialsArray[$index]}
+					index=$(($index+1))
+				else
+					newUsername=$appUsername
+				fi
+				if [ "$passwordCanBeEdited" == "true" ]; then
+					newPassword=${credentialsArray[$index]}
+				else
+					newPassword=$appPassword
+				fi
+				# Save credentials to file
+				sed -i "s/^appUsername=.*/appUsername=$newUsername/g" $credentialFolder/$appName.properties
+				sed -i "s/^appPassword=.*/appPassword=$newPassword/g" $credentialFolder/$appName.properties
+			fi
+		fi
+	done
+}
 
 ##
 # This function calls other functions to show category box and all others
@@ -269,7 +335,7 @@ function menu
 
 	credits
 	# Repeat select categories and applications windows until not selected categories
-	while [ "$selcat" != "" ] || [ "$firstTime" == "true" ]; do
+	while [ -n "$selcat" ] || [ "$firstTime" == "true" ]; do
 		# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
 		local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`)
 		local categoryNumber=1
@@ -311,6 +377,7 @@ function menu
 			seledtedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
 		done
 		echo "$seledtedAppsFormatted" > "$tempFolder/selectedAppsFile"
+		selectCredentialApplication
 	else
 		rm -f "$tempFolder/selectedAppsFile"
 	fi
