@@ -4,7 +4,7 @@
 # Desktop Mode. The application to manage windows is Zenity.
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-08-01
-# @version 	1.3, 2016-11-19
+# @version 	1.3.3, 2017-03-25
 # @license 	MIT
 ##########################################################################
 
@@ -254,6 +254,71 @@ function getApplicationList
 	fi
 }
 
+##
+# This function creates a window to allow change username/password of
+# thouse applications which need credentials to authenticate
+# @since 	v1.3.3
+# @return String credential window
+##
+function getCredentialsWindow
+{
+	# Set first row: Continue installation
+ 	local appRows="true \"[$continue]\" \"$proceedToInstall\" "
+	# Array of applications which requires authentication
+	local credentialArray=(`ls $credentialFolder/`) credentialFile totalApplicationNumber=1
+	for credentialFile in "${credentialArray[@]}"; do
+		if [[ $credentialFile != template* ]] && [ -f $credentialFolder/$credentialFile ]; then
+			local appName="${credentialFile%.*}"
+			local appNameForMenu="`echo $appName | tr '_' ' '`"
+			. $credentialFolder/$appName.properties
+			appRows+="false \"$appNameForMenu\" \"$appUsername / $appPassword\" "
+			totalApplicationNumber=$(($totalApplicationNumber+1))
+		fi
+	done
+	local height=$( getHeight $totalApplicationNumber)
+	window="zenity --title=\"$installerTitle\" --text \"$credentialSelection\" --list --radiolist --width=$width --height=$height --column \"\" --column \"$nameLabel\" --column \"$credentialsLabel\" $appRows --window-icon=\"$installerIconFolder/tux-shell-console32.png\""
+	echo "$window"
+}
+
+##
+# This function allows to select an application which requires
+# credential authentication for editing username/password
+# @since 	v1.3.3
+##
+function selectCredentialApplication
+{
+	local selection=""
+	while [ "$selection" != "[$continue]" ] ; do
+		selection=`eval $( getCredentialsWindow )`
+		if [ $? -ne 0 ]; then exit 0; fi
+		if [ "$selection" != "[$continue]" ]; then
+			local appName="`echo $selection | tr ' ' '_'`" usernameParameter="" passwordParameter=""
+			. $credentialFolder/$appName.properties
+			if [ "$usernameCanBeEdited" == "true" ]; then usernameParameter="--add-entry=$usernameLabel"; fi
+			if [ "$passwordCanBeEdited" == "true" ]; then passwordParameter="--add-entry=$passwordLabel"; fi
+
+			newCredentials=`zenity --title "$appCredentials $selection" --width=400 --forms --text="$credentialsLabel. Actual: $appUsername / $appPassword" "$usernameParameter" "$passwordParameter"`
+			if [[ $? -eq 0 ]] && [ -n "$newCredentials" ]; then
+				local credentialsArray newUsername="" newPassword="" index=0
+				IFS='|' read -ra credentialsArray <<< "$newCredentials"
+				if [ "$usernameCanBeEdited" == "true" ]; then
+					newUsername=${credentialsArray[$index]}
+					index=$(($index+1))
+				else
+					newUsername=$appUsername
+				fi
+				if [ "$passwordCanBeEdited" == "true" ]; then
+					newPassword=${credentialsArray[$index]}
+				else
+					newPassword=$appPassword
+				fi
+				# Save credentials to file
+				sed -i "s/^appUsername=.*/appUsername=$newUsername/g" $credentialFolder/$appName.properties
+				sed -i "s/^appPassword=.*/appPassword=$newPassword/g" $credentialFolder/$appName.properties
+			fi
+		fi
+	done
+}
 
 ##
 # This function calls other functions to show category box and all others
@@ -268,7 +333,7 @@ function menu
 
 	credits
 	# Repeat select categories and applications windows until not selected categories
-	while [ "$selcat" != "" ] || [ "$firstTime" == "true" ]; do
+	while [ -n "$selcat" ] || [ "$firstTime" == "true" ]; do
 		# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
 		local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`)
 		local categoryNumber=1
@@ -310,6 +375,7 @@ function menu
 			selectedAppsFormatted+="`echo ${selectedAppsMap[$categoryName]//. /|} | tr -d '.' | tr ' ' '_' | tr '|' ' '` "
 		done
 		echo "$selectedAppsFormatted" > "$tempFolder/selectedAppsFile"
+		selectCredentialApplication
 	else
 		rm -f "$tempFolder/selectedAppsFile"
 	fi

@@ -277,12 +277,14 @@ function getCredentialsWindow
 		fi
 	done
 	local height=$( getHeight $totalApplicationNumber)
-	window="dialog --title \"$credentialsTitle\" --backtitle \"$installerTitle\" --stdout --no-cancel --radiolist \"$credentiaSelection\" $height $(($width - 4)) $totalApplicationNumber $appRows"
+	window="dialog --title \"$credentialsTitle\" --backtitle \"$installerTitle\" --stdout --no-cancel --radiolist \"$credentialSelection\" $height $(($width - 4)) $totalApplicationNumber $appRows"
 	echo "$window"
 }
 
 ##
-#
+# This function allows to select an application which requires
+# credential authentication for editing username/password
+# @since 	v1.3.3
 ##
 function selectCredentialApplication
 {
