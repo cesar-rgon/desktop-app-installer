@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since	1.0, 2014-05-10
-# @version 	1.3.3, 2017-03-25
+# @version 	1.3.3, 2017-04-10
 # @license 	MIT
 ##########################################################################
 
@@ -42,7 +42,7 @@ function tryToInstallYadPackage
 ##
 function installNeededPackages
 {
-	local neededPackages=( gdebi-core libgtk2-perl lsb-release software-properties-common )
+	local neededPackages=( gdebi-core libgtk2-perl lsb-release software-properties-common systemd )
 	if [ -z "$DISPLAY" ]; then
 		neededPackages+=( dialog tmux )
 	else

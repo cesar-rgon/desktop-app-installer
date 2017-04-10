@@ -130,7 +130,7 @@ server    		      MySql_server		               mysql-server-5.7
 server    		      Proftpd				                 proftpd-basic
 server              qBittorrent_server             qbittorrent-nox
 server	            SSH_server                     openssh-server
-server			        Tomcat_8			                 tomcat8
+server			        Tomcat			                   tomcat8
 server              Transmission_server            transmission-daemon
 server	            VNC_server			               vnc4server
 

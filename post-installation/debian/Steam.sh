@@ -15,5 +15,5 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
 repositoryFilename="steam.list"
 
-# Command to disable Chrome's repository
+# Command to disable Steam's repository
 sed -i 's/^deb/#deb/g' "/etc/apt/sources.list.d/$repositoryFilename"
