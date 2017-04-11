@@ -2,7 +2,7 @@
 ##########################################################################
 # This script installs jDowloader 2 beta application.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3.3, 2017-04-11
 # @license MIT
 ##########################################################################
 
@@ -25,5 +25,5 @@ else
 fi
 jDownloader2URL="/tmp/jdownloader2.sh http://installer.jdownloader.org/$jDownloader2File"
 wget -O /tmp/$jDownloader2File $jDownloader2URL 2>&1
-bash /tmp/$jDownloader2File
+bash /tmp/$jDownloader2File 2>/dev/null
 chown $username:$username -R /opt/jd2
