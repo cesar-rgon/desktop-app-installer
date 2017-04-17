@@ -55,6 +55,7 @@ Downloads\TempPathEnabled=true
 Downloads\TempPath=$QBITTORRENT_DAEMON_TEMP_FOLDER
 Downloads\ScanDirs=$QBITTORRENT_DAEMON_TORRENT_FOLDER
 WebUI\Username=$appUsername
+WebUI\Password_ha1=@ByteArray(`echo -n $appPassword | md5sum | cut -d ' ' -f 1`)
 WebUI\Port=$QBITTORRENT_DAEMON_WEB_PORT
 [LegalNotice]
 Accepted=true" > $homeFolder/.config/qBittorrent/qBittorrent.conf
@@ -98,4 +99,3 @@ service qbittorrent-nox-daemon start
 
 # Create qbittorrent daemon startup links
 update-rc.d -f qbittorrent-nox-daemon defaults
-
