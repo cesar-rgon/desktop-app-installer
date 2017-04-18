@@ -1,0 +1,1 @@
+../debian/template-pre-installation.sh

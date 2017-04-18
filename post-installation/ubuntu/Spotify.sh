@@ -13,7 +13,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
-repositoryFilename="getdeb-xonotic.list"
+repositoryFilename="spotify.list"
 
-# Command to disable Xonotic's repository
+# Command to disable Spotify's repository
 sed -i 's/^deb/#deb/g' "/etc/apt/sources.list.d/$repositoryFilename"

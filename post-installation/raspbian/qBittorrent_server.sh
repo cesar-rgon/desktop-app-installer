@@ -1,0 +1,1 @@
+../debian/qBittorrent_server.sh

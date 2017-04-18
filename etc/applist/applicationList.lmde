@@ -26,6 +26,7 @@ desktop			Mate				mate-desktop-environment|lightdm
 desktop			Xfce				xfce4|lightdm
 desktop			Lxde				lxde|xinit|lxsession-logout|xfce4-notifyd
 
+developer_tools       Atom
 developer_tools       Bluefish                       bluefish
 developer_tools       Eclipse                        eclipse
 developer_tools       Emacs                          emacs
@@ -53,7 +54,7 @@ games                 Pingus                         pingus
 games                 Steam			     steam
 games                 Supertux                       supertux
 games                 Supertuxkart                   supertuxkart
-games                 Xonotic                        xonotic
+games                 Xonotic
 
 graphics              Blender                        blender
 graphics              Gimp                           gimp
@@ -135,6 +136,7 @@ sound_video   MkvToolNix                  mkvtoolnix-gui
 sound_video   OpenShot			  openshot
 sound_video   Puddletag                   puddletag
 sound_video   Smplayer                    smplayer
+sound_video   Spotify                     spotify-client
 sound_video   SubDownloader               subdownloader
 sound_video   Videolan                    vlc
 sound_video   Flash_plugin                flashplugin-nonfree

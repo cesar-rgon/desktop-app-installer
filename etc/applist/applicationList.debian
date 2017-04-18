@@ -3,7 +3,7 @@
 #                                                                                                                       #
 # Author: César Rodríguez González                                                                                      #
 # Version: 1.3.3                                                                                                        #
-# Last modified date (yyyy/mm/dd): 2017/03/20                                                                           #
+# Last modified date (yyyy/mm/dd): 2017/04/18                                                                           #
 # Licence: MIT                                                                                                          #
 #                                                                                                                       #
 # The columns are described below:                                                                                      #
@@ -54,7 +54,7 @@ games                 Pingus                         pingus
 games                 Steam			     steam
 games                 Supertux                       supertux
 games                 Supertuxkart                   supertuxkart
-games                 Xonotic                        xonotic
+games                 Xonotic
 
 graphics              Blender                        blender
 graphics              Gimp                           gimp
@@ -138,6 +138,7 @@ sound_video   MkvToolNix                  mkvtoolnix-gui
 sound_video   OpenShot			  openshot
 sound_video   Puddletag                   puddletag
 sound_video   Smplayer                    smplayer
+sound_video   Spotify                     spotify-client
 sound_video   SubDownloader               subdownloader
 sound_video   Videolan                    vlc
 sound_video   Flash_plugin                flashplugin-nonfree
