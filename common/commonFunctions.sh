@@ -3,7 +3,7 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since	1.0, 2014-05-10
-# @version 	1.3.3, 2017-04-10
+# @version 	1.3.3, 2017-04-19
 # @license 	MIT
 ##########################################################################
 
@@ -138,7 +138,7 @@ function getAppFiles
 		if [ -f "$targetFolder/$filename$extension" ]; then fileList+="$targetFolder/$filename$extension "; fi
 		# Search subscript that matches 64 bits, 32bits or arm architecture
 		if [ `uname -m` == "x86_64" ]; then	arquitecture="_x64"
-		else if [ `uname -m` == "i386" ]; then	arquitecture="_i386"
+		else if [ `uname -m` == "i386" ] || [ `uname -m` == "i686" ]; then	arquitecture="_i386"
 		else if [[ `uname -m` == arm* ]]; then arquitecture="_arm"; fi; fi; fi
 		if [ -n "$arquitecture" ]; then
 			if [ -f "$targetFolder/$distro/$filename$arquitecture$extension" ]; then fileList+="$targetFolder/$distro/$filename$arquitecture$extension "; fi

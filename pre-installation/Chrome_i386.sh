@@ -3,7 +3,7 @@
 # This script sends a warning message. It's not possible to install
 # Google Chrome application on 32 bits operating systems.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-20
+# @version 1.3.3, 2017-04-19
 # @license MIT
 ##########################################################################
 
@@ -26,5 +26,6 @@ fi
 
 echo "$message" 1>&2
 if [ -n "$DISPLAY" ]; then
-	notify-send -i "$installerIconFolder/installing-notification.png" "ERROR" "$message"
+	notify-send -i "$installerIconFolder/stop-error.png" "ERROR" "$message"
+    sleep 5
 fi
