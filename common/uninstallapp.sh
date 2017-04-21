@@ -3,7 +3,7 @@
 # This script uninstall an application
 # @author 	César Rodríguez González
 # @since 		1.3, 2016-10-10
-# @version 	1.3, 2016-10-10
+# @version 	1.3.3, 2017-04-20
 # @license 	MIT
 ##########################################################################
 
@@ -20,7 +20,7 @@ if [ -n "$4" ]; then
 	. $scriptRootFolder/common/commonVariables.properties
 
 	# Get application packages: Delete blank and comment lines,then filter by application name and take package list (third column)
-	packageList=`cat $appListFile | awk -v app=$appName '!/^($|#)/{ if ($2 == app) print $3; }' | tr '|' ' '`
+	packageList=`cat $appListFile | awk -F ',' -v app=$appName '!/^($|#|,)/{ if ($2 == app) print $3; }'`
 	if [ -n "$packageList" ]; then
 		apt purge -y $packageList;
 	fi

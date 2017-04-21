@@ -237,13 +237,13 @@ function getApplicationList
 	local categoryName="$1"
 
 	# Delete blank and comment lines,then filter by category name and take application list (second column)
-	local applicationList=(`cat "$appListFile" | awk -v category=$categoryName '!/^($|#)/{ if ($1 == category) print $2; }'`)
+	local applicationList=(`cat "$appListFile" | awk -F ',' -v category=$categoryName '!/^($|#|,)/{ if ($1 == category) print $2; }'`)
 
 	if [ "$uninstaller" == "true" ]; then
 		local installedAppList=""
 		for application in "${applicationList[@]}"; do
 			# Delete blank and comment lines,then filter by application name and take package list (third column)
-			local packageList="`cat "$appListFile" | awk -v app=$application '!/^($|#)/{ if ($2 == app) print $3; }' | tr '|' ' '`"
+			local packageList="`cat "$appListFile" | awk -F ',' -v app=$application '!/^($|#|,)/{ if ($2 == app) print $3; }' | tr '|' ' '`"
 			if [ -n "`dpkg -s $packageList 2>&1 | grep "Status: install ok installed"`" ]; then
 				# The application is installed
 				installedAppList+="$application "
@@ -339,7 +339,7 @@ function menu
 	# Repeat select categories and applications windows until not selected categories
 	while [ -n "$selcat" ] || [ "$firstTime" == "true" ]; do
 		# Array of categories from appListFile of your distro. Delete blank and comment lines. Take category list (first column) and remove duplicated rows in appListFile content.
-		local categoryArray=(`cat "$appListFile" | awk '!/^($|#)/{ print $1; }' | uniq | sort`)
+		local categoryArray=(`cat "$appListFile" | awk -F ',' '!/^($|#|,)/{ print $1; }' | uniq | sort`)
 		local categoryNumber=1
 
 		selcat="$( selectCategoriesToBrowse categoryArray[@] $firstTime )"

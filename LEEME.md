@@ -64,14 +64,14 @@ Versión:       1.3.3
 ```bash
 $ sudo apt install git
 $ git clone https://github.com/cesar-rgon/desktop-app-installer.git
-$ cd app-installer
+$ cd desktop-app-installer
 ```
 
 #### 2.2 Método 2. Descargar y extraer ficheros
 ```bash
 $ wget https://github.com/cesar-rgon/desktop-app-installer/archive/master.tar.gz
 $ tar -xvf master.tar.gz
-$ cd linux-app-installer-master
+$ cd desktop-app-installer-master
 ```
 
 ---
@@ -105,7 +105,7 @@ $ bash installer.sh
 #### 3.2 Script de aplicación
 Existe un script individual por cada aplicación, de forma que, puede ser instalada ejecutando dicho script.
 ```bash
-$ bash ./scripts/applicationName.sh
+$ bash ./app-scripts/applicationName.sh
 ```
 
 ---
@@ -160,11 +160,11 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 │   ├── version
 │   │
 │   ├── applist             Contiene listado de aplicaciones disponibles para instalar en cada distribucion linux soportada
-│   │   ├── applicationList.debian
-│   │   ├── applicationList.linuxmint
-│   │   ├── applicationList.lmde
-│   │   ├── applicationList.raspbian
-│   │   └── applicationList.ubuntu
+│   │   ├── applicationList-debian.csv
+│   │   ├── applicationList-linuxmint.csv
+│   │   ├── applicationList-lmde.csv
+│   │   ├── applicationList-raspbian.csv
+│   │   └── applicationList-ubuntu.csv
 │   │
 │   ├── credentials         Contiene un fichero por aplicacion con nombre-usuario/contraseña requerido para autenticación
 │   │   ├── template-credentials.properties
@@ -239,11 +239,11 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 | [menuVariables.properties][menuVariables.properties]           | Contiene variables globales del menú disponibles sólo para el script principal                       |
 | [yadFunctions.sh][yadFunctions.sh]                             | Contiene funciones del menú para ventanas Yad (modo escritorio). Usado sólo por script principal  |
 | [zenityFunctions.sh][zenityFunctions.sh]                       | Contiene funciones del menú para ventanas Zenity (modo escritorio). Usado sólo por script principal  |
-| [applicationList.debian][applicationList.debian]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Debian               |
-| [applicationList.linuxmint][applicationList.linuxmint]         | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Linux Mint           |
-| [applicationList.lmde][applicationList.lmde]                   | Define categorías, aplicaciones y los paquetes correspondientes para un sistema LMDE                 |
-| [applicationList.raspbian][applicationList.raspbian]           | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Raspbian             |
-| [applicationList.ubuntu][applicationList.ubuntu]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Ubuntu               |
+| [applicationList-debian.csv][applicationList-debian.csv]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Debian               |
+| [applicationList-linuxmint.csv][applicationList-linuxmint.csv]         | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Linux Mint           |
+| [applicationList-lmde.csv][applicationList-lmde.csv]                   | Define categorías, aplicaciones y los paquetes correspondientes para un sistema LMDE                 |
+| [applicationList-raspbian.csv][applicationList-raspbian.csv]           | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Raspbian             |
+| [applicationList-ubuntu.csv][applicationList-ubuntu.csv]               | Define categorías, aplicaciones y los paquetes correspondientes para un sistema Ubuntu               |
 | [installer.sh][installer.sh]                                   | Fichero del script principal                                                                         |
 | [en.properties][en.properties]                                 | Fichero de idioma inglés                                                                             |
 | [es.properties][es.properties]                                 | Fichero de idioma español                                                                            |
@@ -260,7 +260,7 @@ Para extender la funcionalidad del script principal es necesario añadir subscri
 #### 5.2 Añadir nueva aplicación a una categoría. Modificar o borrar una existente
 Para añadir una nueva aplicación a ser instalada, siga los siguientes pasos:
 
-1. Editar fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] y añadir una nueva línea con la siguiente sintaxis:
+1. Editar fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv (se recomienda usar LibreOffice u Openoffice) y añadir una nueva línea con la siguiente sintaxis:
 
 | 1ra columna - Categoría (*) | 2da columna - Aplicación (*) | 3ra columna - Paquetes    |
 | ----------------------------| ---------------------------- | ------------------------- |
@@ -278,7 +278,7 @@ Para añadir una nueva aplicación a ser instalada, siga los siguientes pasos:
   * La fuente de la aplicación puede venir de repositorios oficiales, de terceros o incluso otras (sin repositorios).
   * El orden en la que se listan las aplicaciones en el menú es la misma que el especificado en este fichero.
   * La tercera columna - Paquetes: es obligatoria sólo si la aplicación proviene de un repositorio.
-  * Los paquetes deben estar separados por el caracter |.
+  * Los nombres de paquetes deben estar separados por el carácter espacio.
   * Las aplicaciones sin repositorio no deben especificar paquete alguno.
 
 2. Editar fichero [es.properties][es.properties] y añadir una descripción para categorías (si hay nuevas) y aplicaciones con la siguiente sintaxis:
@@ -286,14 +286,14 @@ Para añadir una nueva aplicación a ser instalada, siga los siguientes pasos:
   NombreAplicacionDescription=Aquí va la descripción de la aplicación tal y como se verá en el menú principal
 
   Consideraciones:
-  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian]. La palabra _Description_: debe continuar al nombre de categoría.
+  * NombreCategoriaDescription está compuesta por la palabra _NombreCategoria_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv. La palabra _Description_: debe continuar al nombre de categoría.
   * Para que sea intuitivo, es recomendable definir NombreCategoriaDescription en la sección 'CATEGORIAS' de este fichero.
-  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian]. La palabra _Description_: debe continuar al nombre de aplicación.
+  * NombreAplicacionDescription está compuesta por la palabra _NombreAplicacion_: debe ser idéntica (sensible a mayúsculas) a la especificada en el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv. La palabra _Description_: debe continuar al nombre de aplicación.
   * Para que sea intuitivo, es recomendable definir NombreAplicacionDescription en la sección 'APLICACIONES' de este fichero.
   * Es recomendado, pero no obligatorio, añadir estas descripciones a otros ficheros de traducción.  
   * Puedes crear un nuevo fichero de traducción en tu idioma nativo para facilitar la comprensión. Vea el capítulo [Añadir nuevo fichero de traducción](#6-añadir-nuevo-fichero-de-traducción) para más información.
 
-Para modificar o eliminar una aplicación o categoría, debe editar el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian] y cambiar/borrar las líneas correspondientes.
+Para modificar o eliminar una aplicación o categoría, debe editar el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv y cambiar/borrar las líneas correspondientes.
 
 ---
 [Regresar al índice](#indice)
@@ -311,11 +311,11 @@ Para añadir un nuevo subscript que prepare una aplicación antes de que comienc
 Para añadir un fichero que define PPA a ser usado para agregar repositorio de tercero para una aplicación siga los siguientes pasos:
 1. Crear un nuevo fichero './etc/ppa/applicationName'
   Considerationes:
-  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian].
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv.
   * El nombre de fichero no debe tener extensión.
 2. El fichero debe contener sólamente uno y solo un PPA. Puede estar formado por:
   * Líneas en blanco [opcional]
-  * # Comentarios [opcional]
+  * '# Comentarios' [opcional]
   * ppa:/...  [obligatorio]
 
 ---
@@ -328,7 +328,7 @@ Para añadir un nuevo script de instalación de una aplicación siga los siguien
 
 2. Modificar contenido para asignar valores a las variables: _appName_ y _logFile_  
   Consideraciones:
-  * el valor de _appName_ debe ser idéntico (sensible a mayúsculas) al definido en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian].
+  * el valor de _appName_ debe ser idéntico (sensible a mayúsculas) al definido en el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv.
   * el valor de _logFile_ es usado para crear el fichero ~/logs/logFile.
 
 ---
@@ -357,7 +357,7 @@ Para añadir un nuevo subscript que configure el soporte EULA para una aplicaci�
 
 1. Crear un nuevo fichero './eula/nombreAplicacion' tomando como base los siguientes comandos de la plantilla [template-eula][template-eula].
   Consideraciones:
-  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian].
+  * El nombre de fichero debe ser idéntico (sensible a mayúsculas) a la aplicación correspondiente definida en el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv.
 
 2. Añadir parámetros al final del fichero con la sintaxis indicada en la plantilla para evitar las preguntas EULA durante el proceso de instalación.
 
@@ -393,7 +393,7 @@ Para definir un subscript que elimine la configuración de una aplicación insta
 
 ##### Consideraciones del fichero subscript
   * El nombre de fichero debe seguir el siguiente patrón: NombreAplicacion[_i386/_x64]
-    - NombreAplicacion: debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero applicationList.[ubuntu][applicationList.ubuntu]/[debian][applicationList.debian]/[linuxmint][applicationList.linuxmint]/[lmde][applicationList.lmde]/[raspbian][applicationList.raspbian]
+    - NombreAplicacion: debe ser idéntico (sensible a mayúsculas) al nombre de aplicación definido en el fichero applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv
 	  - _i386 / _x64 / arm: Opcional si fuera necesario. Script que sólo debe ser ejecutado en la arquitectura correspondiente del S.O. (i386 para 32 bits; x64: para 64 bits; arm: para sistemas ARM).
     - La extensión debe ser siempre '.sh'
   * El subscript debe estar ubicado en la carpeta _./third-party-repo_ si es válido para todas las distros linux soportadas. Lo denominamos subscript general.
@@ -423,11 +423,11 @@ Espero que lo encontréis útil.
 [menuVariables.properties]:./menu/menuVariables.properties
 [yadFunctions.sh]:./menu/yadFunctions.sh
 [zenityFunctions.sh]:./menu/zenityFunctions.sh
-[applicationList.debian]:./etc/applist/applicationList.debian
-[applicationList.linuxmint]:./etc/applist/applicationList.linuxmint
-[applicationList.lmde]:./etc/applist/applicationList.lmde
-[applicationList.ubuntu]:./etc/applist/applicationList.ubuntu
-[applicationList.raspbian]:./etc/applist/applicationList.raspbian
+[applicationList-debian.csv]:./etc/applist/applicationList-debian.csv
+[applicationList-linuxmint.csv]:./etc/applist/applicationList-linuxmint.csv
+[applicationList-lmde.csv]:./etc/applist/applicationList-lmde.csv
+[applicationList-ubuntu.csv]:./etc/applist/applicationList-ubuntu.csv
+[applicationList-raspbian.csv]:./etc/applist/applicationList-raspbian.csv
 [installer.sh]:./installer.sh
 [en.properties]:./etc/languages/en.properties
 [es.properties]:./etc/languages/es.properties
