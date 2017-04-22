@@ -52,6 +52,7 @@ internet,aMule_client,amule-utils-gui
 internet,Chrome,google-chrome-stable
 internet,Chromium,chromium
 internet,Deluge_application,deluge
+internet,Discord,
 internet,Dropbox,nautilus-dropbox
 internet,Evolution,evolution
 internet,Filezilla,filezilla
@@ -142,7 +143,7 @@ utilities,Guake_terminal,guake
 utilities,Keepassx,keepassx
 utilities,Luckybackup,luckybackup
 utilities,Menu_libre,menulibre
-utilities,Peazip
+utilities,Peazip,
 utilities,Py_par2,pypar2
 utilities,Pyrenamer,pyrenamer
 utilities,Speedcrunch,speedcrunch
