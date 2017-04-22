@@ -149,13 +149,14 @@ system,Wine,wine
 ,,
 utilities,Byobu,byobu
 utilities,Catfish,catfish
-utilities,Compressors,p7zip-full rar unrar
+utilities,Compressor_commands,p7zip-full rar unrar
 utilities,Gedit,gedit
 utilities,Guake_terminal,guake
 utilities,Keepassx,keepassx
 utilities,Luckybackup,luckybackup
 utilities,Menu_libre,menulibre
 utilities,Midnight_commander,mc
+utilities,Peazip
 utilities,Py_par2,pypar2
 utilities,Pyrenamer,pyrenamer
 utilities,Speedcrunch,speedcrunch
