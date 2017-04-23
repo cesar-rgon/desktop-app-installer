@@ -13,7 +13,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
-repositoryFilename="google-chrome.list"
+repositoryFilename="etcher.list"
 
-# Commands to disable Chrome's repository
+# Commands to disable Etcher's repository
 sed -i 's/^deb/#deb/g' "/etc/apt/sources.list.d/$repositoryFilename"

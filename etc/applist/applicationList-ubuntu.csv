@@ -151,6 +151,7 @@ system,Wine,wine
 utilities,Byobu,byobu
 utilities,Catfish,catfish
 utilities,Compressor_commands,p7zip-full rar unrar
+utilities,Etcher,etcher-electron
 utilities,Gedit,gedit
 utilities,Guake_terminal,guake
 utilities,Keepassx,keepassx
