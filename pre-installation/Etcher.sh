@@ -19,6 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 # Add common variables
 . $scriptRootFolder/common/commonVariables.properties
 
+apt install -y apt-transport-https
 repositoryFilename="etcher.list"
 # Commands to add third-party repository of the application.
 rm -f "/etc/apt/sources.list.d/$repositoryFilename"
