@@ -13,8 +13,6 @@ if [ -n "$1" ]; then scriptRootFolder="$1"; else scriptRootFolder="`pwd`/.."; fi
 if [ -n "$2" ]; then username="$2"; else username="`whoami`"; fi
 if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 
-# Add common variables
-. $scriptRootFolder/common/commonVariables.properties
 neededPackages=( gdebi-core libgtk2-perl lsb-release software-properties-common systemd )
 
 function tryToInstallYad
@@ -31,7 +29,7 @@ function tryToInstallYad
           if [ "$distro" == "ubuntu" ] || [ "$distro" == "linuxmint" ]; then
             sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
           else
-            sudo apt-key add $etcFolder/yad.key
+            sudo apt-key add $scriptRootFolder/etc/yad.key
             echo "deb http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main" | sudo tee "/etc/apt/sources.list.d/yad.list"
           fi
           # STEP 4. Update repositories

@@ -7,8 +7,8 @@
 # @license 	MIT
 ##########################################################################
 
+bash "$scriptRootFolder/common/installNeededPackages.sh" "$scriptRootFolder" "$username" "$homeFolder"
 . $scriptRootFolder/common/commonVariables.properties "$1"
-bash "$commonFolder/installNeededPackages.sh" "$scriptRootFolder" "$username" "$homeFolder"
 if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then yadInstalled="false"; else yadInstalled="true"; fi
 
 ##
