@@ -42,8 +42,7 @@ function tryToInstallYad
           if [ "$distro" == "ubuntu" ] || [ "$distro" == "linuxmint" ]; then
             sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager
           else
-            sudo apt-key del EEA14886
-            sed -i 's/^deb/#deb/g' "/etc/apt/sources.list.d/yad.list"
+            sudo sed -i 's/^deb/#deb/g' "/etc/apt/sources.list.d/yad.list"
           fi
           # STEP 7. Update repositories again
           sudo apt update
