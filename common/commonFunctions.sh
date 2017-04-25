@@ -3,67 +3,13 @@
 # This script contains common functions used by installation scripts
 # @author 	César Rodríguez González
 # @since	1.0, 2014-05-10
-# @version 	1.3.3, 2017-04-19
+# @version 	1.3.3, 2017-04-25
 # @license 	MIT
 ##########################################################################
 
-##
-# This functions tries to install yad package
-##
-function tryToInstallYadPackage
-{
-	yadInstalled="true"
-	# Step 1. Check if yad is NOT installed
-	if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
-		# Step 2. Try to install yad utility from official repositories (since ubuntu 16.10)
-		clear
-		echo "*** INSTALLING NEEDED PACKAGES: yad"
-        echo ""
-		sudo apt install -y yad --fix-missing
-		if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
-					# Step 3. If error, add third-party repository
-					sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
-					sudo apt update 1>/dev/null
-					# Step 4. Try to install yad again
-					sudo apt install -y yad --fix-missing
-					if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then
-						# If error. Remove third-party repository
-						sudo add-apt-repository -y -r ppa:webupd8team/y-ppa-manager
-						yadInstalled="false"
-					fi
-		fi
-	fi
-}
-
-##
-# This funtion installs dialog or zenity packages, if not installed yet,
-# according to detected enviroment: desktop or terminal
-# @since v1.0
-##
-function installNeededPackages
-{
-	local neededPackages=( gdebi-core libgtk2-perl lsb-release software-properties-common systemd )
-	if [ -z "$DISPLAY" ]; then
-		neededPackages+=( dialog tmux )
-	else
-		neededPackages+=( libnotify-bin xterm )
-		tryToInstallYadPackage
-		if [ "$yadInstalled" == "false" ]; then
-			neededPackages+=( zenity )
-		fi
-	fi
-
-	for package in "${neededPackages[@]}"; do
-		if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
-			clear
-			echo "*** INSTALLING NEEDED PACKAGES: $package"
-			sudo apt install -y $package --fix-missing 1>/dev/null
-		fi
-	done
-}
-
-installNeededPackages
 . $scriptRootFolder/common/commonVariables.properties "$1"
+bash "$commonFolder/installNeededPackages.sh" "$scriptRootFolder" "$username" "$homeFolder"
+if [ -z "`dpkg -s yad 2>&1 | grep "Status: install ok installed"`" ]; then yadInstalled="false"; else yadInstalled="true"; fi
 
 ##
 # This funtion get Script Name executed
