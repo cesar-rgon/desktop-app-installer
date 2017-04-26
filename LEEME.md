@@ -35,7 +35,7 @@ Hay un listado por defecto que incluye muchas aplicaciones y escritorios, pero d
 >   - [Consideraciones de comandos en fichero subscript](#consideraciones-de-comandos-en-fichero-subscript)
 
 ```
-Probado en:    Ubuntu 16.04 LTS Xenial, Debian 9 Stretch, Linux Mint 18.1 Serena, LMDE 2 Betsy o Raspbian Jessie (escritorio o servidor).
+Probado en:    Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18.1 Serena, LMDE 2 Betsy o Raspbian Jessie (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
 Versión:       1.3.3
 Último cambio: 21/03/2017 (dd/mm/yyyy)

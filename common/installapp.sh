@@ -46,11 +46,11 @@ if [ -n "$4" ]; then
 					echo -e \"$packageInstallFailed ...\" 1>&2
 					rm /var/lib/dpkg/info/$package.pre* 2>/dev/null
 					rm /var/lib/dpkg/info/$package.post* 2>/dev/null
-					apt install -f >/dev/null
+					apt install -y -f
 			fi
 			# If package is NOT installed, remove it to avoid broken dependencies
 			if [ -z "`dpkg -s $package 2>&1 | grep "Status: install ok installed"`" ]; then
-				apt remove -y $package >/dev/null
+				apt remove -y $package
 				apt autoremove -y
 			fi
 		done
