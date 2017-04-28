@@ -1,10 +1,10 @@
 $ Desktop && app installer script
 =================================
 
-| Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint or LMDE linux (desktop or server).| ![Logo][tux-shell-terminal-logo] |
+| Desktops and applications installer menu taking as source official repositories, third-party ones or others on Ubuntu, Debian, Linux Mint , LMDE or Raspbian (desktop or server).| ![Logo][tux-shell-terminal-logo] |
 | --- | --- |
 
-There are a lot of applications or desktops environments included in the default list, but this list can be modified by the user by just editing a single text file. Furthermore, users can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
+There are a lot of applications or desktops environments included in the default application list, it can be modified by the user by just editing a single text file. Furthermore, the user can add subscripts to extend main menu functionality, for example, add new repositories, setup applications, etc. In addition, exist one separate script for each application as an alternative way to do the installation proccess without the main menu.
 
 > _Spanish version can be found [here][leeme.md] ( Versión española disponible [aquí][leeme.md] )_
 
@@ -28,6 +28,7 @@ There are a lot of applications or desktops environments included in the default
 >   - [Add new subscript to install a non-repository application](#56-add-new-subscript-to-install-a-non-repository-application)  
 >   - [Add new subscript to setup an application](#57-add-new-subscript-to-setup-an-application)  
 >   - [Add new subscript to setup EULA support](#58-add-new-subscript-to-setup-eula-support)
+>   - [Add default authentication credentials for an application](#59-add-default-authentication-credentials-for-an-application)
 > 6. [Add new translation file](#6-add-new-translation-file)
 > 7. [Add new subscript to remove config files of an application during uninstallation proccess](#7-add-new-subscript-to-remove-config-files-of-an-application-during-uninstallation-proccess)
 > 8. ANNEX
@@ -38,7 +39,7 @@ There are a lot of applications or desktops environments included in the default
 Tested on:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18.1 Serena, LMDE 2 Betsy and Raspbian Jessie (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
 Version:     1.3.3
-Last change: 2017/03/21 (yyyy/mm/dd)
+Last change: 2017/04/26 (yyyy/mm/dd)
 ```
 
 ### 1. Features
@@ -48,9 +49,11 @@ Last change: 2017/03/21 (yyyy/mm/dd)
 * Download, extract and install non-repository applications through custom subscripts that extend the main script functionality. It includes several subscripts by default.
 * Set up applications after they are installed through custom subscripts.
 * Customize your own application list to be installed and third-party repositories to add to your distro by just editing some config files (no need to edit main script at all for this purpose).
-* Third-party repositories added by some applications will be disabled automatically after the installation of those applications.
+* Third-party repositories, added by some applications, will be automatically disabled after the installation proccess.
 * EULA support. Install applications automatically with no need of user interaction to accept legal terms of the application.
-* The script runs with an interface adapted to the detected environment: Dialog for terminal. Yad or Zenity for desktop or terminal emulator.
+* The script runs with an interface adapted to the detected environment: Dialog for
+terminal. Yad or Zenity for desktop or terminal emulator.
+* User can set the authentication credentials for thouse applications witch require user's login.
 * Installation log file that shows installation steps and errors if they have occurred.
 * Multilingual support. Easy to add new translations. For the time being English and Spanish languages are included. The script detects system language and it use the appropiate translation.  
 * Valid for multiple arquitecture systems: x64, i386, arm.
@@ -96,6 +99,10 @@ $ bash installer.sh
 > ![Main menu screenshot with selected applications on desktop mode][screenshot-desktop-mainmenu]
 > ![Main menu screenshot with selected applications on terminal mode][screenshot-terminal-mainmenu]
 
+##### Change authentication credentials (Desktop/Terminal mode)
+> ![Change authentication credentials screenshot on desktop mode][screenshot-desktop-credentials]
+> ![Change authentication credentials screenshot on terminal mode][screenshot-terminal-credentials]
+
 ##### Installing applications (Desktop/Terminal mode)
 > ![Screenshot installing an application on desktop mode][screenshot-desktop-installing-app]
 > ![Screenshot installing an application on terminal mode][screenshot-terminal-installing-app]
@@ -114,11 +121,15 @@ $ bash ./app-scripts/applicationName.sh
 [Back to index](#index)
 
 ### 4. Execution's lifecycle
-1. The user must SELECT the APPLICATIONS to install.
+1. The user must SELECT the APPLICATIONS to be installed.
 
-2. The script EXECUTES INITIAL OPERATIONS to be ready to install the selected applications.
+2. The user can SET the AUTHENTICATION CREDENTIALS for thouse applications witch require user's login.
 
-3. For each application, execute next steps:
+3. The User REQUIRES to START the INSTALATION process.
+
+4. The script EXECUTES INITIAL OPERATIONS to be ready to install the selected applications.
+
+5. For each application, execute next steps:
   * The script ADDS THIRD-PARTY REPOSITORY through a PPA, if defined in a specific file.
   * The script EXECUTES PRE-INSTALLATION OPERATIONS of the application to be installed if exists a custom sub-script for that purpose. The sub-script could add a third-party repository, custom commands instead of use a PPA, and/or prepare the installation of the application.
   * The script INSTALLS the APPLICATION, with EULA support, taking as source official distro repositories, third-party one or a custom sub-script created for that purpose.
@@ -126,7 +137,7 @@ $ bash ./app-scripts/applicationName.sh
   * The script EXECUTES POST-INSTALLATION OPERATIONS to set-up the installed application if exists a custom sub-script for that purpose.
   * The script STORES CREDENTIALS for AUTHENTICATION to the applicacion, if required.
 
-4. The script EXECUTES FINAL OPERATIONS to clean packages, remove temporal files/folders, show logs and show login credentials.
+6. The script EXECUTES FINAL OPERATIONS to clean packages, remove temporal files/folders, show logs and show login credentials.
 
 ```
 NOTE 1: Main script runs all the previous steps whereas each individual application script skip step one and run the remaining.
@@ -336,7 +347,7 @@ To add a new file that defines PPA to be used to add a third-party repository fo
 #### 5.5 Add new subscript to install an application
 To add a new installation script for an application follow next steps:
 
-1. Create a new file './scripts/application-name.sh' taking, as base, next commands defined in [template-script.sh][template-script.sh] file
+1. Create a new file './app-scripts/application-name.sh' taking, as base, next commands defined in [template-script.sh][template-script.sh] file
 
 2. Modify content to asign values to variables: _appName_ and _logFile_  
   Considerations:
@@ -369,11 +380,23 @@ To add a new subscript to setup an application after installation proccess just 
 #### 5.8 Add new subscript to setup EULA support
 To add a new subscript to setup EULA support for an application just follow next steps:
 
-1. Create a new file './eula/applicationName' taking, as base, next commands from [template-eula][template-eula] file.
+1. Create a new file './etc/eula/applicationName' taking, as base, next commands from [template-eula][template-eula] file.
   Considerations:
   * The filename must be identically (case-sensitive) to the related application name defined in applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv file.
 
 2. Add parameters at the end of the file with the syntax indicated in template file to skip EULA questions during installation proccess.
+
+---
+[Back to index](#index)
+
+#### 5.9 Add default authentication credentials for an application
+To add default authentication credentials for an application which requires user's login just follow next steps:
+
+1. Create a new file './etc/credentials/applicationName.properties' taking, as base, [template-credentials.properties][template-credentials.properties] file.
+  Considerations:
+  * The applicationName must be identically (case-sensitive) to the related application name defined in applicationList-[ubuntu][applicationList-ubuntu.csv]/[debian][applicationList-debian.csv]/[linuxmint][applicationList-linuxmint.csv]/[lmde][applicationList-lmde.csv]/[raspbian][applicationList-raspbian.csv].csv file.
+
+2. Set values of variables appUsername, appPassword (credentials) and usernameCanBeEdited, passwordCanBeEdited (that tells to script if the value of the associated variable can be modified).
 
 ---
 [Back to index](#index)
@@ -445,16 +468,19 @@ I hope you find it useful.
 [template-post-installation.sh]:./post-installation/template-post-installation.sh
 [template-uninstall.sh]:./uninstall/template-uninstall.sh
 [template-eula]:./etc/eula/template-eula
+[template-credentials.properties]:./etc/credentials/template-credentials.properties
 [template-non-repo-app.sh]:./install-non-repo-apps/template-non-repo-app.sh
 [template-script.sh]:./app-scripts/template-script.sh
 [screenshot-monitors]:http://cesar-rgon.github.io/desktop-app-installer-website/images/monitors.png
-[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-06.png
-[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-07.png
-[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-12.png
-[screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-13.png
-[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-13.png
-[screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-14.png
-[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-15.png
+[screenshot-desktop-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-02.png
+[screenshot-terminal-internetapp]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-02.png
+[screenshot-desktop-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-03.png
+[screenshot-terminal-mainmenu]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-03.png
+[screenshot-desktop-credentials]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-04.png
+[screenshot-terminal-credentials]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-05.png
+[screenshot-desktop-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-05.png
+[screenshot-terminal-installing-app]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/dialog-06.png
+[screenshot-desktop-log]:http://cesar-rgon.github.io/desktop-app-installer-website/images/screenshots/en/yad-07.png
 [ISO639]:http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [tux-shell-terminal-logo]:http://cesar-rgon.github.io/desktop-app-installer-website/images/logos/desktop-app-installer.png
 [under construction]:http://1.bp.blogspot.com/_qgWWAMk9DLU/R0_rG8oIQWI/AAAAAAAAAdI/DjY32PC6Wu4/s200/xanderrun-tux-construction-8454.png
