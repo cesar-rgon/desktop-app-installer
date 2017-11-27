@@ -36,10 +36,10 @@ There are a lot of applications or desktops environments included in the default
 >   - [Subscript commands considerations](#subscript-commands-considerations)
 
 ```
-Tested on:   Ubuntu 16.04 LTS Xenial, Debian 8 Jessie, Linux Mint 18.1 Serena, LMDE 2 Betsy and Raspbian Jessie (desktop or server).
+Tested on:   Ubuntu 16.04 LTS Xenial, Debian 9 Stretch, Linux Mint 18.1 Serena, LMDE 2 Betsy and Raspbian Jessie (desktop or server).
              With some changes in config files, it can be 100% compatible with previous versions.
-Version:     1.3.3
-Last change: 2017/04/26 (yyyy/mm/dd)
+Version:     1.3.4
+Last change: 2017/11/27 (yyyy/mm/dd)
 ```
 
 ### 1. Features

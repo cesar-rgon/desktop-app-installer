@@ -1,7 +1,7 @@
 #Category Name (mandatory),#Application Name (mandatory),#Repo package(s) (mandatory only for repo-applications)
 ,,
-desktop,Gnome_shell,gnome-shell
-desktop,KDE,kde-plasma-desktop
+desktop,Gnome_shell,gnome-shell lightdm
+desktop,KDE,kde-plasma-desktop lightdm
 desktop,Cinnamon,cinnamon lightdm
 desktop,Mate,mate-desktop-environment lightdm
 desktop,Xfce,xfce4 lightdm
@@ -14,7 +14,7 @@ developer_tools,Emacs,emacs
 developer_tools,Geany,geany
 developer_tools,Git,git
 developer_tools,Git_cola,git-cola
-developer_tools,MariaDB_client,mariadb-client-10.0
+developer_tools,MariaDB_client,mariadb-client-10.1
 developer_tools,Meld,meld
 developer_tools,MySQL_workbench,mysql-workbench
 developer_tools,OpenJdk,default-jdk
@@ -47,6 +47,8 @@ graphics,Pinta,pinta
 graphics,Scribus,scribus
 graphics,Shutter,shutter
 ,,
+internet,aMule_application,amule
+internet,aMule_client,amule-utils-gui
 internet,Chrome,google-chrome-stable
 internet,Chromium,chromium
 internet,Deluge_application,deluge
@@ -64,7 +66,6 @@ internet,Mumble,mumble
 internet,OpenJRE,default-jre
 internet,Pidgin,pidgin pidgin-extprefs
 internet,qBittorrent_application,qbittorrent
-internet,Remmina,remmina
 internet,Skype,
 internet,Teamviewer_full,
 internet,Teamviewer_quick_support,
@@ -72,7 +73,7 @@ internet,Transmission_application_Qt,transmission-qt
 internet,Transmission_application_Gtk,transmission-gtk
 internet,Transmission_client,transgui
 internet,Uget,uget
-internet,Xchat,xchat
+internet,Hexchat,hexchat
 ,,
 office,Abiword,abiword
 office,Calibre,calibre
@@ -85,20 +86,20 @@ office,Libreoffice,libreoffice
 office,Texmaker,texmaker
 office,Tomboy,tomboy
 ,,
-science,Celestia,celestia-common-nonfree
 science,gElemental,gelemental
 science,Geogebra,geogebra
 science,Kalzium,kalzium
 science,Stellarium,stellarium
 ,,
+server,aMule_server,amule-daemon
 server,Apache_2,apache2
 server,Aria_2_server,aria2
 server,Bind_9,bind9
 server,Deluge_server,deluged deluge-webui
-server,Jetty,jetty8
-server,MariaDB_server,mariadb-server-10.0
+server,Jetty,jetty9
+server,MariaDB_server,mariadb-server-10.1
 server,Mumble_server,mumble-server
-server,MySql_server,mysql-server
+server,MySql_server,default-mysql-server
 server,Proftpd,proftpd-basic
 server,qBittorrent_server,qbittorrent-nox
 server,SSH_server,openssh-server
@@ -109,7 +110,7 @@ server,VNC_server,tightvncserver
 sound_video,Amarok,amarok
 sound_video,Audacity,audacity
 sound_video,Clementine,clementine
-sound_video,Gstreamer,gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+sound_video,Gstreamer,gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 sound_video,Guvcview,guvcview
 sound_video,Xbmc,xbmc
 sound_video,Mediainfo,mediainfo
@@ -120,7 +121,6 @@ sound_video,Smplayer,smplayer
 sound_video,Spotify,spotify-client
 sound_video,SubDownloader,subdownloader
 sound_video,Videolan,vlc
-sound_video,Flash_plugin,flashplugin-nonfree
 ,,
 system,Bleachbit,bleachbit
 system,Gdebi,gdebi
@@ -129,7 +129,6 @@ system,Hardinfo,hardinfo
 system,Htop,htop
 system,Log_viewer,gnome-system-log
 system,Lxtask,lxtask
-system,Schedule,gnome-schedule
 system,Synaptic,synaptic software-properties-gtk
 system,System_monitor,gnome-system-monitor
 system,Wine,wine
@@ -148,6 +147,6 @@ utilities,Py_par2,pypar2
 utilities,Pyrenamer,pyrenamer
 utilities,Speedcrunch,speedcrunch
 utilities,Vim,vim
-utilities,Virtualbox,virtualbox virtualbox-guest-x11
+utilities,Virtualbox,virtualbox-5.1
 utilities,VMWare_player,
 utilities,Yakuake,yakuake
