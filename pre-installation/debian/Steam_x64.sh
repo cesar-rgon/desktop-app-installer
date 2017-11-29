@@ -3,7 +3,7 @@
 # This script prepares Teamviewer application to be ready to be installed
 # on 64 bits OS linux
 # @author César Rodríguez González
-# @version 1.3, 2016-08-09
+# @version 1.3.4, 2017-11-29
 # @license MIT
 ##########################################################################
 
@@ -19,7 +19,7 @@ if [ -n "$3" ]; then homeFolder="$3"; else homeFolder="$HOME"; fi
 . $scriptRootFolder/common/commonVariables.properties
 
 # We must add a non-free repository to be able to install Steam
-echo "deb http://httpredir.debian.org/debian/ jessie main contrib non-free" > /etc/apt/sources.list.d/steam.list
+echo "deb http://httpredir.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list.d/steam.list
 
 # We must add 32 bits architecture to be able to install Steam 32 bits in 64 bits OS
 dpkg --add-architecture i386
