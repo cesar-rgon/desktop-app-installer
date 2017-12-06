@@ -14,7 +14,7 @@ scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
 # Import common variables and functions
 
 . $scriptRootFolder/common/commonFunctions.sh
-declare -a appsToInstall=( "Jetty_8" )
+declare -a appsToInstall=( "Jetty" )
 
 # Lauch menu and install selected applications
 prepareScript "$0"

@@ -15,8 +15,8 @@ download_server_client,Transmission_server,transmission-daemon
 ,,
 database_server_client,MySql_client,mysql-client
 database_server_client,MySql_server,mysql-server
-database_server_client,MariaDB_client,mariadb-client-10.0
-database_server_client,MariaDB_server,mariadb-server-10.0
+database_server_client,MariaDB_client,Mariadb-client-10.1
+database_server_client,MariaDB_server,Mariadb-server-10.1
 database_server_client,PostgreSql_client,postgresql-client
 database_server_client,Sqlite_3,sqlite3
 ,,
@@ -27,15 +27,15 @@ ftp_server_client,Proftpd,proftpd-basic
 ,,
 web_server,Apache_2,apache2
 web_server,Tomcat_8,tomcat8
-web_server,Jetty_8,jetty8
+web_server,Jetty,jetty9
 ,,
 remote_conection_server_client,SSH_server,openssh-server
 remote_conection_server_client,VNC_client,realvnc-vnc-viewer
 remote_conection_server_client,VNC_server,realvnc-vnc-server
 remote_conection_server_client,Remmina,remmina
 ,,
-terminal_utilities,Mplayer_2,mplayer2 gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
-terminal_utilities,Htop,htop
-terminal_utilities,Compressor_commands,p7zip-full
+terminal_utilities,Mplayer_2,mplayer2 gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 terminal_utilities,Vim,vim
+terminal_utilities,Compressor_commands,p7zip-full
+terminal_utilities,Htop,htop
 terminal_utilities,Git,git
