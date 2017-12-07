@@ -6,6 +6,8 @@ desktop,Lxde,lxde
 audio_server_client,Mumble,mumble
 audio_server_client,Mumble_server,mumble-server
 ,,
+download_server_client,aMule_client,amule-utils-gui
+download_server_client,aMule_server,amule-daemon
 download_server_client,Aria_2_server,aria2
 download_server_client,Deluge_application,deluge
 download_server_client,Deluge_server,deluged deluge-webui
@@ -26,7 +28,7 @@ ftp_server_client,Filezilla,filezilla
 ftp_server_client,Proftpd,proftpd-basic
 ,,
 web_server,Apache_2,apache2
-web_server,Tomcat_8,tomcat8
+web_server,Tomcat,tomcat8
 web_server,Jetty,jetty9
 ,,
 remote_conection_server_client,SSH_server,openssh-server

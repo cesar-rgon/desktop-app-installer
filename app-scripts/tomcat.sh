@@ -14,7 +14,7 @@ scriptRootFolder="`pwd`/.."; username="`whoami`"; homeFolder="$HOME"
 # Import common variables and functions
 
 . $scriptRootFolder/common/commonFunctions.sh
-declare -a appsToInstall=( "Tomcat_8" )
+declare -a appsToInstall=( "Tomcat" )
 
 # Lauch menu and install selected applications
 prepareScript "$0"

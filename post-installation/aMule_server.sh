@@ -2,7 +2,7 @@
 ##########################################################################
 # This script configures aMule daemon to be ready to use.
 # @author César Rodríguez González
-# @version 1.3, 2016-08-19
+# @version 1.3.4, 2016-12-07
 # @license MIT
 ##########################################################################
 
@@ -46,8 +46,10 @@ function setCategoryParameter
 sudo -u $username mkdir -p $AMULE_DAEMON_DOWNLOAD_FOLDER $AMULE_DAEMON_TEMP_FOLDER
 
 ### SETUP APPLICATION CONFIG FILES #######################################
-# Try to start amule-daemon. The application can not start yet and will automatically create home folder and default config files
-sudo -u $username amuled -f 1>/dev/null
+# Start amule-daemon. The application will automatically create home folder and default config files
+sudo -u $username /usr/bin/amuled -f
+pkill amuled
+pkill amuleweb
 # Backup of default main config file
 sudo -u $username cp $homeFolder/.aMule/amule.conf $homeFolder/.aMule/amule.conf.backup
 
@@ -141,4 +143,5 @@ tar -C /usr/share/ -xvf "$scriptRootFolder/icons/amule.tar.gz"
 ### PREPARE DAEMON TO START ON SYSTEM BOOT AND START DAEMON NOW ##########
 systemctl enable /etc/systemd/system/amuled.service
 systemctl daemon-reload
-systemctl start amuled
+sudo -u $username /usr/bin/amuled -f
+#systemctl start amuled
