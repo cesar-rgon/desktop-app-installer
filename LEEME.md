@@ -36,10 +36,10 @@ Hay muchas aplicaciones y escritorios incluidos en el listado de aplicaciones po
 >   - [Consideraciones de comandos en fichero subscript](#consideraciones-de-comandos-en-fichero-subscript)
 
 ```
-Probado en:    Ubuntu 16.04 LTS Xenial, Debian 9 Stretch, Linux Mint 18.1 Serena, LMDE 2 Betsy o Raspbian Stretch (escritorio o servidor).
+Probado en:    Ubuntu 18.04 LTS Bionic, Debian 9 Stretch, Linux Mint 18.1 Serena, LMDE 2 Betsy o Raspbian Stretch (escritorio o servidor).
                Con algunos cambios en ficheros de configuración, puede ser 100% compatible con versiones previas.
-Versión:       1.3.4
-Último cambio: 06/12/2017 (dd/mm/yyyy)
+Versión:       1.4
+Último cambio: 15/03/2018 (dd/mm/yyyy)
 ```
 
 ### 1. Características

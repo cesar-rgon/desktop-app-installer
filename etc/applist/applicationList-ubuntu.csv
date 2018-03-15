@@ -5,7 +5,6 @@ desktop,Kubuntu,kubuntu-desktop
 desktop,Xubuntu,xubuntu-desktop
 desktop,Lubuntu,lubuntu-desktop pavucontrol
 desktop,Edubuntu,edubuntu-desktop
-desktop,Gnome_shell,gnome-shell
 desktop,Cinnamon,cinnamon
 desktop,Mate,mate-desktop-environment
 desktop,Xfce,xfce4
@@ -18,7 +17,7 @@ developer_tools,Emacs,emacs
 developer_tools,Geany,geany
 developer_tools,Git,git
 developer_tools,Git_cola,git-cola
-developer_tools,MariaDB_client,mariadb-client-10.0
+developer_tools,MariaDB_client,mariadb-client-10.1
 developer_tools,Meld,meld
 developer_tools,MySQL_workbench,mysql-workbench
 developer_tools,Netbeans,netbeans
@@ -27,7 +26,7 @@ developer_tools,Pgadmin_iii,pgadmin3
 developer_tools,PostgreSql_client,postgresql-client
 developer_tools,Qt_creator,qtcreator
 developer_tools,SQLite_database_browser,sqlitebrowser
-developer_tools,Sublime_text,sublime-text-installer
+developer_tools,Sublime_text,sublime-text
 ,,
 education,Goldendict,goldendict
 education,Klavaro,klavaro
@@ -48,8 +47,8 @@ graphics,Gimp,gimp
 graphics,Hugin_panorama_photo_stitcher,hugin
 graphics,Imagemagick,imagemagick
 graphics,Inkscape,inkscape
-graphics,Mcomix,mcomix
 graphics,Pinta,pinta
+graphics,Qcomicbook,qcomicbook
 graphics,Scribus,scribus
 graphics,Shutter,shutter
 graphics,Xnconvert,
@@ -64,8 +63,7 @@ internet,Dropbox,nautilus-dropbox
 internet,Filezilla,filezilla
 internet,Firefox,firefox
 internet,Google_earth,googleearth-package
-internet,jDownloader,jdownloader-installer
-internet,jDownloader2_beta,
+internet,jDownloader2,
 internet,Kget,kget
 internet,Liferea,liferea
 internet,Mumble,mumble
@@ -94,10 +92,10 @@ office,Libreoffice,libreoffice
 office,Texmaker,texmaker
 office,Tomboy,tomboy
 ,,
-science,Celestia,celestia-common-nonfree
 science,gElemental,gelemental
 science,Geogebra,geogebra
 science,Kalzium,kalzium
+science,OpenUniverse,openuniverse
 science,Stellarium,stellarium
 ,,
 server,aMule_server,amule-daemon
@@ -105,8 +103,8 @@ server,Apache_2,apache2
 server,Aria_2_server,aria2
 server,Bind_9,bind9
 server,Deluge_server,deluged deluge-webui
-server,Jetty,jetty8
-server,MariaDB_server,mariadb-server-10.0
+server,Jetty,jetty9
+server,MariaDB_server,mariadb-server-10.1
 server,Mumble_server,mumble-server
 server,MySql_server,mysql-server-5.7
 server,Proftpd,proftpd-basic
@@ -120,7 +118,7 @@ sound_video,Amarok,amarok
 sound_video,Audacity,audacity
 sound_video,Clementine,clementine
 sound_video,Cinelerra,cinelerra-cv
-sound_video,Gstreamer,gstreamer0.10-plugins-good
+sound_video,Gstreamer,gstreamer1.0-plugins-good
 sound_video,Guvcview,guvcview
 sound_video,Kodi,kodi
 sound_video,Mediainfo,mediainfo
@@ -128,14 +126,13 @@ sound_video,MkvToolNix,mkvtoolnix-gui
 sound_video,OpenShot,openshot
 sound_video,Puddletag,puddletag
 sound_video,Smplayer,smplayer
-sound_video,Spotify,spotify-client
+sound_video,Spotify,libcurl3 spotify-client
 sound_video,SubDownloader,subdownloader
 sound_video,Videolan,vlc
 sound_video,Flash_plugin,flashplugin-installer
 ,,
 system,Bleachbit,bleachbit
 system,Boot_repair,boot-repair
-system,Compiz,compiz compizconfig-settings-manager fusion-icon
 system,Gdebi,gdebi
 system,Gmount_iso,gmountiso
 system,Gparted,gparted
@@ -146,7 +143,7 @@ system,Log_viewer,gnome-system-log
 system,Startup_disk_creator_Gtk,usb-creator-gtk
 system,Startup_disk_creator_Kde,usb-creator-kde
 system,Synaptic,synaptic software-properties-gtk
-system,Wine,wine
+system,Wine,wine-stable
 ,,
 utilities,Byobu,byobu
 utilities,Catfish,catfish
@@ -159,7 +156,6 @@ utilities,Luckybackup,luckybackup
 utilities,Menu_libre,menulibre
 utilities,Midnight_commander,mc
 utilities,Peazip,
-utilities,Py_par2,pypar2
 utilities,Pyrenamer,pyrenamer
 utilities,Speedcrunch,speedcrunch
 utilities,Vim,vim
