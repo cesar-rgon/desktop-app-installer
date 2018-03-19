@@ -1,14 +1,15 @@
 #Category Name (mandatory),#Application Name (mandatory),#Repo package(s) (mandatory only for repo-applications)
 ,,
-desktop,Ubuntu,ubuntu-desktop
-desktop,Kubuntu,kubuntu-desktop
-desktop,Xubuntu,xubuntu-desktop
-desktop,Lubuntu,lubuntu-desktop pavucontrol
-desktop,Edubuntu,edubuntu-desktop
+desktop,Budgie,budgie-desktop
 desktop,Cinnamon,cinnamon
-desktop,Mate,mate-desktop-environment
-desktop,Xfce,xfce4
+desktop,Edubuntu,edubuntu-desktop
+desktop,Kubuntu,kubuntu-desktop
+desktop,Lubuntu,lubuntu-desktop pavucontrol
 desktop,Lxde,lxde xinit lxsession-logout xfce4-notifyd
+desktop,Mate,mate-desktop-environment
+desktop,Ubuntu,ubuntu-desktop
+desktop,Xfce,xfce4
+desktop,Xubuntu,xubuntu-desktop
 ,,
 developer_tools,Atom,atom
 developer_tools,Bluefish,bluefish
